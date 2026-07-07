@@ -1,0 +1,14 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 13px;
+  row-gap: 13px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.half {
+  grid-column: span 1;
+}

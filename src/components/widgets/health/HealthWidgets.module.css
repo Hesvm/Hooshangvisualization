@@ -1,0 +1,214 @@
+.label {
+  margin: 0 0 8px;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--color-history-title);
+  /* Fixed left-top position regardless of page RTL direction, matching the
+     reference — the top-right corner is reserved for the icon. */
+  text-align: left;
+}
+
+.labelLight {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.value {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.valueLight {
+  color: var(--color-white);
+}
+
+.subValue {
+  margin: 2px 0 0;
+  font-family: var(--font-ravi);
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+/* Normal flow (not absolute) inside a flex-column card, pushed to the
+   bottom via margin-top: auto — avoids overlapping the content above when
+   that content's height varies between widgets. */
+.statRows {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ravi);
+  font-size: 13px;
+}
+
+.statLabel {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.statLabelLight {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.statValueGreen {
+  color: #8ce64b;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.statValueCyan {
+  color: #33d6d6;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.statValueLight {
+  color: var(--color-white);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Movement */
+.movement {
+  background: #15151a;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.movementIcon {
+  color: #8ce64b;
+}
+
+.rings {
+  width: 56px;
+  height: 56px;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+/* Heart */
+.heart {
+  background: #e8384f;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.heartTopIcon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.heartGlyphWrap {
+  position: relative;
+  width: 72px;
+  height: 65px;
+  margin: 0 auto 8px;
+}
+
+.heartGlyph {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.heartBpmWrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.heartBpm {
+  font-family: var(--font-ravi);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-white);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.heartBpmUnit {
+  font-family: var(--font-ravi);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Sleep */
+.sleep {
+  background: linear-gradient(160deg, #6a5cf0 0%, #3d2e8c 100%);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.sleepTopIcon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.sleepScoreCircle {
+  width: 68px;
+  height: 68px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+}
+
+.sleepScore {
+  font-family: var(--font-ravi);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.sleepQuality {
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Steps */
+.steps {
+  background: #5a6472;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.stepsTopIcon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.gauge {
+  width: 64px;
+  height: 34px;
+  display: block;
+  margin: 4px auto 0;
+}
+
+.gaugeValue {
+  text-align: center;
+  margin-top: -6px;
+}

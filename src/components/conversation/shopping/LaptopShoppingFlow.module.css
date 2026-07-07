@@ -1,0 +1,79 @@
+/* Internal rhythm for everything this flow appends — mirrors .stream's 32px
+   base rhythm, since this whole flow is a single child of that stream. */
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column > * + * {
+  margin-top: 32px;
+}
+
+.shortlist {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortlistCarousel {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x pan-y;
+  direction: rtl;
+  padding-block: 2px 8px;
+}
+
+.shortlistCarousel::-webkit-scrollbar {
+  display: none;
+}
+
+.shortlistItem {
+  flex: 0 0 70%;
+  display: flex;
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.shortlistDecision {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortlistSupport {
+  margin: 0 4px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.05em;
+  color: var(--color-assistant-ink);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.ctaButton {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ctaButton:active {
+  scale: 0.96;
+}

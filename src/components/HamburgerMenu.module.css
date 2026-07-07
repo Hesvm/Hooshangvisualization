@@ -1,0 +1,99 @@
+/* Static hit-box only — no background/shadow/radius of its own. Those live on
+   .triggerSurface, the layoutId-shared decorative layer underneath. */
+.trigger {
+  position: absolute;
+  z-index: 30;
+  top: 63px;
+  right: 23px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.trigger:active {
+  scale: 0.96;
+}
+
+/* Closed-state geometry of the shared surface — a 40x40 circle sitting
+   exactly behind the hamburger icon. Framer morphs this into .drawerSurface. */
+.triggerSurface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-floating);
+}
+
+.iconWrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  color: var(--color-neutral-500);
+}
+
+/* Dims + freezes the underlying page while the drawer is open. Sits above every
+   other control (header badge, composer) so nothing beneath remains tappable. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  padding: 0;
+}
+
+/* Static-size positioning wrapper — renders at its final 14px-inset geometry
+   the instant it mounts, so content's coordinate space never itself resizes.
+   Only its child .drawerSurface visually morphs underneath. */
+.drawerFrame {
+  position: absolute;
+  z-index: 50;
+  top: 14px;
+  right: 14px;
+  bottom: 14px;
+  width: 80%;
+  touch-action: pan-y;
+}
+
+/* Open-state geometry of the shared surface — grows to fill .drawerFrame.
+   Owns background/shadow/radius/clipping; content must not control this. */
+.drawerSurface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--radius-sheet);
+  background: var(--color-white);
+  box-shadow: var(--shadow-floating);
+  overflow: hidden;
+  will-change: transform, border-radius;
+}
+
+/* Independent content layer — only ever animates opacity/x, never scale. */
+.drawerContent {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: var(--radius-sheet);
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .triggerSurface,
+  .drawerSurface {
+    transition: none !important;
+  }
+}

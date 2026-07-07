@@ -1,0 +1,115 @@
+/* Branded "Hooshang is thinking" moment — morphing logo + integrated streaming
+   dots + shimmering, cycling status line. Fixed slot sizes so phrase swaps and
+   the dot loop never shift surrounding posts. */
+
+.wrap {
+  /* Reserve the module's height up front so the delayed entrance doesn't push
+     the conversation down when it finally appears. */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+}
+
+.inner {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* ---- Morphing logo system: ONE inline SVG whose single <path> interpolates
+   between the real Hooshang silhouette and a circle. The 3 white dots live in
+   the same SVG so they scale with the shell. No stacked shells, no crossfade. */
+.logoSystem {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoSvg {
+  /* Real logo is 23×21; render ~38×35 to sit in the 40px slot. */
+  width: 38px;
+  height: 35px;
+  overflow: visible;
+  will-change: transform;
+}
+
+/* ---- Status text ---- */
+.textSlot {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  /* Stable height so cycling phrases never nudge the row. */
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.text {
+  display: block;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 22px;
+  /* Subtle, secondary tone — warm neutral-500, not primary ink and not 800. */
+  color: var(--color-neutral-500);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Soft, low-contrast shine sweeping slowly across the line. The gradient is a
+   *repeating* tile (base → gentle highlight → base) so the text is always fully
+   painted — only a single light band travels through, and the loop is seamless.
+   Worst case, every glyph still reads in the base neutral tone. */
+.shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-neutral-500) 0%,
+    var(--color-neutral-500) 42%,
+    #b8b2ad 50%,
+    var(--color-neutral-500) 58%,
+    var(--color-neutral-500) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: thinkingShimmer 2.8s linear infinite;
+}
+
+@keyframes thinkingShimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logoSvg {
+    will-change: auto;
+  }
+  /* Reduced motion keeps the original silhouette (no shell morph); only the dots
+     pulse in opacity — handled in the component. */
+  .shimmer {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: var(--color-neutral-500);
+    color: var(--color-neutral-500);
+  }
+}

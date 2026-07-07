@@ -1,0 +1,53 @@
+/* Horizontal scroll chip row — same pattern as the workout plan's .dayRow/.dayChip. */
+.row {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 2px;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: #ececee;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-history-title);
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: scale, opacity, background-color;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.chip:active {
+  scale: 0.96;
+}
+
+.chipPrimary {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.chipDone {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.chipDone:active {
+  scale: 1;
+}

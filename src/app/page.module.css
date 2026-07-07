@@ -1,0 +1,178 @@
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
+  overflow: hidden;
+  /* Static page: keep the composer's bottom fade short so it stays below the
+     second tile row instead of blurring it. */
+  --bottom-edge-height: 92px;
+}
+
+.pageContent {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: transform, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pageContentRaised {
+  opacity: 0.16;
+  transform: translateY(-64px);
+  transition-duration: 220ms;
+}
+
+.datePill {
+  position: absolute;
+  left: 23px;
+  top: 63px;
+  width: 132px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mascot {
+  position: absolute;
+  /* 20% larger than the spec'd 77×73, grown from its visual center. */
+  top: 228px;
+  width: 92px;
+  height: 88px;
+  /* Optical centering: the ghost body's center sits at 36.8% of the asset
+     width (cup + empty canvas fill the right side), so the box is offset
+     right of geometric center to put the ghost itself at page center:
+     195 − 0.368×92 ≈ 161. */
+  left: 161px;
+}
+
+.mascot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.greeting {
+  position: absolute;
+  top: 335px;
+  left: 0;
+  right: 0;
+  height: 59px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.greetingLine1 {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.greetingLine2 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.spaceGridRow {
+  position: absolute;
+  left: 21.5px;
+  right: 21.5px;
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  justify-content: space-between;
+  /* Column order must match the reference screenshot's fixed left-to-right
+     visual layout, not the mirrored RTL auto-flow direction would produce.
+     Rows are separate absolutely-positioned grids (not one 2-row grid) so a
+     wrapping label (e.g. "مدیریت مالی") in row 1 can't push row 2 down. */
+  direction: ltr;
+}
+
+.spaceGridRow1 {
+  top: 444px;
+}
+
+.spaceGridRow2 {
+  top: 559.5px;
+}
+
+.spaceTile {
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* Buttons don't inherit font-family or letter-spacing — without this the labels render in the system font/spacing instead of Ravi's. */
+  font-family: var(--font-ravi);
+  letter-spacing: -0.04em;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.spaceTile:active {
+  scale: 0.96;
+}
+
+.spaceTile:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.tileIcon {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tileIcon img {
+  width: 79px;
+  height: 79px;
+  object-fit: contain;
+}
+
+.notificationDot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--color-notification);
+}
+
+.tileLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  /* Labels wider than the 64px tile column stay on one line and overflow
+     the tile centered, as in the reference (e.g. "مدیریت مالی"). */
+  white-space: nowrap;
+}

@@ -1,0 +1,18 @@
+.card {
+  position: relative;
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  /* Square by default — half-span widgets read as tiles, not rectangles.
+     Width comes from the grid column; the ratio drives height from it.
+     Full-span widgets (e.g. the heatmap) opt out via aspect-ratio: auto. */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.iconTopRight {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}

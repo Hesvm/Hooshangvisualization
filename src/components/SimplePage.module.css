@@ -1,0 +1,49 @@
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
+  overflow: hidden;
+}
+
+.homeButton {
+  position: absolute;
+  z-index: 30;
+  top: 63px;
+  left: 23px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-floating);
+  color: var(--color-neutral-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.homeButton:active {
+  scale: 0.96;
+}
+
+.body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  color: var(--color-history-heading);
+  text-align: center;
+}

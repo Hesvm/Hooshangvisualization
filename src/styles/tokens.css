@@ -1,0 +1,96 @@
+/* Ravi — static weight files only (no faked weights, no variable font instancing). */
+@font-face {
+  font-family: "Ravi";
+  src: url("/fonts/ravi/RaviFaNum-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ravi";
+  src: url("/fonts/ravi/RaviFaNum-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ravi";
+  src: url("/fonts/ravi/RaviFaNum-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ravi";
+  src: url("/fonts/ravi/RaviFaNum-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-ravi: "Ravi", sans-serif;
+
+  /* Colors confirmed from spec / Figma variables on node 96-1631.
+     Everything else (full type scale, shadow system, spacing scale)
+     is not yet available — DESIGN_SYSTEM.md doesn't exist in this repo. */
+  --color-white: #ffffff;
+  --color-bg-gradient-top: #ffffff;
+  --color-bg-gradient-bottom: #f4f4f5;
+  /* RGB channels of the gradient stops, so the header/composer edge overlays can
+     fade the *real* page background in and out (rgba(var(--bg-*-rgb), a)) instead
+     of guessing pure white. Keep in sync with the two hexes above. */
+  --bg-top-rgb: 255, 255, 255;
+  --bg-bottom-rgb: 244, 244, 245;
+  --color-ink: #0c2f34; /* greeting line 1 + tile labels */
+  --color-notification: #ff002f;
+
+  /* From Figma get_variable_defs on node 96-1631 */
+  --color-neutral-400: #a8a29e;
+  --color-neutral-500: #78716c; /* "warm gray" — used for tier-1 line icon stroke */
+  --color-gray-neutral-800: #26344f;
+
+  /* Tier-1 icon stroke: Figma token says 2, design doc audit says ~2.25 — using 2.25 per doc, flagged as open discrepancy. */
+  --icon-stroke-width: 2.25;
+  --color-icon-line: #5c6874; /* composer line icons (mic, plus) — confirmed by Hesam */
+
+  --radius-tile: 19px;
+  --radius-pill: 999px;
+  --radius-composer: 26px;
+  --radius-widget: 24px;
+  --radius-sheet: 24px;
+
+  --page-padding: 24px;
+  --color-border-soft: rgba(0, 0, 0, 0.06);
+  --color-surface-subtle: #f2f2f4;
+
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* Softer, more diffuse — layered so the falloff reads smoother than a single hard shadow. */
+  --shadow-card-soft: 0 10px 28px rgba(0, 0, 0, 0.06), 0 3px 10px rgba(0, 0, 0, 0.04);
+  /* Floating pills/buttons (header badge, menu, composer): wider blur + lower
+     opacity so the shadow reads as a soft ambient lift, not a hard drop. */
+  --shadow-floating: 0 8px 28px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.03);
+
+  --color-history-heading: #949698;
+  --color-history-title: #292d32;
+
+  /* Rich-response status pills (comparison tables). Colour is data-driven off a
+     status enum, not hardcoded per row: up→danger, borderline→warning, down→info. */
+  --color-danger: #e5484d;
+  --color-danger-bg: #fbe1e2;
+  --color-warning: #c98a09;
+  --color-warning-bg: #f8ecc4;
+  --color-info: #5c82b8;
+  --color-info-bg: #e2ebf6;
+
+  /* Conversation surfaces */
+  --color-user-bubble: #ebe8ea; /* full-width user message, per reference */
+  --color-assistant-ink: #1c2226; /* assistant prose on canvas */
+  --color-selected: #101013; /* selected pill: black bg / white text */
+  --color-primary: #3b93eb; /* primary action button (بعدی / آره استفاده کن) */
+  --color-secondary-bg: #ededef; /* secondary/ghost button fill */
+  --radius-bubble: 23px;
+}

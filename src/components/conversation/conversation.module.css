@@ -1,0 +1,557 @@
+/* Message stream — reuses the frame/topEdge from the space layout; this owns the
+   scrollable column and per-block vertical rhythm. */
+.stream {
+  display: flex;
+  flex-direction: column;
+  /* -5% baseline for all conversation text (tables, titles, notes that don't
+     set their own tracking). Message/option elements override with their own
+     -0.05em so it's a true -5% of their font size. */
+  letter-spacing: -0.05em;
+}
+
+/* Base rhythm between blocks (~28px); larger transitions add their own margin. */
+.stream > * + * {
+  margin-top: 32px;
+}
+
+/* ---- File attachment ---- */
+.fileBlock {
+  display: flex;
+  /* flex-start = right edge in RTL: the file sits on the user's side. */
+  justify-content: flex-start;
+}
+
+.fileCard {
+  width: 132px;
+  border-radius: 16px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.fileThumb {
+  position: relative;
+  height: 150px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fileThumbBar {
+  height: 4px;
+  border-radius: 2px;
+  background: #e7e7ea;
+}
+
+.fileThumbBar.short {
+  width: 55%;
+}
+
+.fileThumbBar.tiny {
+  width: 32%;
+}
+
+.pdfBadge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 28px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--color-danger);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ravi);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: 0 3px 8px rgba(229, 72, 77, 0.35);
+}
+
+.fileName {
+  margin: 8px 2px 2px;
+  font-size: 11px;
+  color: var(--color-history-heading);
+  text-align: center;
+  direction: rtl;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- User bubble ---- */
+.userBlock {
+  display: flex;
+  justify-content: flex-start; /* right in RTL */
+}
+
+.userBubble {
+  /* fit-content handles the single-line case; once text wraps to 2+ lines,
+     JS (see UserBubble in blocks.tsx) measures the actual rendered line
+     widths via Range.getClientRects() and pins an explicit px width — pure
+     CSS can't shrink-wrap to the widest *wrapped* line, only to the unwrapped
+     max-content. Still caps at the padded content width (never edge-to-edge —
+     the stream already insets 23px). */
+  width: fit-content;
+  max-width: 100%;
+  background: var(--color-user-bubble);
+  border-radius: var(--radius-bubble);
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 20px;
+  color: var(--color-history-title);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+/* ---- Assistant text (on canvas, no bubble) ---- */
+.assistantText {
+  padding: 0 4px; /* right-aligned prose aligns near the content edge, like the user bubble */
+}
+
+.assistantPara {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 20px;
+  color: var(--color-assistant-ink);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.assistantPara + .assistantPara {
+  margin-top: 28px;
+}
+
+/* ---- Comparison table ---- */
+.cmpCard {
+  background: var(--color-white);
+  border-radius: 22px;
+  padding: 18px 16px 8px;
+  box-shadow: var(--shadow-card-soft);
+}
+
+.cmpTitle {
+  margin: 0 4px 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  text-align: right;
+}
+
+.cmpTable {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+}
+
+.cmpTable th {
+  padding: 8px 4px 12px;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+  text-align: center;
+}
+
+.cmpTable td {
+  padding: 14px 4px;
+  font-size: 15px;
+  text-align: center;
+  color: var(--color-history-title);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-variant-numeric: tabular-nums;
+}
+
+.cmpMetric {
+  font-weight: 600;
+}
+
+.statusPill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.statusUp {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.statusBorderline {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.statusDown {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+/* ---- Questionnaire ---- */
+.qCard {
+  background: var(--color-white);
+  border-radius: 22px;
+  padding: 18px 16px;
+  box-shadow: var(--shadow-card-soft);
+}
+
+.qHead {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.qProgress {
+  font-size: 14px;
+  color: var(--color-history-heading);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.qQuestion {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  text-align: right;
+}
+
+.qOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qOption {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: #ececee;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 15px;
+  color: var(--color-history-title);
+  text-align: right;
+  cursor: pointer;
+  transition-property: scale, background-color;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.qOption:active {
+  scale: 0.98;
+}
+
+.qOptionSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}
+
+.qIcon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  color: currentColor;
+  line-height: 1;
+}
+
+.qIcon svg {
+  display: block;
+}
+
+.qOptionLabel {
+  flex: 1;
+}
+
+.qCustom {
+  height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 15px;
+  color: var(--color-history-title);
+  text-align: right;
+  direction: rtl;
+  outline: none;
+}
+
+.qFooter {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.qBack {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: #ececee;
+  color: var(--color-history-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.qNext {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  min-width: 94px;
+  padding: 0 18px 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.qBack:active,
+.qNext:active {
+  scale: 0.96;
+}
+
+/* ---- Permission ---- */
+.permBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.permButton {
+  height: 54px;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.permButton:active {
+  scale: 0.97;
+}
+
+.permPrimary {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.permSecondary {
+  background: var(--color-secondary-bg);
+  color: var(--color-history-title);
+}
+
+/* ---- Workout plan ---- */
+.dayRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-bottom: 16px;
+  padding-bottom: 2px;
+}
+
+.dayRow::-webkit-scrollbar {
+  display: none;
+}
+
+.dayChip {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: #ececee;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-history-title);
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: scale, background-color;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dayChip:active {
+  scale: 0.96;
+}
+
+.dayChipSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}
+
+.diagramCard {
+  position: relative;
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 20px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.diagramGlyph {
+  font-size: 48px;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.diagramMuscle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.diagramNote {
+  font-size: 12px;
+  color: var(--color-history-heading);
+  max-width: 220px;
+  text-wrap: pretty;
+}
+
+.exerciseCard {
+  margin-top: 16px;
+}
+
+.exerciseTitle {
+  margin: 0 4px 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  text-align: right;
+}
+
+.exTable {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+}
+
+.exTable th {
+  padding: 6px 4px 12px;
+  font-family: var(--font-ravi);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.exTable th:first-child {
+  text-align: right;
+}
+
+.exTable th:not(:first-child) {
+  text-align: center;
+}
+
+.exTable td {
+  padding: 12px 4px;
+  font-size: 14px;
+  color: var(--color-history-title);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-variant-numeric: tabular-nums;
+}
+
+.exTable td:first-child {
+  text-align: right;
+  font-weight: 500;
+}
+
+.exTable td:not(:first-child) {
+  text-align: center;
+}
+
+/* ---- Weight chart (placeholder) ---- */
+.chartCard {
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 18px 16px 14px;
+}
+
+.chartTitle {
+  margin: 0 4px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  text-align: right;
+}
+
+.chartSvg {
+  width: 100%;
+  height: 150px;
+  display: block;
+}
+
+.chartNote {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  font-size: 11px;
+  color: var(--color-history-heading);
+  text-align: right;
+  text-wrap: pretty;
+}

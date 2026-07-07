@@ -1,0 +1,178 @@
+.card {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2px;
+}
+
+.hero {
+  position: relative;
+  min-height: 174px;
+  border-radius: 20px;
+  background: var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.055);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.imageSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.rolePill {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 20px);
+  min-height: 28px;
+  padding: 5px 9px 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.rolePill svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.roleEconomical {
+  background: #fff2d6;
+  color: #9a6100;
+}
+
+.roleBalanced {
+  background: #e4f0ff;
+  color: #2d6fb5;
+}
+
+.rolePowerful {
+  background: #eee9ff;
+  color: #6a4bc2;
+}
+
+.ratingRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  min-height: 19px;
+  font-size: 12px;
+  color: var(--color-history-heading);
+}
+
+.ratingValue {
+  font-weight: 700;
+  color: var(--color-history-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.info {
+  min-width: 0;
+  margin-top: 6px;
+}
+
+.name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--color-history-title);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.config {
+  margin-top: 1px;
+  overflow: hidden;
+  font-size: 12px;
+  letter-spacing: -0.05em;
+  color: var(--color-history-heading);
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.price {
+  margin-top: 9px;
+  font-size: 15.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-history-title);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.copyBlock {
+  margin-top: 9px;
+}
+
+.positioning {
+  margin: 0;
+  min-height: 38px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 19px;
+  letter-spacing: -0.05em;
+  color: var(--color-history-title);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.reviewSummary {
+  margin: 6px 0 0;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: -0.05em;
+  color: var(--color-history-heading);
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.deepDiveButton {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-secondary-bg);
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  letter-spacing: -0.05em;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale, background-color;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.deepDiveButton:active {
+  scale: 0.96;
+}

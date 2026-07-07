@@ -1,0 +1,89 @@
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: 100dvh;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
+  overflow: hidden;
+}
+
+/* The scroll area fills the whole frame and clears the header/composer with padding
+   rather than hard top/bottom bounds — so content scrolls *under* both edges and is
+   softly blurred/faded by the overlays instead of clipping at a visible line.
+   Padding keeps the first widget at ~127px and the last item ~128px above the
+   composer, matching the previous resting positions. */
+.scrollArea {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  padding: 127px 23px 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* Scroll still works; the bar itself is hidden. */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: transform, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scrollAreaRaised {
+  opacity: 0.16;
+  transform: translateY(-64px);
+  transition-duration: 220ms;
+}
+
+.scrollArea::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Top edge: page background at full opacity up top → transparent at the bottom,
+   with the backdrop blur ramped in from the top by a gradient mask. No solid bar,
+   no bottom line — content dissolves upward beneath the sharp header controls. */
+.topEdge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 152px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.topEdge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--bg-top-rgb), 1) 0%,
+    rgba(var(--bg-top-rgb), 0.92) 38%,
+    rgba(var(--bg-top-rgb), 0.52) 72%,
+    rgba(var(--bg-top-rgb), 0) 100%
+  );
+}
+
+.topEdge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.8) 42%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.8) 42%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}

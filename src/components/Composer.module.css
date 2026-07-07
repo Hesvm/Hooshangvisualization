@@ -1,0 +1,308 @@
+/* Transparent full-screen catcher: taps outside the dock blur the input so the
+   OS keyboard closes. Sits below the dock (so its controls stay tappable). */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: transparent;
+}
+
+/* Dev-only stand-in for the real OS keyboard (see Composer.tsx) — lets us see
+   and QA the composer reflow in a desktop/preview browser, which has no real
+   keyboard to shrink visualViewport. Never renders on a real touch device. */
+.devKeyboard {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 28;
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The whole composer group. translateY lifts it above the OS keyboard using the
+   visualViewport inset (0 on desktop). pointer-events pass through the gaps;
+   only the actual controls capture taps. */
+.dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  pointer-events: none;
+  transform: translateY(calc(-1 * var(--kb-inset, 0px)));
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dock.hasSuggestions {
+  --bottom-edge-height: 288px;
+}
+
+/* Bottom edge: transparent at the top → page background at full opacity at the
+   bottom, blur ramped in toward the bottom by a gradient mask. */
+.bottomEdge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--bottom-edge-height, 168px);
+  pointer-events: none;
+}
+
+.bottomEdge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--bg-bottom-rgb), 0) 0%,
+    rgba(var(--bg-bottom-rgb), 0.52) 32%,
+    rgba(var(--bg-bottom-rgb), 0.92) 68%,
+    rgba(var(--bg-bottom-rgb), 1) 100%
+  );
+}
+
+.bottomEdge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+/* Focused composer suggestions, aligned to the input pill (not the plus button). */
+.suggestions {
+  position: relative;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  direction: rtl;
+  gap: 5px;
+  margin: 0 23px 8px 85px;
+}
+
+.suggestionRow {
+  --suggestion-index: 0;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 0 0 1px rgba(232, 233, 234, 0.65),
+    0 8px 24px rgba(20, 24, 32, 0.04);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--color-history-title);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.04em;
+  text-align: right;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: suggestionIn 150ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--suggestion-index) * 25ms);
+  transition-property: transform, background-color;
+  transition-duration: 140ms;
+  transition-timing-function: ease;
+}
+
+.suggestionRow:active {
+  background: rgba(247, 247, 248, 0.96);
+}
+
+.suggestionRow:focus-visible {
+  outline: 2px solid rgba(92, 130, 184, 0.28);
+  outline-offset: 3px;
+}
+
+.suggestionsExiting .suggestionRow {
+  opacity: 1;
+  transform: translateY(0);
+  animation: suggestionOut 110ms ease-in forwards;
+  animation-delay: 0ms;
+}
+
+.suggestionLabel {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--color-history-title);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes suggestionIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes suggestionOut {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.controlsRow {
+  position: relative;
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  /* LTR order: plus on the left, input pill filling the right — matching the
+     reference (the page is RTL, so this must be forced back). */
+  direction: ltr;
+  align-items: center;
+  gap: 10px;
+  padding: 0 23px 28px;
+}
+
+.plusButton {
+  pointer-events: auto;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--color-white);
+  border: none;
+  box-shadow: var(--shadow-floating);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-icon-line);
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.plusButton:active {
+  scale: 0.96;
+}
+
+.composer {
+  pointer-events: auto;
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border-radius: var(--radius-composer);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-floating);
+  /* Back to RTL inside the pill: trailing (mic/send) button on the right,
+     input text flowing from the right. */
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px 0 16px;
+}
+
+.composerText {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-ravi);
+  letter-spacing: -0.04em;
+  font-size: 15px;
+  color: var(--color-gray-neutral-800);
+  text-align: right;
+}
+
+/* Trailing button morphs mic ⇄ send by cross-fading two stacked icon layers and
+   shifting its fill from gray to primary. */
+.trailingButton {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: #f0f0f1;
+  color: var(--color-icon-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-property: background-color, scale;
+  transition-duration: 0.25s, 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.trailingButton:active {
+  scale: 0.96;
+}
+
+.trailingButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.trailingButton.isSend {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.iconLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: opacity, scale, filter;
+  transition-duration: 0.25s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Mic visible in idle/focused_empty; send visible while typing. */
+.iconMic {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
+.iconSend {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+  color: var(--color-white);
+}
+
+.isSend .iconMic {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+.isSend .iconSend {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}

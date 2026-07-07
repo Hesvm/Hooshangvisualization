@@ -1,0 +1,350 @@
+.whiteCard {
+  background: var(--color-white);
+  min-height: 0;
+  padding: 16px;
+  border-radius: var(--radius-widget);
+  box-shadow: 0 8px 28px rgba(20, 24, 32, 0.045);
+}
+
+.badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  min-width: 0;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #0c2f34;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardTitle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #0c2f34;
+}
+
+.itemList {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemRow {
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-history-title);
+  text-align: right;
+}
+
+/* Shopping list preview */
+.shoppingListWidget {
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  aspect-ratio: 1 / 1;
+  border: 0;
+  border-radius: var(--radius-widget);
+  background: var(--color-white);
+  box-shadow: 0 8px 28px rgba(20, 24, 32, 0.045);
+  cursor: pointer;
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  transition-property: transform, box-shadow;
+  transition-duration: 140ms;
+  transition-timing-function: ease-out;
+}
+
+.shoppingListWidget:active {
+  transform: scale(0.99);
+}
+
+.shoppingListWidget:focus-visible {
+  outline: 2px solid rgba(80, 130, 220, 0.28);
+  outline-offset: 3px;
+}
+
+.shoppingListTitle {
+  flex: 0 0 auto;
+  margin: 0 0 10px;
+  color: #0c2f34;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  text-align: right;
+  text-wrap: balance;
+}
+
+.shoppingListGrid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  direction: ltr;
+  grid-template-areas:
+    "camera phone"
+    "shoe remaining";
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+}
+
+.shoppingListTile {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.55), rgba(240, 240, 242, 0.75) 70%),
+    #f2f2f3;
+  display: grid;
+  place-items: center;
+}
+
+.shoppingListTileCamera {
+  grid-area: camera;
+}
+
+.shoppingListTilePhone {
+  grid-area: phone;
+}
+
+.shoppingListTileShoe {
+  grid-area: shoe;
+}
+
+.shoppingListTileRemaining {
+  grid-area: remaining;
+  color: #000000;
+  direction: ltr;
+  font-family: var(--font-ravi);
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 200;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+
+.shoppingListImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center center;
+}
+
+/* Your items — deliberate bleeding collage, see component doc comment. */
+.yourItemsCard {
+  overflow: hidden;
+}
+
+.collage {
+  position: relative;
+  margin-top: 40px;
+  height: 84px;
+}
+
+.collagePlaceholder {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-white);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.collage0 {
+  width: 78px;
+  height: 78px;
+  left: -14px;
+  top: 4px;
+  background: #2b3a4a;
+  transform: rotate(-6deg);
+  z-index: 1;
+}
+
+.collage1 {
+  width: 64px;
+  height: 84px;
+  left: 44px;
+  top: -6px;
+  background: #6b5ecf;
+  transform: rotate(4deg);
+  z-index: 2;
+}
+
+.collage2 {
+  width: 66px;
+  height: 66px;
+  right: -12px;
+  top: 10px;
+  background: #8b8f94;
+  transform: rotate(-4deg);
+  z-index: 1;
+}
+
+/* Purchase history heatmap */
+.purchaseHistory {
+  container-type: inline-size;
+  background: var(--color-white);
+  min-height: 125px;
+  /* Full-span heatmap: a wide banner, not a square tile. */
+  aspect-ratio: auto;
+}
+
+.purchaseHistoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.purchaseHistoryTitle {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--color-history-title);
+  text-align: right;
+  text-wrap: balance;
+}
+
+.purchaseAnalysisButton {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 0 0 1px var(--color-border-soft);
+  color: var(--color-info);
+  cursor: pointer;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  transition-property: transform, background-color, box-shadow;
+  transition-duration: 140ms;
+  transition-timing-function: ease-out;
+}
+
+.purchaseAnalysisButton::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  min-width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+}
+
+.purchaseAnalysisButton:active {
+  transform: scale(0.96);
+}
+
+.purchaseAnalysisButton:focus-visible {
+  outline: 2px solid rgba(92, 130, 184, 0.28);
+  outline-offset: 3px;
+}
+
+.dailyTimeline {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  direction: rtl;
+}
+
+.monthGroup {
+  --month-columns: 5;
+  --month-days: 30;
+  display: flex;
+  flex: var(--month-days) 1 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monthLabel {
+  display: block;
+  overflow: visible;
+  color: var(--color-history-heading);
+  font-family: var(--font-ravi);
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dayList {
+  display: grid;
+  grid-template-columns: repeat(var(--month-columns), minmax(0, 1fr));
+  grid-template-rows: repeat(7, auto);
+  grid-auto-flow: column;
+  gap: 1px;
+  direction: rtl;
+}
+
+.dayCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  display: block;
+}
+
+.dayCell[data-intensity="0"] {
+  background: #eceeef;
+}
+
+.dayCell[data-intensity="1"] {
+  background: #d7efd6;
+}
+
+.dayCell[data-intensity="2"] {
+  background: #9bd49a;
+}
+
+.dayCell[data-intensity="3"] {
+  background: #55b65a;
+}
+
+.dayCell[data-intensity="4"] {
+  background: #278c35;
+}
+
+.dayCell[data-tone="orange"] {
+  background: #ff4900;
+}

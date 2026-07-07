@@ -1,0 +1,123 @@
+"use client";
+
+import { useState } from "react";
+import { InfoCircle, ShieldTick, TickCircle, Truck, Refresh, Chart, Star1 } from "iconsax-react";
+import { faNum } from "@/lib/faNum";
+import type { ShoppingProduct } from "@/types/shopping";
+import styles from "./FinalRecommendationCard.module.css";
+
+type FinalRecommendationCardProps = {
+  product: ShoppingProduct;
+};
+
+const SELLER_WHY_TEXT =
+  "این فروشنده رو با توجه به قیمت رقابتی، رضایت بالای خریدارهای قبلی، ارسال سریع توسط دیجی‌کالا و امکان بازگشت کالا انتخاب کردیم.";
+
+export function FinalRecommendationCard({ product }: FinalRecommendationCardProps) {
+  const [matchDetailsExpanded, setMatchDetailsExpanded] = useState(false);
+  const [sellerWhyExpanded, setSellerWhyExpanded] = useState(false);
+
+  return (
+    <div className={styles.card}>
+      <div className={styles.label}>انتخاب مناسب تو</div>
+
+      <div className={styles.heroFrame}>
+        <div className={styles.imageSlot} aria-hidden>
+          {product.imageGlyph}
+        </div>
+      </div>
+
+      <div className={styles.identityBlock}>
+        <div className={styles.name}>{product.name}</div>
+        <div className={styles.config}>{product.configuration}</div>
+        <div className={styles.price}>{faNum(product.price)} میلیون تومان</div>
+      </div>
+
+      <div className={styles.matchBlock}>
+        <div className={styles.matchRow}>
+          <span className={styles.matchScore}>{faNum(product.matchScore)}٪ مناسب نیاز تو</span>
+          <button
+            type="button"
+            className={styles.matchInfoButton}
+            aria-label="جزئیات تطابق"
+            onClick={() => setMatchDetailsExpanded((v) => !v)}
+          >
+            <InfoCircle variant="Bold" size={17} color="currentColor" />
+          </button>
+        </div>
+        {matchDetailsExpanded && (
+          <div className={styles.matchBreakdown}>
+            {product.matchBreakdown.map((item) => (
+              <div key={item.label} className={styles.matchBreakdownRow}>
+                <span className={styles.matchBreakdownLabel}>{item.label}:</span>
+                <span className={styles.matchBreakdownVerdict}>{item.verdict}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>چرا این گزینه؟</div>
+        <ul className={styles.list}>
+          {product.recommendationReasons.map((r) => (
+            <li key={r} className={styles.listItem}>
+              <span className={styles.listDot} aria-hidden />
+              {r}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={`${styles.section} ${styles.limitationsSection}`}>
+        <div className={styles.sectionTitle}>چه محدودیت‌هایی داره؟</div>
+        <ul className={styles.list}>
+          {product.limitations.map((l) => (
+            <li key={l} className={styles.listItem}>
+              <span className={styles.listDot} aria-hidden />
+              {l}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={styles.trustBlock}>
+        <div className={styles.trustTitle}>خرید مطمئن از دیجی‌کالا</div>
+
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><TickCircle variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>{product.seller}</span>
+        </div>
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><Chart variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>{faNum(product.sellerSatisfaction)}٪ رضایت از فروشنده</span>
+        </div>
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><Truck variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>
+            {product.fulfilledByDigikala ? "ارسال توسط دیجی‌کالا" : "ارسال توسط فروشنده"} · {product.deliveryEstimate}
+          </span>
+        </div>
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><ShieldTick variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>{product.authenticityGuarantee ? "تضمین اصالت کالا" : ""}</span>
+        </div>
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><Refresh variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>{faNum(product.returnWindowDays)} روز امکان بازگشت</span>
+        </div>
+        <div className={styles.trustRow}>
+          <span className={styles.trustIcon}><Star1 variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span>
+            امتیاز {faNum(product.rating)} از ۵ · بر اساس {faNum(product.reviewCount)} نظر خریدار
+          </span>
+        </div>
+
+        <button type="button" className={styles.sellerWhyButton} onClick={() => setSellerWhyExpanded((v) => !v)}>
+          چرا این فروشنده؟
+        </button>
+        {sellerWhyExpanded && <div className={styles.sellerWhyText}>{SELLER_WHY_TEXT}</div>}
+      </div>
+    </div>
+  );
+}
