@@ -1,0 +1,135 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow-card-soft);
+  transition-property: box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.cardSelected {
+  box-shadow: var(--shadow-card-soft), 0 0 0 1.5px var(--color-primary);
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.providerInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.providerLogo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 8px;
+  background: none;
+}
+
+.providerLogoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.providerName {
+  font-family: var(--font-ravi);
+  font-size: var(--component-header-font-size);
+  font-weight: var(--component-header-font-weight);
+  line-height: var(--component-header-line-height);
+  color: var(--color-history-title);
+}
+
+.rate {
+  font-size: 13px;
+  color: var(--color-history-heading);
+  margin-top: 2px;
+}
+
+.selectButton {
+  min-width: 40px;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-selected);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.selectButton:active {
+  scale: 0.96;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border-soft);
+  margin: 14px 0;
+}
+
+.valueRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.valueLabel {
+  color: var(--color-history-heading);
+}
+
+.valueAmount {
+  font-weight: 700;
+  color: var(--color-history-title);
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.requirements {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--color-surface-subtle);
+  border-radius: 14px; /* concentric: 20px card - ~6-8px inset */
+}
+
+.requirementItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.requirementLabel {
+  font-size: 12px;
+  color: var(--color-history-heading);
+}
+
+.requirementValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-history-title);
+}

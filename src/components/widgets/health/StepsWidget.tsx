@@ -1,5 +1,8 @@
 import { Shoe } from "@/components/icons/line";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import type { StepsData } from "@/lib/mocks/health";
+import { faNum } from "@/lib/faNum";
+import { NumericText, NumericRuns } from "@/components/NumericText";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./HealthWidgets.module.css";
 
@@ -8,11 +11,12 @@ export function StepsWidget({ data }: { data: unknown }) {
 
   return (
     <div className={`${shared.card} ${styles.steps}`}>
-      <span className={`${shared.iconTopRight} ${styles.stepsTopIcon}`}>
-        <Shoe size={20} strokeWidth={2} />
-      </span>
-
-      <p className={`${styles.label} ${styles.labelLight}`}>حرکت روزانه</p>
+      <ComponentHeader
+        title="حرکت روزانه"
+        tone="light"
+        className={styles.widgetHeader}
+        action={<Shoe size={16} strokeWidth={2} className={styles.stepsTopIcon} />}
+      />
 
       <svg viewBox="0 0 100 55" className={styles.gauge} aria-hidden>
         <path
@@ -37,11 +41,15 @@ export function StepsWidget({ data }: { data: unknown }) {
       <div className={styles.statRows}>
         <div className={styles.statRow}>
           <span className={`${styles.statLabel} ${styles.statLabelLight}`}>مسافت</span>
-          <span className={styles.statValueLight}>{d.distanceKm} کیلومتر</span>
+          <span className={styles.statValueLight}>
+            <NumericText>{faNum(d.distanceKm).replace(".", "٫")}</NumericText> کیلومتر
+          </span>
         </div>
         <div className={styles.statRow}>
           <span className={`${styles.statLabel} ${styles.statLabelLight}`}>فعالیت</span>
-          <span className={styles.statValueLight}>{d.activeTime}</span>
+          <span className={styles.statValueLight}>
+            <NumericRuns text={d.activeTime} />
+          </span>
         </div>
       </div>
     </div>

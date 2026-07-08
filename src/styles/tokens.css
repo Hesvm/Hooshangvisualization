@@ -85,6 +85,8 @@
   --color-warning-bg: #f8ecc4;
   --color-info: #5c82b8;
   --color-info-bg: #e2ebf6;
+  --color-success: #1a9e6b;
+  --color-success-bg: #e0f3ea;
 
   /* Conversation surfaces */
   --color-user-bubble: #ebe8ea; /* full-width user message, per reference */
@@ -92,5 +94,18 @@
   --color-selected: #101013; /* selected pill: black bg / white text */
   --color-primary: #3b93eb; /* primary action button (بعدی / آره استفاده کن) */
   --color-secondary-bg: #ededef; /* secondary/ghost button fill */
+  --color-digikala-red: #ed1844; /* Digikala brand red — logo mark, seller-trust badge */
+  --color-digikala-red-bg: rgba(237, 24, 68, 0.05);
   --radius-bubble: 23px;
+
+  --component-header-font-size: 14px;
+  --component-header-line-height: 20px;
+  --component-header-font-weight: 500;
+  --component-header-logo-size: 16px;
+
+  /* Ravi's digits are proportional by default; its `tnum` OpenType feature pads
+     every digit to a fixed 710/1000em advance (vs. as narrow as 297 natively),
+     which is what caused visibly gaping runs of numerals. Tabular is opt-in
+     only, scoped to components with genuine column alignment. */
+  --numeric-letter-spacing: -0.05em;
 }

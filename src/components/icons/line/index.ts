@@ -1,7 +1,4 @@
 export { Hamburger } from "./Hamburger";
-export { Plus } from "./Plus";
-export { Mic } from "./Mic";
-export { ArrowUp } from "./ArrowUp";
 export { ChevronLeft } from "./ChevronLeft";
 export { Edit } from "./Edit";
 export { Settings } from "./Settings";

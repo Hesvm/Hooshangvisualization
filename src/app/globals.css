@@ -36,3 +36,13 @@ a {
   unicode-bidi: isolate;
   direction: ltr;
 }
+
+/* Shared numeric run styling — see NumericText component. Ravi's digits are
+   proportional by default; `tnum` is what widened them, so this only ever
+   needs to keep tabular OFF and apply the tighter numeral tracking. */
+.numeric-text {
+  letter-spacing: var(--numeric-letter-spacing);
+  font-kerning: normal;
+  font-variant-numeric: proportional-nums;
+  unicode-bidi: isolate;
+}

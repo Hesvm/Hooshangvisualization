@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import { jalaliMonthLabels, type DayActivity } from "@/lib/mocks/shopping";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./ShoppingWidgets.module.css";
@@ -27,17 +28,20 @@ export function PurchaseHistoryWidget({ data, onOpenPurchaseAnalysis }: Purchase
 
   return (
     <div className={`${shared.card} ${styles.purchaseHistory}`}>
-      <header className={styles.purchaseHistoryHeader}>
-        <h2 className={styles.purchaseHistoryTitle}>تاریخچه خریدهای آنلاین شما</h2>
-
-        <button
-          type="button"
-          className={styles.purchaseAnalysisButton}
-          onClick={handleOpenPurchaseAnalysis}
-        >
-          تحلیل خرید
-        </button>
-      </header>
+      <ComponentHeader
+        title="تاریخچه خریدهای آنلاین شما"
+        titleAs="h2"
+        className={styles.purchaseHistoryHeader}
+        action={
+          <button
+            type="button"
+            className={styles.purchaseAnalysisButton}
+            onClick={handleOpenPurchaseAnalysis}
+          >
+            تحلیل خرید
+          </button>
+        }
+      />
 
       <div className={styles.dailyTimeline} aria-label="تاریخچه روزانه خریدهای آنلاین">
         {daysByMonth.map(({ monthLabel, days: monthDays }, monthIndex) => (

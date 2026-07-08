@@ -1,21 +1,47 @@
-import type { LoanEstimate } from "@/types/shopping";
+import type { LoanOffer } from "@/types/shopping";
+import { LOAN_PROVIDERS, MIN_LOAN_AMOUNT } from "@/lib/mocks/loanProviders";
 
-/**
- * Isolated so this rough estimator can be swapped for a real credit-check API
- * later without touching the conversation UI. Fee rate is a flat placeholder,
- * not a real financing product's terms.
- */
-const FEE_RATE = 0.05;
+/** ShoppingProduct.price is stored in million-toman units (e.g. 49 = ۴۹ میلیون تومان);
+ *  everything else in the loan flow works in raw toman, so this is the single conversion point. */
+const MILLION_TOMAN = 1_000_000;
 
-/** "کمترین پیش‌پرداخت" quick answer — a flat 10% of price, rounded to the nearest 0.5M toman. */
-const MIN_DOWN_PAYMENT_RATIO = 0.1;
-
-export function computeLoanEstimate(price: number, downPayment: number, months: number): LoanEstimate {
-  const creditAmount = Math.max(0, price - downPayment);
-  const monthlyInstallment = Math.round(((creditAmount * (1 + FEE_RATE)) / months) * 10) / 10;
-  return { downPayment, months, creditAmount, monthlyInstallment };
+export function productPriceToman(priceInMillionToman: number): number {
+  return priceInMillionToman * MILLION_TOMAN;
 }
 
-export function minDownPayment(price: number): number {
-  return Math.round(price * MIN_DOWN_PAYMENT_RATIO * 2) / 2;
+/**
+ * Isolated so this mock flat-rate estimator can be swapped for a real
+ * provider-rate API later without touching any component. Simple-interest
+ * model (not a true amortization table) — consistent with this being a
+ * scripted demo, not a real credit product.
+ */
+export function computeInstallment(loanAmount: number, months: number, annualRate: number) {
+  const totalRepayment = Math.round((loanAmount * (1 + annualRate * (months / 12))) / 10_000) * 10_000;
+  const monthlyInstallment = Math.round(totalRepayment / months / 10_000) * 10_000;
+  return { monthlyInstallment, totalRepayment: monthlyInstallment * months };
+}
+
+/** Loan amount must never exceed the product price (no cash-loan use case here). */
+export function clampLoanAmount(amount: number, productPrice: number): number {
+  return Math.min(Math.max(amount, MIN_LOAN_AMOUNT), productPrice);
+}
+
+export function buildLoanOffers(loanAmount: number, months: number): LoanOffer[] {
+  return LOAN_PROVIDERS.map((provider) => {
+    const { monthlyInstallment, totalRepayment } = computeInstallment(loanAmount, months, provider.annualRate);
+    return {
+      id: provider.id,
+      providerName: provider.providerName,
+      providerInitial: provider.providerInitial,
+      logoSrc: provider.logoSrc,
+      annualRate: provider.annualRate,
+      loanAmount,
+      repaymentMonths: months,
+      monthlyInstallment,
+      totalRepayment,
+      requiredMembership: provider.requiredMembership,
+      guaranteeType: provider.guaranteeType,
+      isRecommended: provider.isRecommended,
+    };
+  });
 }

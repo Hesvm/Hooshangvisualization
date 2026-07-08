@@ -1,4 +1,5 @@
 import { HeartOutline } from "@/components/icons/line";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import type { HeartData } from "@/lib/mocks/health";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./HealthWidgets.module.css";
@@ -8,11 +9,12 @@ export function HeartWidget({ data }: { data: unknown }) {
 
   return (
     <div className={`${shared.card} ${styles.heart}`}>
-      <span className={`${shared.iconTopRight} ${styles.heartTopIcon}`}>
-        <HeartOutline size={20} strokeWidth={2} />
-      </span>
-
-      <p className={`${styles.label} ${styles.labelLight}`}>قلب</p>
+      <ComponentHeader
+        title="قلب"
+        tone="light"
+        className={styles.widgetHeader}
+        action={<HeartOutline size={16} strokeWidth={2} className={styles.heartTopIcon} />}
+      />
 
       <div className={styles.heartGlyphWrap}>
         <svg viewBox="0 0 100 90" className={styles.heartGlyph} aria-hidden>

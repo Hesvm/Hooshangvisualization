@@ -1,5 +1,15 @@
 import type { ComposerSuggestion, SpaceConfig } from "@/types/space";
 import { INITIAL_USER_MESSAGE } from "@/lib/mocks/shoppingScript";
+import { MONTHLY_GROCERY_CONVERSATION_ID, MONTHLY_GROCERY_PROMPT, MONTHLY_GROCERY_USER_MESSAGE } from "@/lib/mocks/monthlyGrocery";
+import { CRYPTO_ANALYSIS_CONVERSATION_ID, EXCHANGE_STEP_COPY } from "@/lib/mocks/financeCopy";
+
+const CRYPTO_ANALYSIS_SUGGESTION: ComposerSuggestion = {
+  id: "crypto-analysis",
+  label: EXCHANGE_STEP_COPY.userMessage,
+  icon: "finance",
+  prompt: EXCHANGE_STEP_COPY.userMessage,
+  href: `/spaces/modiriat-mali/conversations/${CRYPTO_ANALYSIS_CONVERSATION_ID}`,
+};
 
 const LAPTOP_SHOPPING_SUGGESTION: ComposerSuggestion = {
   id: "laptop",
@@ -7,6 +17,14 @@ const LAPTOP_SHOPPING_SUGGESTION: ComposerSuggestion = {
   icon: "shopping",
   prompt: INITIAL_USER_MESSAGE,
   href: "/spaces/kharid/conversations/laptop-shopping",
+};
+
+const MONTHLY_GROCERY_SUGGESTION: ComposerSuggestion = {
+  id: "monthly-grocery",
+  label: MONTHLY_GROCERY_PROMPT,
+  icon: "shopping",
+  prompt: MONTHLY_GROCERY_USER_MESSAGE,
+  href: `/spaces/kharid-supermarketi/conversations/${MONTHLY_GROCERY_CONVERSATION_ID}`,
 };
 
 export const homeComposerSuggestions: ComposerSuggestion[] = [
@@ -17,14 +35,14 @@ export const homeComposerSuggestions: ComposerSuggestion[] = [
 
 export const spaces: SpaceConfig[] = [
   {
-    id: "ravan",
-    label: "روان",
-    iconSrc: "/images/spaces/new-icons-symbol-130/mind.png",
+    id: "kharid-supermarketi",
+    label: "خرید روزمره",
+    iconSrc: "/images/spaces/new-icons-symbol-130/grocery.png",
     hasNotification: false,
     composerSuggestions: [
-      { id: "mood", label: "حالم رو بررسی کن", icon: "health", prompt: "حالم رو بررسی کن" },
-      { id: "journal", label: "یه یادداشت کوتاه بنویسیم", icon: "daily", prompt: "یه یادداشت کوتاه بنویسیم" },
-      { id: "sleep-stress", label: "برای آرامش قبل خواب کمکم کن", icon: "sleep", prompt: "برای آرامش قبل خواب کمکم کن" },
+      MONTHLY_GROCERY_SUGGESTION,
+      { id: "quick-reorder", label: "چیزهایی که رو به اتمامه رو بخر", icon: "shopping", prompt: "چیزهایی که رو به اتمامه رو بخر" },
+      { id: "breakfast", label: "برای صبحانه فردا خرید بچین", icon: "shopping", prompt: "برای صبحانه فردا خرید بچین" },
     ],
   },
   {
@@ -40,13 +58,13 @@ export const spaces: SpaceConfig[] = [
   },
   {
     id: "modiriat-mali",
-    label: "مدیریت مالی",
+    label: "سرمایه‌گذاری",
     iconSrc: "/images/spaces/new-icons-symbol-130/finance.png",
     hasNotification: false,
     composerSuggestions: [
+      CRYPTO_ANALYSIS_SUGGESTION,
       { id: "expenses", label: "خرج‌های این هفته رو بررسی کن", icon: "finance", prompt: "خرج‌های این هفته رو بررسی کن" },
       { id: "budget", label: "یه بودجه اقتصادی بچین", icon: "finance", prompt: "یه بودجه اقتصادی بچین" },
-      { id: "installments", label: "قسط‌های پیش روم رو ببین", icon: "daily", prompt: "قسط‌های پیش روم رو ببین" },
     ],
   },
   {
@@ -69,6 +87,17 @@ export const spaces: SpaceConfig[] = [
       { id: "today", label: "برنامه امروزمو مرتب کن", icon: "daily", prompt: "برنامه امروزمو مرتب کن" },
       { id: "reminders", label: "کارهای عقب‌افتاده رو ببین", icon: "daily", prompt: "کارهای عقب‌افتاده رو ببین" },
       { id: "quick-note", label: "یه یادداشت سریع ثبت کن", icon: "learning", prompt: "یه یادداشت سریع ثبت کن" },
+    ],
+  },
+  {
+    id: "ravan",
+    label: "روان",
+    iconSrc: "/images/spaces/new-icons-symbol-130/mind.png",
+    hasNotification: false,
+    composerSuggestions: [
+      { id: "mood", label: "حالم رو بررسی کن", icon: "health", prompt: "حالم رو بررسی کن" },
+      { id: "journal", label: "یه یادداشت کوتاه بنویسیم", icon: "daily", prompt: "یه یادداشت کوتاه بنویسیم" },
+      { id: "sleep-stress", label: "برای آرامش قبل خواب کمکم کن", icon: "sleep", prompt: "برای آرامش قبل خواب کمکم کن" },
     ],
   },
   {

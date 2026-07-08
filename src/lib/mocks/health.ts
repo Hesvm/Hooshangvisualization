@@ -41,7 +41,7 @@ export const healthWidgetData = {
     duration: "۴ ساعت و ۱۹ دقیقه",
   } satisfies SleepData,
   steps: {
-    count: "۱۳.۴k",
+    count: "۱۳٫۴k",
     distanceKm: 10.2,
     activeTime: "۵ ساعت و ۲۱ دقیقه",
   } satisfies StepsData,
@@ -50,7 +50,7 @@ export const healthWidgetData = {
 export const healthHistory = [
   {
     id: "1",
-    title: "خطرات گلوکز بالای ۷.۹ میلی‌گرم",
+    title: "خطرات گلوکز بالای ۷٫۹ میلی‌گرم",
     subtitle: "ببین این خیلی بده. لطفا زودتر برو دکتر...",
     isUnread: true,
     href: "/spaces/badan/conversations/blood-test",

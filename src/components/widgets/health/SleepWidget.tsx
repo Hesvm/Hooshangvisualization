@@ -1,5 +1,7 @@
 import { Moon } from "@/components/icons/line";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import type { SleepData } from "@/lib/mocks/health";
+import { NumericRuns } from "@/components/NumericText";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./HealthWidgets.module.css";
 
@@ -8,11 +10,12 @@ export function SleepWidget({ data }: { data: unknown }) {
 
   return (
     <div className={`${shared.card} ${styles.sleep}`}>
-      <span className={`${shared.iconTopRight} ${styles.sleepTopIcon}`}>
-        <Moon size={20} strokeWidth={2} />
-      </span>
-
-      <p className={`${styles.label} ${styles.labelLight}`}>خواب</p>
+      <ComponentHeader
+        title="خواب"
+        tone="light"
+        className={styles.widgetHeader}
+        action={<Moon size={16} strokeWidth={2} className={styles.sleepTopIcon} />}
+      />
 
       <div className={styles.sleepScoreCircle}>
         <span className={styles.sleepScore}>{d.score}</span>
@@ -22,7 +25,9 @@ export function SleepWidget({ data }: { data: unknown }) {
       <div className={styles.statRows}>
         <div className={styles.statRow}>
           <span className={`${styles.statLabel} ${styles.statLabelLight}`}>مدت خواب</span>
-          <span className={styles.statValueLight}>{d.duration}</span>
+          <span className={styles.statValueLight}>
+            <NumericRuns text={d.duration} />
+          </span>
         </div>
         <div className={styles.statRow}>
           <span className={`${styles.statLabel} ${styles.statLabelLight}`}>کیفیت خواب</span>

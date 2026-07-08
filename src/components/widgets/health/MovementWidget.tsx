@@ -1,5 +1,7 @@
 import { Running } from "@/components/icons/line";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import type { MovementData } from "@/lib/mocks/health";
+import { NumericText } from "@/components/NumericText";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./HealthWidgets.module.css";
 
@@ -8,9 +10,12 @@ export function MovementWidget({ data }: { data: unknown }) {
 
   return (
     <div className={`${shared.card} ${styles.movement}`}>
-      <span className={`${shared.iconTopRight} ${styles.movementIcon}`}>
-        <Running size={20} strokeWidth={2} />
-      </span>
+      <ComponentHeader
+        title="تحرک"
+        tone="light"
+        className={styles.widgetHeader}
+        action={<Running size={16} strokeWidth={2} className={styles.movementIcon} />}
+      />
 
       <svg viewBox="0 0 100 100" className={styles.rings} aria-hidden>
         <circle cx="50" cy="50" r="42" stroke="#3d3d42" strokeWidth="8" fill="none" />
@@ -54,18 +59,21 @@ export function MovementWidget({ data }: { data: unknown }) {
         />
       </svg>
 
-      <p className={`${styles.label} ${styles.labelLight}`}>تحرک</p>
       <p className={`${styles.value} ${styles.valueLight}`}>{d.calories}</p>
       <p className={styles.subValue}>از {d.calorieGoal} کالری</p>
 
       <div className={styles.statRows}>
         <div className={styles.statRow}>
           <span className={styles.statLabel}>ورزش</span>
-          <span className={styles.statValueGreen}>{d.exerciseMinutes} دقیقه</span>
+          <span className={styles.statValueGreen}>
+            <NumericText>{d.exerciseMinutes}</NumericText> دقیقه
+          </span>
         </div>
         <div className={styles.statRow}>
           <span className={styles.statLabel}>ایستادن</span>
-          <span className={styles.statValueCyan}>{d.standHours} ساعت</span>
+          <span className={styles.statValueCyan}>
+            <NumericText>{d.standHours}</NumericText> ساعت
+          </span>
         </div>
       </div>
     </div>

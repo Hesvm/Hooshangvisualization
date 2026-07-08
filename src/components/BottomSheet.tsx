@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import styles from "./BottomSheet.module.css";
 
@@ -13,12 +15,26 @@ type BottomSheetProps = {
 
 /** Generic bottom sheet, reused for product deep dives, the match-score
  * breakdown, and the seller explanation — same drag-to-dismiss pattern as
- * HamburgerMenu's side drawer, just bottom-anchored instead of right-anchored. */
+ * HamburgerMenu's side drawer, just bottom-anchored instead of right-anchored.
+ *
+ * Portals to document.body: callers mount this from deep inside the conversation's
+ * scrollArea, which sets `transform: translateY(0)` for its raise/lower animation —
+ * any transform makes an ancestor a containing block for absolute/fixed descendants,
+ * so without the portal the sheet would scroll away with the conversation instead of
+ * staying pinned to the viewport. */
 export function BottomSheet({ open, onClose, ariaLabel, children }: BottomSheetProps) {
-  return (
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
-        <>
+        <div className={styles.viewport}>
           <motion.button
             key="backdrop"
             type="button"
@@ -48,8 +64,9 @@ export function BottomSheet({ open, onClose, ariaLabel, children }: BottomSheetP
             <div className={styles.grabber} aria-hidden />
             <div className={styles.content}>{children}</div>
           </motion.div>
-        </>
+        </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

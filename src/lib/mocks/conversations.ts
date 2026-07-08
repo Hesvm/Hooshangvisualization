@@ -1,6 +1,8 @@
 import type { Conversation } from "@/types/conversation";
 import { laptopShortlist, RECOMMENDED_PRODUCT_ID } from "@/lib/mocks/shoppingProducts";
 import { INITIAL_USER_MESSAGE } from "@/lib/mocks/shoppingScript";
+import { MONTHLY_GROCERY_HEADER_ACCENT_RGB, MONTHLY_GROCERY_USER_MESSAGE } from "@/lib/mocks/monthlyGrocery";
+import { CRYPTO_ANALYSIS_CONVERSATION_ID, EXCHANGE_STEP_COPY, FINANCE_HEADER_ACCENT_RGB } from "@/lib/mocks/financeCopy";
 
 /**
  * Reference reproductions of the two Health conversation mocks. Note (flagged to
@@ -36,7 +38,7 @@ const bloodTest: Conversation = {
       columns: { metric: "شاخص", previous: "قبلی", current: "فعلی", status: "وضعیت" },
       rows: [
         { label: "قند ناشتا", previous: "۹۸", current: "۱۰۶", status: "up" },
-        { label: "HbA1c", previous: "۵.۴ ٪", current: "۵.۸ ٪", status: "borderline" },
+        { label: "HbA1c", previous: "۵٫۴ ٪", current: "۵٫۸ ٪", status: "borderline" },
         { label: "ویتامین D", previous: "۲۴", current: "۱۸", status: "down" },
         { label: "تری‌گلیسیرید", previous: "۱۶۲", current: "۱۹۸", status: "up" },
       ],
@@ -191,8 +193,30 @@ const laptopShopping: Conversation = {
   ],
 };
 
+const monthlyGroceryShopping: Conversation = {
+  id: "monthly-grocery-shopping",
+  spaceId: "kharid-supermarketi",
+  headerAccentRgb: MONTHLY_GROCERY_HEADER_ACCENT_RGB,
+  blocks: [
+    { id: "u1", kind: "userText", text: MONTHLY_GROCERY_USER_MESSAGE },
+    { id: "monthly-grocery", kind: "monthlyGroceryShopping" },
+  ],
+};
+
+const cryptoPortfolioAnalysis: Conversation = {
+  id: CRYPTO_ANALYSIS_CONVERSATION_ID,
+  spaceId: "modiriat-mali",
+  headerAccentRgb: FINANCE_HEADER_ACCENT_RGB,
+  blocks: [
+    { id: "u1", kind: "userText", text: EXCHANGE_STEP_COPY.userMessage },
+    { id: "crypto-analysis", kind: "financeCryptoAnalysis" },
+  ],
+};
+
 export const conversations: Record<string, Conversation> = {
   "blood-test": bloodTest,
   workout,
   "laptop-shopping": laptopShopping,
+  "monthly-grocery-shopping": monthlyGroceryShopping,
+  [CRYPTO_ANALYSIS_CONVERSATION_ID]: cryptoPortfolioAnalysis,
 };

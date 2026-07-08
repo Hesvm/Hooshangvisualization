@@ -1,0 +1,25 @@
+.wrapper {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.wrapper :global(.recharts-wrapper),
+.wrapper :global(.recharts-surface),
+.wrapper :global(.recharts-layer),
+.wrapper :global(.recharts-sector) {
+  outline: none;
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+  pointer-events: none;
+}

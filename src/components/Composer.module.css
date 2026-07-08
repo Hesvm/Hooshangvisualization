@@ -197,8 +197,8 @@
   align-items: center;
   justify-content: center;
   color: var(--color-icon-line);
-  transition-property: scale;
-  transition-duration: 0.15s;
+  transition-property: scale, opacity;
+  transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -206,7 +206,16 @@
   scale: 0.96;
 }
 
+/* Recording: the plus button steps aside so the pill can morph into the
+   voice capsule as one continuous object, not a panel appearing beside it. */
+.controlsRow.isVoiceActive .plusButton {
+  opacity: 0;
+  scale: 0.8;
+  pointer-events: none;
+}
+
 .composer {
+  position: relative;
   pointer-events: auto;
   flex: 1;
   min-width: 0;
@@ -214,13 +223,203 @@
   border-radius: var(--radius-composer);
   background: rgba(255, 255, 255, 0.94);
   box-shadow: var(--shadow-floating);
-  /* Back to RTL inside the pill: trailing (mic/send) button on the right,
-     input text flowing from the right. */
   direction: rtl;
+  transition-property: flex-basis, width, height, border-radius, background-color, box-shadow;
+  transition-duration: 260ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Contract into the compact recording capsule — same element, new shape. */
+.composerVoice {
+  flex: 0 0 auto;
+  width: 126px;
+  height: 58px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 34px rgba(20, 24, 32, 0.07);
+}
+
+.composerContent,
+.voiceCapsule {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
+  transition-property: opacity, scale, filter;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.composerContent {
   gap: 10px;
   padding: 0 6px 0 16px;
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
+.composerVoice .composerContent {
+  opacity: 0;
+  scale: 0.92;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.voiceCapsule {
+  direction: ltr;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 8px;
+  opacity: 0;
+  scale: 0.92;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.composerVoice .voiceCapsule {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.voiceCancel {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.voiceCancel:active {
+  scale: 0.96;
+}
+
+.voiceCancelIcon {
+  display: flex;
+  transform: rotate(45deg);
+}
+
+.voiceSubmit {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-property: scale, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.voiceSubmit:active:not(:disabled) {
+  scale: 0.96;
+}
+
+.voiceSubmit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.spectrumRow {
+  position: relative;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 23px 6px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: voiceRowIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.spectrumRow::before {
+  content: "";
+  position: absolute;
+  inset: -6px 14px;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(20, 24, 32, 0.05);
+}
+
+.finalizingHint {
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--color-history-heading);
+}
+
+@keyframes voiceRowIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.errorBanner {
+  position: relative;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 23px 8px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-floating);
+  direction: rtl;
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  letter-spacing: -0.02em;
+  color: var(--color-history-title);
+  opacity: 0;
+  transform: translateY(6px);
+  animation: voiceRowIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.errorRetry {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 8px 4px;
+  color: var(--color-primary);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composer,
+  .composerContent,
+  .voiceCapsule,
+  .controlsRow.isVoiceActive .plusButton {
+    transition-duration: 120ms;
+    scale: 1;
+    filter: none;
+  }
+
+  .spectrumRow,
+  .errorBanner {
+    animation-duration: 1ms;
+  }
 }
 
 .composerText {

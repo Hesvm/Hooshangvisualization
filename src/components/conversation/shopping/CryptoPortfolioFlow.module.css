@@ -1,0 +1,21 @@
+/* Mirrors LaptopShoppingFlow.module.css's rhythm — this flow is likewise a
+   single child of the conversation stream. */
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column > * + * {
+  margin-top: 32px;
+}
+
+.unavailableNote {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--color-secondary-bg);
+  font-size: 12.5px;
+  line-height: 19px;
+  color: var(--color-history-heading);
+  text-align: right;
+  text-wrap: pretty;
+}

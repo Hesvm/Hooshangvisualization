@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { ComponentHeader } from "@/components/ComponentHeader";
+import { faNum } from "@/lib/faNum";
 import type { ShoppingListPreviewItem, ShoppingListWidgetData } from "@/lib/mocks/shopping";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./ShoppingWidgets.module.css";
@@ -16,9 +18,6 @@ const tileAreaClass: Record<ProductTileArea, string> = {
   phone: styles.shoppingListTilePhone,
   shoe: styles.shoppingListTileShoe,
 };
-
-const toPersianDigits = (value: number | string) =>
-  String(value).replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
 
 function productImageStyle(item: ShoppingListPreviewItem): CSSProperties {
   return {
@@ -49,7 +48,7 @@ function ProductPreviewTile({ item }: { item: ShoppingListPreviewItem }) {
 }
 
 function RemainingCountTile({ count }: { count: number }) {
-  const persianCount = toPersianDigits(count);
+  const persianCount = faNum(count);
 
   return (
     <span
@@ -74,7 +73,7 @@ export function ShoppingListWidget({ data, onOpen }: ShoppingListWidgetProps) {
       aria-label="باز کردن لیست خرید"
       dir="rtl"
     >
-      <h2 className={styles.shoppingListTitle}>{d.title}</h2>
+      <ComponentHeader as="span" title={d.title} titleAs="span" className={styles.shoppingListHeader} />
 
       <span className={styles.shoppingListGrid} aria-hidden={false}>
         {visibleItems.map((item) => (

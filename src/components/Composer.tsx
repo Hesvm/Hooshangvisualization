@@ -3,12 +3,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowUp,
-  Mic,
-  Plus,
-} from "@/components/icons/line";
+import { Add, ArrowUp, Microphone, TickCircle } from "iconsax-react";
 import type { ComposerSuggestion } from "@/types/space";
+import { useVoiceComposer } from "@/hooks/useVoiceComposer";
+import { VoiceSpectrum } from "@/components/VoiceSpectrum";
 import styles from "./Composer.module.css";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
@@ -16,7 +14,16 @@ const MAX_VISIBLE_SUGGESTIONS = 3;
 const SUGGESTION_EXIT_MS = 120;
 const HREF_TAP_FEEDBACK_MS = 180;
 
-export type ComposerState = "idle" | "focused" | "recording" | "transcribing" | "submitting";
+export type ComposerState =
+  | "idle"
+  | "focused"
+  | "requesting_permission"
+  | "connecting"
+  | "recording"
+  | "finalizing"
+  | "transcript_ready"
+  | "error"
+  | "submitting";
 
 type ComposerProps = {
   /** Contextual starter rows shown while focused + empty. */
@@ -28,7 +35,10 @@ type ComposerProps = {
 };
 
 /**
- * Composer state machine: idle → focused_empty → typing → sending → idle.
+ * Composer state machine: idle → focused_empty → typing → sending → idle, with
+ * a parallel voice branch (see useVoiceComposer) that morphs the same pill into
+ * recording controls: idle → requesting_permission → connecting → recording →
+ * finalizing → transcript_ready → idle (draft replaced with the transcript).
  * The blinking caret and the on-screen keyboard are native (HTML input + OS);
  * we only own the suggestion rows, the mic→send morph, outside-tap dismiss, and
  * reflowing above the keyboard via the visualViewport API.
@@ -51,14 +61,26 @@ export function Composer({
   const inputRef = useRef<HTMLInputElement>(null);
   const devKeyboardRef = useRef<HTMLImageElement>(null);
   const suggestionExitTimerRef = useRef<number | null>(null);
+  const valueRef = useRef(value);
+  valueRef.current = value;
+
+  const voice = useVoiceComposer({
+    getDraft: () => valueRef.current,
+    setDraft: setValue,
+    onRecordingStart: () => {
+      inputRef.current?.blur();
+      hideSuggestionRows();
+    },
+  });
 
   const isSend = value.trim().length > 0;
-  const state: ComposerState = sending ? "submitting" : focused ? "focused" : "idle";
+  const isVoiceActive = voice.mode !== "idle" && voice.mode !== "error";
+  const state: ComposerState = sending ? "submitting" : voice.mode !== "idle" ? voice.mode : focused ? "focused" : "idle";
   const visibleSuggestions = useMemo(
     () => suggestions?.slice(0, MAX_VISIBLE_SUGGESTIONS) ?? [],
     [suggestions],
   );
-  const shouldRenderSuggestions = renderedSuggestions.length > 0;
+  const shouldRenderSuggestions = renderedSuggestions.length > 0 && !isVoiceActive;
 
   useEffect(() => {
     onStateChange?.(state);
@@ -174,6 +196,7 @@ export function Composer({
   }
 
   function handleInputChange(nextValue: string) {
+    if (voice.error) voice.retry();
     setValue(nextValue);
     if (nextValue.trim().length > 0) {
       hideSuggestionRows();
@@ -191,6 +214,16 @@ export function Composer({
     setFocused(false);
     hideSuggestionRows();
   }
+
+  function handleTrailingTap() {
+    if (isSend) {
+      handleSend(value);
+    } else if (voice.mode === "idle") {
+      voice.start();
+    }
+  }
+
+  const canSubmitVoice = voice.mode === "recording";
 
   return (
     <>
@@ -236,43 +269,100 @@ export function Composer({
           </div>
         )}
 
-        <div className={styles.controlsRow}>
-          <button type="button" className={styles.plusButton} aria-label="افزودن">
-            <Plus />
-          </button>
+        {voice.mode !== "error" && voice.mode !== "idle" && (
+          <div className={styles.spectrumRow} role="status" aria-live="polite">
+            <VoiceSpectrum samples={voice.amplitudeSamples} />
+            {voice.isFinalizingSlow && (
+              <span className={styles.finalizingHint}>دارم متن رو آماده می‌کنم…</span>
+            )}
+          </div>
+        )}
 
-          <div className={styles.composer}>
-            {/* First child in the RTL row = visual right (leading) edge. */}
+        {voice.error && (
+          <div className={styles.errorBanner} role="alert">
+            <span>{voice.error.message}</span>
             <button
               type="button"
-              className={`${styles.trailingButton} ${isSend ? styles.isSend : ""}`}
-              aria-label={isSend ? "ارسال" : "ورودی صوتی"}
-              disabled={sending}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => (isSend ? handleSend(value) : undefined)}
-            >
-              <span className={`${styles.iconLayer} ${styles.iconMic}`} aria-hidden>
-                <Mic size={20} strokeWidth={2} />
-              </span>
-              <span className={`${styles.iconLayer} ${styles.iconSend}`} aria-hidden>
-                <ArrowUp size={20} strokeWidth={2.5} />
-              </span>
-            </button>
-
-            <input
-              ref={inputRef}
-              type="text"
-              className={styles.composerText}
-              placeholder={placeholder}
-              value={value}
-              onChange={(e) => handleInputChange(e.target.value)}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSend(value);
+              className={styles.errorRetry}
+              onClick={() => {
+                voice.retry();
+                voice.start();
               }}
-              enterKeyHint="send"
-            />
+            >
+              دوباره تلاش کن
+            </button>
+          </div>
+        )}
+
+        <div className={`${styles.controlsRow} ${isVoiceActive ? styles.isVoiceActive : ""}`}>
+          <button type="button" className={styles.plusButton} aria-label="افزودن" tabIndex={isVoiceActive ? -1 : 0}>
+            <Add variant="Linear" size={24} color="var(--color-icon-line)" />
+          </button>
+
+          <div className={`${styles.composer} ${isVoiceActive ? styles.composerVoice : ""}`}>
+            <div className={styles.composerContent} aria-hidden={isVoiceActive}>
+              {/* First child in the RTL row = visual right (leading) edge. */}
+              <button
+                type="button"
+                className={`${styles.trailingButton} ${isSend ? styles.isSend : ""}`}
+                aria-label={isSend ? "ارسال" : "ورودی صوتی"}
+                disabled={sending}
+                tabIndex={isVoiceActive ? -1 : 0}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleTrailingTap}
+              >
+                <span className={`${styles.iconLayer} ${styles.iconMic}`} aria-hidden>
+                  <Microphone variant="Linear" size={20} color="currentColor" />
+                </span>
+                <span className={`${styles.iconLayer} ${styles.iconSend}`} aria-hidden>
+                  <ArrowUp variant="Linear" size={20} color="currentColor" />
+                </span>
+              </button>
+
+              <input
+                ref={inputRef}
+                type="text"
+                className={styles.composerText}
+                placeholder={placeholder}
+                value={value}
+                disabled={isVoiceActive}
+                tabIndex={isVoiceActive ? -1 : 0}
+                onChange={(e) => handleInputChange(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSend(value);
+                }}
+                enterKeyHint="send"
+              />
+            </div>
+
+            <div className={styles.voiceCapsule} aria-hidden={!isVoiceActive}>
+              <button
+                type="button"
+                className={styles.voiceCancel}
+                aria-label="لغو ضبط صدا"
+                tabIndex={isVoiceActive ? 0 : -1}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={voice.cancel}
+              >
+                <span className={styles.voiceCancelIcon}>
+                  <Add variant="Linear" size={22} color="var(--color-gray-neutral-800)" />
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className={styles.voiceSubmit}
+                aria-label="تبدیل صدا به متن"
+                disabled={!canSubmitVoice}
+                tabIndex={isVoiceActive ? 0 : -1}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={voice.submit}
+              >
+                <TickCircle variant="Bold" size={48} color="var(--color-primary)" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

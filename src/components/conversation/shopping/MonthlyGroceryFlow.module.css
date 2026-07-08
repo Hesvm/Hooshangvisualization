@@ -1,0 +1,596 @@
+.flowColumn {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.flowColumn > * + * {
+  margin-top: 32px;
+}
+
+.questionCard,
+.basketCard,
+.successCard,
+.routineCard {
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.questionCard {
+  min-height: 384px;
+  padding: 18px 16px;
+}
+
+.questionCardComplete {
+  min-height: 136px;
+}
+
+.questionHead {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.questionTitle {
+  color: var(--color-history-title);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 23px;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.questionProgress {
+  color: var(--color-history-heading);
+  direction: ltr;
+  font-size: 14px;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.questionBody {
+  animation: questionSettle 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.optionStack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optionButton {
+  display: flex;
+  height: 48px;
+  direction: rtl;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #ececee;
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0;
+  padding: 0 16px;
+  text-align: right;
+  cursor: pointer;
+  transition-property: scale, background-color;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.optionButton:active {
+  scale: 0.98;
+}
+
+.optionButton span:nth-child(2) {
+  flex: 1;
+}
+
+.optionSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}
+
+.customInput {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-history-title);
+  direction: rtl;
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  letter-spacing: 0;
+  margin-top: 10px;
+  outline: none;
+  padding: 0 16px;
+  text-align: right;
+}
+
+.completedQuestionText {
+  margin: 0;
+  color: var(--color-assistant-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: right;
+}
+
+.questionFooter {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.nextButton,
+.backButton,
+.quantityControl button,
+.replaceButton,
+.addItemButton,
+.checkoutButton,
+.secondaryCta,
+.routineCard button,
+.replacementOption button {
+  border: 0;
+  font-family: var(--font-ravi);
+  letter-spacing: 0;
+  cursor: pointer;
+  transition-property: scale, background-color, opacity;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.nextButton:active,
+.backButton:active,
+.quantityControl button:active,
+.replaceButton:active,
+.addItemButton:active,
+.checkoutButton:active,
+.secondaryCta:active,
+.routineCard button:active,
+.replacementOption button:active {
+  scale: 0.96;
+}
+
+.nextButton {
+  display: flex;
+  height: 40px;
+  min-width: 94px;
+  direction: rtl;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 18px 0 16px;
+}
+
+.backButton {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+}
+
+.userAnswerRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.assistantPost {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.basketCard {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 16px 16px;
+}
+
+.cartHeader {
+  gap: 5px;
+}
+
+.cartHeader span {
+  font: inherit;
+}
+
+.cartHeader span:first-child {
+  color: var(--color-history-heading);
+}
+
+.jetTitle {
+  color: rgb(245, 112, 34);
+  font: inherit;
+}
+
+.flatList {
+  margin-top: 12px;
+}
+
+.groceryRow {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 76px;
+  direction: ltr;
+  align-items: center;
+  gap: 12px;
+  min-height: 106px;
+  padding: 12px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.groceryRow:last-child {
+  border-bottom: 0;
+}
+
+.rowActionSlot {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.productBody {
+  min-width: 0;
+  direction: rtl;
+  text-align: right;
+}
+
+.productName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--color-history-title);
+  font-size: 15px;
+  font-weight: 760;
+  line-height: 22px;
+  text-wrap: pretty;
+}
+
+.productPrice,
+.unavailableText {
+  margin-top: 7px;
+  color: var(--color-history-title);
+  font-size: 14px;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  font-weight: 850;
+  line-height: 20px;
+}
+
+.unavailableText {
+  color: var(--color-history-heading);
+}
+
+.unavailableRow .productName {
+  color: var(--color-history-heading);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: rgba(0, 0, 0, 0.18);
+}
+
+.productImageFrame {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 8px 18px rgba(0, 0, 0, 0.045);
+}
+
+.unavailableRow .productImageFrame {
+  filter: grayscale(0.18);
+}
+
+.productImage {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.quantityControl {
+  display: flex;
+  width: 104px;
+  height: 38px;
+  direction: ltr;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 999px;
+  background: rgba(248, 248, 250, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.035);
+  padding: 0 8px;
+}
+
+.quantityControl button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-history-heading);
+}
+
+.quantityControl span {
+  min-width: 26px;
+  color: var(--color-history-title);
+  font-size: 16px;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  font-weight: 850;
+  line-height: 1;
+  text-align: center;
+}
+
+.replaceButton {
+  height: 40px;
+  min-width: 92px;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-history-title);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 4px 10px rgba(0, 0, 0, 0.04);
+  font-size: 13px;
+  font-weight: 850;
+  padding: 0 16px;
+}
+
+.addItemButton {
+  display: flex;
+  width: 100%;
+  height: 54px;
+  direction: rtl;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-size: 15px;
+  font-weight: 780;
+  margin-top: 4px;
+}
+
+.cartFooter {
+  margin-top: 18px;
+}
+
+.footerSummary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  direction: rtl;
+  align-items: center;
+  border-radius: 22px;
+  background: rgba(248, 248, 250, 0.82);
+  color: var(--color-history-heading);
+  margin-bottom: 12px;
+  min-height: 70px;
+  padding: 10px 12px;
+}
+
+.footerSummary > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.footerSummary > div + div {
+  border-right: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.footerSummary span {
+  color: var(--color-history-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+.footerSummary strong {
+  color: var(--color-history-title);
+  font-size: 14px;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  font-weight: 850;
+  line-height: 20px;
+}
+
+.checkoutButton {
+  display: flex;
+  width: 100%;
+  height: 58px;
+  direction: rtl;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgb(255, 96, 35), rgb(255, 70, 18));
+  color: var(--color-white);
+  box-shadow: 0 10px 24px rgba(245, 112, 34, 0.32);
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.bottomChips {
+  min-width: 0;
+}
+
+.successCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+}
+
+.successCard p {
+  margin: 0;
+  color: var(--color-history-title);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 21px;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.secondaryCta {
+  width: 100%;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.routineCard {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 16px;
+}
+
+.routineHeader {
+  margin-bottom: 4px;
+}
+
+.routineCard button {
+  min-height: 42px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-size: 13.5px;
+  font-weight: 750;
+  padding: 8px 14px;
+  text-align: right;
+}
+
+.routineSelected {
+  background: var(--color-primary) !important;
+  color: var(--color-white) !important;
+}
+
+.replacementSheet {
+  direction: rtl;
+}
+
+.replacementSheet h3 {
+  margin: 0;
+  color: var(--color-history-title);
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 26px;
+  text-align: right;
+}
+
+.replacementSheet p {
+  margin: 5px 0 12px;
+  color: var(--color-history-heading);
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 19px;
+  text-align: right;
+}
+
+.replacementOption {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 10px;
+  border-radius: 18px;
+  background: var(--color-surface-subtle);
+  margin-top: 8px;
+  padding: 10px;
+}
+
+.replacementImage {
+  width: 58px;
+  height: 58px;
+  border-radius: 13px;
+  background: var(--color-white);
+  object-fit: contain;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.replacementBody {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  text-align: right;
+}
+
+.replacementBadge {
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(245, 112, 34, 0.12);
+  color: rgb(205, 73, 18);
+  font-size: 10.5px;
+  font-weight: 850;
+  line-height: 16px;
+  margin-bottom: 4px;
+  padding: 2px 7px;
+}
+
+.replacementBody strong {
+  color: var(--color-history-title);
+  font-size: 13.5px;
+  font-weight: 820;
+  line-height: 20px;
+}
+
+.replacementBody small,
+.replacementBody em {
+  color: var(--color-history-heading);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 650;
+  line-height: 17px;
+}
+
+.replacementOption button {
+  grid-column: 1 / -1;
+  height: 40px;
+  border-radius: 999px;
+  background: rgb(245, 112, 34);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+@keyframes questionSettle {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .questionBody {
+    animation: none;
+  }
+}

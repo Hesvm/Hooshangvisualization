@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { faNum } from "@/lib/faNum";
+import { Price } from "@/components/Price";
 import { PRODUCT_ROLE_LABEL, type ShoppingProduct } from "@/types/shopping";
 import styles from "./DeepDiveSheet.module.css";
 
@@ -31,7 +32,7 @@ export function DeepDiveSheet({ product, otherProducts, onSelectAsFinal }: DeepD
           <div className={styles.name}>{product.name}</div>
           <div className={styles.config}>{product.configuration}</div>
           <div className={styles.priceRow}>
-            <span className={styles.price}>{faNum(product.price)} میلیون تومان</span>
+            <Price className={styles.price} amount={faNum(product.price)} unit="میلیون تومان" />
             <span className={styles.rolePill}>{PRODUCT_ROLE_LABEL[product.role]}</span>
           </div>
         </div>
@@ -86,7 +87,7 @@ export function DeepDiveSheet({ product, otherProducts, onSelectAsFinal }: DeepD
               <div key={p.id} className={styles.compareRow}>
                 <div className={styles.compareName}>{p.name}</div>
                 <div className={styles.comparePrice}>
-                  {faNum(p.price)} میلیون تومان · {PRODUCT_ROLE_LABEL[p.role]}
+                  <Price amount={faNum(p.price)} unit="میلیون تومان" /> · {PRODUCT_ROLE_LABEL[p.role]}
                 </div>
               </div>
             ))}

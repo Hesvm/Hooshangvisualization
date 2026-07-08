@@ -1,0 +1,195 @@
+.card {
+  background: var(--color-white);
+  border-radius: 22px;
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-card-soft);
+}
+
+.header {
+  margin-bottom: 14px;
+}
+
+.header :global(img) {
+  width: 16px;
+  height: 16px;
+}
+
+.chartRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.centerLabel {
+  font-size: 11px;
+  color: var(--color-history-heading);
+}
+
+.centerValue {
+  display: flex;
+  width: 56px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: var(--color-history-title);
+  text-align: center;
+}
+
+.centerAmount {
+  font-size: 15px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.centerUnit {
+  font-size: 8.5px;
+  line-height: 11px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--color-history-heading);
+  white-space: nowrap;
+}
+
+.legend {
+  flex: 1;
+  min-width: 0;
+  max-width: 142px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  direction: rtl;
+  align-items: center;
+  column-gap: 10px;
+  font-size: 12.5px;
+}
+
+.legendAsset {
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 7px;
+}
+
+.legendDot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.legendLabel {
+  min-width: 0;
+  color: var(--color-history-title);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legendPercentage {
+  flex-shrink: 0;
+  color: var(--color-history-heading);
+  font-size: 12px;
+  text-align: left;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.statsRow {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.statPill {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.statPillUp {
+  background: rgba(26, 158, 107, 0.1);
+  color: var(--color-success);
+}
+
+.statPillDown {
+  background: rgba(229, 72, 77, 0.1);
+  color: var(--color-danger);
+}
+
+.statMeta {
+  font-size: 11.5px;
+  line-height: 18px;
+  color: var(--color-history-heading);
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.scoreGrid {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scoreTrack {
+  height: 7px;
+  border-radius: 999px;
+  background: #eff0f2;
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 999px;
+  background: #7f9db4;
+  transition-property: width;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.scoreLabelRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.scoreLabel {
+  color: var(--color-history-heading);
+}
+
+.scoreValue {
+  color: var(--color-history-title);
+  font-weight: 600;
+  letter-spacing: var(--numeric-letter-spacing);
+  text-align: left;
+}

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AssistantText } from "@/components/conversation/blocks";
+import { AssistantText, UserBubble } from "@/components/conversation/blocks";
 import { ThinkingBeat } from "@/components/conversation/HooshangThinkingState";
 import { BottomSheet } from "@/components/BottomSheet";
-import { computeLoanEstimate } from "@/lib/loan";
-import { computeDeal, DEAL_DURATION_MS, type Deal } from "@/lib/deal";
+import { buildLoanOffers, clampLoanAmount, productPriceToman } from "@/lib/loan";
+import { isFastPreviewMode, makeInitialValidationStages } from "@/lib/mocks/validationStages";
 import {
   ASSISTANT_INTRO,
   QUESTIONS,
@@ -15,24 +15,40 @@ import {
   RECOMMENDATION_REASONING,
   DECISION_CHIPS,
   TIMING_RESPONSES,
-  LOAN_INTRO_PREFIX,
-  LOAN_INTRO_SUFFIX,
-  HESITATION_QUESTION,
-  HESITATION_OPTIONS,
-  HESITATION_THINKING_REPLY,
-  HANDOFF_TEXT,
-  HANDOFF_CTA,
-  POST_PURCHASE_TEXT,
+  LOAN_INTRO_TEXT,
+  LOAN_OFFER_INTRO,
+  LOAN_OFFER_INTRO_SUPPORT,
+  LOAN_OFFER_CONTINUE_CTA,
+  LOAN_VALIDATION_INTRO,
+  LOAN_VALIDATION_INTRO_SUPPORT,
+  LOAN_VALIDATION_SUCCESS,
+  LOAN_VALIDATION_SUCCESS_SUPPORT,
+  LOAN_INVOICE_INTRO,
+  ORDER_SUMMARY_INTRO,
+  ADDRESS_SELECTION_INTRO,
+  DELIVERY_SELECTION_INTRO,
+  buildLoanRequestMessage,
+  buildOfferSelectionMessage,
+  buildOrderCode,
 } from "@/lib/mocks/shoppingScript";
+import { ADDRESSES, DELIVERY_SLOTS } from "@/lib/mocks/addresses";
 import { faNum } from "@/lib/faNum";
-import type { ShoppingProduct } from "@/types/shopping";
+import { PRODUCT_ROLE_LABEL, type LoanOffer, type ShoppingProduct, type ValidationStage } from "@/types/shopping";
 import { ChipRow } from "./ChipRow";
 import { QuestionCard, type QuestionAnswer } from "./QuestionCard";
 import { ProductCard } from "./ProductCard";
 import { DeepDiveSheet } from "./DeepDiveSheet";
 import { FinalRecommendationCard } from "./FinalRecommendationCard";
-import { DownPaymentQuestion, MonthsQuestion, LoanResultCard } from "./LoanFlow";
-import { DealCard } from "./DealCard";
+import { LoanPreferenceCard } from "./LoanPreferenceCard";
+import { LoanOfferCard } from "./LoanOfferCard";
+import { LoanValidationFlow } from "./LoanValidationFlow";
+import { LoanInvoice } from "./LoanInvoice";
+import { OrderSummaryCard } from "./OrderSummaryCard";
+import { AddressSelectionCard } from "./AddressSelectionCard";
+import { DeliveryDaySelector } from "./DeliveryDaySelector";
+import { ReceiptCard } from "./ReceiptCard";
+import { PaymentConfirmationModal } from "./PaymentConfirmationModal";
+import { MessageSuggestionStack, type MessageSuggestion } from "./MessageSuggestionStack";
 import { Reveal } from "./Reveal";
 import styles from "./LaptopShoppingFlow.module.css";
 
@@ -41,7 +57,70 @@ type LaptopShoppingFlowProps = {
   recommendedProductId: string;
 };
 
-type LoanStep = "closed" | "introThinking" | "downPayment" | "monthsThinking" | "months" | "resultThinking" | "result";
+type LoanStep =
+  | "closed"
+  | "introThinking"
+  | "preference"
+  | "offerThinking"
+  | "offerIntro"
+  | "offers"
+  | "offerContinueThinking"
+  | "validationIntro"
+  | "validating"
+  | "validationDone"
+  | "invoiceThinking"
+  | "invoice"
+  | "orderThinking"
+  | "order"
+  | "addressThinking"
+  | "address"
+  | "deliveryThinking"
+  | "delivery"
+  | "paymentProcessing"
+  | "paymentDone";
+
+/* Ordered so "is this step visible yet" can be answered with a single index
+   comparison instead of an ever-growing OR chain per render gate. */
+const LOAN_STEP_ORDER: LoanStep[] = [
+  "closed",
+  "introThinking",
+  "preference",
+  "offerThinking",
+  "offerIntro",
+  "offers",
+  "offerContinueThinking",
+  "validationIntro",
+  "validating",
+  "validationDone",
+  "invoiceThinking",
+  "invoice",
+  "orderThinking",
+  "order",
+  "addressThinking",
+  "address",
+  "deliveryThinking",
+  "delivery",
+  "paymentProcessing",
+  "paymentDone",
+];
+
+function isLoanStepAtLeast(current: LoanStep, target: LoanStep): boolean {
+  return LOAN_STEP_ORDER.indexOf(current) >= LOAN_STEP_ORDER.indexOf(target);
+}
+
+type ShortlistViewMode = "suggestions" | "quickCompare" | "fullTable";
+
+const SHORTLIST_VIEW_CHIPS: { id: ShortlistViewMode; label: string }[] = [
+  { id: "suggestions", label: "پیشنهادها" },
+  { id: "quickCompare", label: "مقایسه سریع" },
+  { id: "fullTable", label: "جدول کامل" },
+];
+
+const DECISION_SUGGESTIONS: MessageSuggestion[] = DECISION_CHIPS.map((chip) => ({
+  id: chip.id,
+  label: chip.label,
+  prompt: chip.label,
+}));
 
 type FlowState = {
   initialThinking: boolean;
@@ -65,27 +144,150 @@ type FlowState = {
   chipResponses: string[];
 
   loanStep: LoanStep;
-  loanDownPayment: number | null;
+  loanAmount: number | null;
   loanMonths: number | null;
+  loanOffers: LoanOffer[];
+  selectedOfferId: string | null;
+  validationStages: ValidationStage[];
+  confirmationOpen: boolean;
 
-  hesitationVisible: boolean;
-  hesitationResponse: string | null;
-
-  dealThinking: boolean;
-  dealActivated: boolean;
-  deal: Deal | null;
-  dealExpiresAt: number | null;
-
-  purchaseCtaShown: boolean;
-  handoffThinking: boolean;
-  purchaseCompleted: boolean;
-  trackingVisible: boolean;
+  orderQuantity: number;
+  selectedAddressId: string | null;
+  selectedDeliverySlotId: string | null;
+  orderCode: string | null;
 };
 
 type ProductShortlistCarouselProps = {
   products: ShoppingProduct[];
   onOpenDeepDive: (productId: string) => void;
 };
+
+type ProductValueMap = Record<string, string>;
+
+type ComparisonRow = {
+  id: string;
+  label: string;
+  values: ProductValueMap;
+  highlightProductId?: string;
+};
+
+type ShoppingShortlistBlockProps = {
+  products: ShoppingProduct[];
+  activeView: ShortlistViewMode;
+  recommendedProductId: string;
+  showDecision: boolean;
+  onViewChange: (view: ShortlistViewMode) => void;
+  onOpenDeepDive: (productId: string) => void;
+  onAskBest: () => void;
+};
+
+type ShortlistContentProps = {
+  products: ShoppingProduct[];
+  activeView: ShortlistViewMode;
+  recommendedProductId: string;
+  onOpenDeepDive: (productId: string) => void;
+};
+
+function mapProductValues(products: ShoppingProduct[], getValue: (product: ShoppingProduct) => string): ProductValueMap {
+  return products.reduce<ProductValueMap>((values, product) => {
+    values[product.id] = getValue(product);
+    return values;
+  }, {});
+}
+
+function getLowestPriceProductId(products: ShoppingProduct[]) {
+  if (products.length === 0) return undefined;
+  return products.reduce((lowest, product) => (product.price < lowest.price ? product : lowest), products[0]).id;
+}
+
+function getMatchVerdict(product: ShoppingProduct, label: string) {
+  return product.matchBreakdown.find((item) => item.label === label)?.verdict ?? "—";
+}
+
+function makeQuickComparisonRows(products: ShoppingProduct[], recommendedProductId: string): ComparisonRow[] {
+  const matchLabels = products[0]?.matchBreakdown.map((item) => item.label) ?? [];
+
+  return [
+    {
+      id: "price",
+      label: "قیمت",
+      values: mapProductValues(products, (product) => `${faNum(product.price)} میلیون تومان`),
+      highlightProductId: getLowestPriceProductId(products),
+    },
+    ...matchLabels.map((label) => ({
+      id: `match-${label}`,
+      label,
+      values: mapProductValues(products, (product) => getMatchVerdict(product, label)),
+      highlightProductId: label === "محدودیت‌ها" ? undefined : recommendedProductId,
+    })),
+  ];
+}
+
+function makeFullTableRows(products: ShoppingProduct[]): ComparisonRow[] {
+  return [
+    {
+      id: "name",
+      label: "مدل",
+      values: mapProductValues(products, (product) => product.name),
+    },
+    {
+      id: "price",
+      label: "قیمت",
+      values: mapProductValues(products, (product) => `${faNum(product.price)} میلیون تومان`),
+      highlightProductId: getLowestPriceProductId(products),
+    },
+    {
+      id: "configuration",
+      label: "پیکربندی",
+      values: mapProductValues(products, (product) => product.configuration),
+    },
+    {
+      id: "role",
+      label: "نقش",
+      values: mapProductValues(products, (product) => PRODUCT_ROLE_LABEL[product.role]),
+    },
+    {
+      id: "fit",
+      label: "مناسب برای",
+      values: mapProductValues(products, (product) => product.suitableFor),
+    },
+    {
+      id: "rating",
+      label: "امتیاز کاربران",
+      values: mapProductValues(products, (product) => `${faNum(product.rating)} از ۵`),
+    },
+    {
+      id: "reviews",
+      label: "تعداد نظر",
+      values: mapProductValues(products, (product) => `${faNum(product.reviewCount)} نظر`),
+    },
+    {
+      id: "seller",
+      label: "فروشنده",
+      values: mapProductValues(products, (product) => product.seller),
+    },
+    {
+      id: "sellerSatisfaction",
+      label: "رضایت فروشنده",
+      values: mapProductValues(products, (product) => `${faNum(product.sellerSatisfaction)}٪`),
+    },
+    {
+      id: "delivery",
+      label: "ارسال",
+      values: mapProductValues(products, (product) => `${product.fulfilledByDigikala ? "دیجی‌کالا" : "فروشنده"} · ${product.deliveryEstimate}`),
+    },
+    {
+      id: "authenticity",
+      label: "اصالت",
+      values: mapProductValues(products, (product) => (product.authenticityGuarantee ? "تضمین اصالت کالا" : "ثبت نشده")),
+    },
+    {
+      id: "return",
+      label: "بازگشت",
+      values: mapProductValues(products, (product) => `${faNum(product.returnWindowDays)} روز`),
+    },
+  ];
+}
 
 function ProductShortlistCarousel({ products, onOpenDeepDive }: ProductShortlistCarouselProps) {
   return (
@@ -94,6 +296,150 @@ function ProductShortlistCarousel({ products, onOpenDeepDive }: ProductShortlist
         {products.map((product) => (
           <div key={product.id} className={styles.shortlistItem}>
             <ProductCard product={product} onOpenDeepDive={onOpenDeepDive} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ShoppingShortlistBlock({
+  products,
+  activeView,
+  recommendedProductId,
+  showDecision,
+  onViewChange,
+  onOpenDeepDive,
+  onAskBest,
+}: ShoppingShortlistBlockProps) {
+  return (
+    <div className={styles.shortlistBlock}>
+      <div className={styles.viewChipBar}>
+        <ChipRow
+          chips={SHORTLIST_VIEW_CHIPS}
+          activeId={activeView}
+          ariaLabel="انتخاب نوع نمایش پیشنهادها"
+          onPick={(id) => onViewChange(id as ShortlistViewMode)}
+        />
+      </div>
+
+      <ShortlistContent products={products} activeView={activeView} recommendedProductId={recommendedProductId} onOpenDeepDive={onOpenDeepDive} />
+
+      {showDecision && (
+        <div className={styles.shortlistDecision}>
+          <p className={styles.shortlistSupport}>
+            این سه مدل از بین گزینه‌هایی که بررسی کردم، بیشترین تطابق رو با بودجه و نوع استفاده‌ات دارن. اگه بخوای، می‌تونم بینشون جمع‌بندی کنم و بگم کدوم بیشتر به کارت میاد.
+          </p>
+          <button type="button" className={styles.ctaButton} onClick={onAskBest}>
+            کدوم برای من بهتره؟
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ShortlistContent({ products, activeView, recommendedProductId, onOpenDeepDive }: ShortlistContentProps) {
+  return (
+    <div className={styles.shortlistContentShell}>
+      <div
+        className={`${styles.shortlistViewPanel} ${activeView === "suggestions" ? styles.shortlistViewActive : styles.shortlistViewHidden}`}
+        aria-hidden={activeView !== "suggestions"}
+      >
+        <ProductShortlistCarousel products={products} onOpenDeepDive={onOpenDeepDive} />
+      </div>
+
+      <div
+        className={`${styles.shortlistViewPanel} ${activeView === "quickCompare" ? styles.shortlistViewActive : styles.shortlistViewHidden}`}
+        aria-hidden={activeView !== "quickCompare"}
+      >
+        <QuickCompareView products={products} recommendedProductId={recommendedProductId} />
+      </div>
+
+      <div
+        className={`${styles.shortlistViewPanel} ${activeView === "fullTable" ? styles.shortlistViewActive : styles.shortlistViewHidden}`}
+        aria-hidden={activeView !== "fullTable"}
+      >
+        <FullTableView products={products} recommendedProductId={recommendedProductId} />
+      </div>
+    </div>
+  );
+}
+
+function QuickCompareView({ products, recommendedProductId }: { products: ShoppingProduct[]; recommendedProductId: string }) {
+  const rows = makeQuickComparisonRows(products, recommendedProductId);
+
+  return (
+    <div className={styles.comparisonScroller} dir="rtl" aria-label="مقایسه سریع پیشنهادها">
+      <div className={styles.quickCompareGrid}>
+        <div className={`${styles.compareHeaderCell} ${styles.compareLabelCell}`}>معیار</div>
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className={`${styles.compareHeaderCell} ${styles.productHeaderCell} ${product.id === recommendedProductId ? styles.recommendedColumn : ""}`}
+          >
+            <span className={styles.compareProductRole}>{PRODUCT_ROLE_LABEL[product.role]}</span>
+            <span className={styles.compareProductTitle}>
+              <span className={styles.compareProductImage} aria-hidden>
+                {product.imageGlyph}
+              </span>
+              <span className={styles.compareProductName}>{product.name}</span>
+            </span>
+          </div>
+        ))}
+
+        {rows.map((row) => (
+          <div key={row.id} className={styles.compareRow}>
+            <div className={`${styles.compareCell} ${styles.compareLabelCell}`}>{row.label}</div>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className={`${styles.compareCell} ${styles.compareValueCell} ${row.highlightProductId === product.id ? styles.compareValueHighlighted : ""} ${
+                  product.id === recommendedProductId ? styles.recommendedColumn : ""
+                }`}
+              >
+                {row.values[product.id]}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FullTableView({ products, recommendedProductId }: { products: ShoppingProduct[]; recommendedProductId: string }) {
+  const rows = makeFullTableRows(products);
+
+  return (
+    <div className={styles.tableScroller} dir="rtl" aria-label="جدول کامل پیشنهادها">
+      <div className={styles.fullTableGrid}>
+        <div className={`${styles.tableHeaderCell} ${styles.tableLabelCell}`}>جزئیات</div>
+        {products.map((product) => (
+          <div key={product.id} className={`${styles.tableHeaderCell} ${product.id === recommendedProductId ? styles.recommendedColumn : ""}`}>
+            <span className={styles.tableProductRole}>{PRODUCT_ROLE_LABEL[product.role]}</span>
+            <span className={styles.tableProductTitle}>
+              <span className={styles.tableProductImage} aria-hidden>
+                {product.imageGlyph}
+              </span>
+              <span className={styles.tableProductName}>{product.name}</span>
+            </span>
+          </div>
+        ))}
+
+        {rows.map((row) => (
+          <div key={row.id} className={styles.tableRow}>
+            <div className={`${styles.tableCell} ${styles.tableLabelCell}`}>{row.label}</div>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className={`${styles.tableCell} ${row.highlightProductId === product.id ? styles.compareValueHighlighted : ""} ${
+                  product.id === recommendedProductId ? styles.recommendedColumn : ""
+                }`}
+              >
+                {row.values[product.id]}
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -124,26 +470,23 @@ function makeInitialState(recommendedProductId: string): FlowState {
     chipResponses: [],
 
     loanStep: "closed",
-    loanDownPayment: null,
+    loanAmount: null,
     loanMonths: null,
+    loanOffers: [],
+    selectedOfferId: null,
+    validationStages: [],
+    confirmationOpen: false,
 
-    hesitationVisible: false,
-    hesitationResponse: null,
-
-    dealThinking: false,
-    dealActivated: false,
-    deal: null,
-    dealExpiresAt: null,
-
-    purchaseCtaShown: false,
-    handoffThinking: false,
-    purchaseCompleted: false,
-    trackingVisible: false,
+    orderQuantity: 1,
+    selectedAddressId: null,
+    selectedDeliverySlotId: null,
+    orderCode: null,
   };
 }
 
 export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopShoppingFlowProps) {
   const [state, setState] = useState<FlowState>(() => makeInitialState(recommendedProductId));
+  const [activeShortlistView, setActiveShortlistView] = useState<ShortlistViewMode>("suggestions");
   const timers = useRef<number[]>([]);
 
   function schedule(fn: () => void, ms: number) {
@@ -180,11 +523,8 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
   }, []);
 
   const recommendedProduct = products.find((p) => p.id === state.recommendedProductId) ?? products[0];
-  const loanEstimate =
-    state.loanDownPayment !== null && state.loanMonths !== null
-      ? computeLoanEstimate(recommendedProduct.price, state.loanDownPayment, state.loanMonths)
-      : null;
   const deepDiveProduct = products.find((p) => p.id === state.deepDiveProductId) ?? null;
+  const recommendedProductPriceToman = productPriceToman(recommendedProduct.price);
 
   function handleQuestionAnswer(index: number, answer: QuestionAnswer) {
     setState((prev) => {
@@ -250,60 +590,89 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
     if (state.answeredChips.includes(chipId)) return;
     if (chipId === "loan") {
       patch({ answeredChips: [...state.answeredChips, chipId], loanStep: "introThinking" });
-      schedule(() => patch({ loanStep: "downPayment" }), TIMING.loanIntroThinking);
+      schedule(() => patch({ loanStep: "preference" }), TIMING.loanEntryThinking);
       return;
     }
     patch({ answeredChips: [...state.answeredChips, chipId], chipResponses: [...state.chipResponses, chipId] });
   }
 
-  function handleDownPaymentSubmit(amount: number) {
-    patch({ loanDownPayment: amount, loanStep: "monthsThinking" });
-    schedule(() => patch({ loanStep: "months" }), TIMING.loanQ2Thinking);
+  function handleLoanPreferenceComplete(amount: number, months: number) {
+    const clampedAmount = clampLoanAmount(amount, recommendedProductPriceToman);
+    const offers = buildLoanOffers(clampedAmount, months);
+    patch({
+      loanAmount: clampedAmount,
+      loanMonths: months,
+      loanOffers: offers,
+      loanStep: "offerThinking",
+    });
+    schedule(() => {
+      patch({ loanStep: "offerIntro" });
+      schedule(() => patch({ loanStep: "offers" }), TIMING.offersAfterIntro);
+    }, TIMING.offerSearchThinking);
   }
 
-  function handleMonthsSubmit(months: number) {
-    patch({ loanMonths: months, loanStep: "resultThinking" });
+  function handleSelectOffer(offerId: string) {
+    patch({ selectedOfferId: offerId });
+  }
+
+  function handleOfferContinue() {
+    if (!state.selectedOfferId) return;
+    patch({ loanStep: "offerContinueThinking" });
     schedule(() => {
-      patch({ loanStep: "result" });
-      setState((prev) => {
-        if (prev.hesitationVisible || prev.hesitationResponse) return prev;
-        schedule(() => patch({ hesitationVisible: true }), TIMING.hesitationAfterResult);
-        return prev;
+      patch({
+        loanStep: "validationIntro",
+        validationStages: makeInitialValidationStages(isFastPreviewMode()),
       });
-    }, TIMING.loanResultThinking);
+      schedule(() => patch({ loanStep: "validating" }), TIMING.validationIntroAfterThinking);
+    }, TIMING.offerPrepThinking);
   }
 
-  function handleLoanRestart() {
-    patch({ loanStep: "downPayment", loanDownPayment: null, loanMonths: null });
-  }
-
-  function handleHesitationPick(id: string) {
-    if (state.hesitationResponse) return;
-    patch({ hesitationResponse: id });
-    if (id === "expensive") {
-      patch({ dealThinking: true });
-      schedule(() => {
-        const deal = computeDeal(recommendedProduct.price);
-        patch({ dealThinking: false, dealActivated: true, deal, dealExpiresAt: Date.now() + DEAL_DURATION_MS });
-      }, TIMING.dealThinking);
-    } else if (id === "good") {
-      patch({ purchaseCtaShown: true });
-    }
-  }
-
-  function handleDealPurchase() {
-    patch({ purchaseCtaShown: true });
-  }
-
-  function handleHandoffCta() {
-    if (state.handoffThinking || state.purchaseCompleted) return;
-    patch({ handoffThinking: true });
+  function handleValidationComplete() {
+    patch({ loanStep: "validationDone" });
     schedule(() => {
-      patch({ handoffThinking: false, purchaseCompleted: true });
-      schedule(() => {
-        patch({ trackingVisible: true });
-      }, TIMING.postPurchaseAfterHandoff);
-    }, TIMING.handoffThinking);
+      patch({ loanStep: "invoiceThinking" });
+      schedule(() => patch({ loanStep: "invoice" }), TIMING.invoiceAfterThinking);
+    }, TIMING.invoicePrepThinking);
+  }
+
+  function handleInvoiceContinue() {
+    patch({ loanStep: "orderThinking" });
+    schedule(() => patch({ loanStep: "order" }), TIMING.orderPrepThinking);
+  }
+
+  function handleOrderQuantityChange(quantity: number) {
+    patch({ orderQuantity: quantity });
+  }
+
+  function handleOrderNext() {
+    patch({ loanStep: "addressThinking" });
+    schedule(() => patch({ loanStep: "address" }), TIMING.addressPrepThinking);
+  }
+
+  function handleSelectAddress(addressId: string) {
+    patch({ selectedAddressId: addressId });
+  }
+
+  function handleAddressNext() {
+    patch({ loanStep: "deliveryThinking" });
+    schedule(() => patch({ loanStep: "delivery" }), TIMING.deliveryPrepThinking);
+  }
+
+  function handleSelectDeliverySlot(slotId: string) {
+    patch({ selectedDeliverySlotId: slotId });
+  }
+
+  function handleOpenConfirmation() {
+    patch({ confirmationOpen: true });
+  }
+
+  function handleCloseConfirmation() {
+    patch({ confirmationOpen: false });
+  }
+
+  function handleConfirmPayment() {
+    patch({ confirmationOpen: false, loanStep: "paymentProcessing" });
+    schedule(() => patch({ loanStep: "paymentDone", orderCode: buildOrderCode() }), TIMING.paymentProcessing);
   }
 
   const currentQuestionDef =
@@ -344,20 +713,15 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
       {state.shortlistVisible && (
         <Reveal>
-          <ProductShortlistCarousel products={products} onOpenDeepDive={openDeepDive} />
-        </Reveal>
-      )}
-
-      {state.shortlistVisible && !state.finalRecommendationRequested && (
-        <Reveal>
-          <div className={styles.shortlistDecision}>
-            <p className={styles.shortlistSupport}>
-              این سه مدل از بین گزینه‌هایی که بررسی کردم، به نیاز و بودجه‌ات نزدیک‌ترن. اگه بخوای، می‌تونم بینشون دقیق‌تر جمع‌بندی کنم و بگم کدوم بیشتر به کارت میاد.
-            </p>
-            <button type="button" className={styles.ctaButton} onClick={() => revealFinalRecommendation()}>
-              کدوم برای من بهتره؟
-            </button>
-          </div>
+          <ShoppingShortlistBlock
+            products={products}
+            activeView={activeShortlistView}
+            recommendedProductId={state.recommendedProductId}
+            showDecision={!state.finalRecommendationRequested}
+            onViewChange={setActiveShortlistView}
+            onOpenDeepDive={openDeepDive}
+            onAskBest={() => revealFinalRecommendation()}
+          />
         </Reveal>
       )}
 
@@ -371,13 +735,14 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
       {state.finalRecommendationVisible && (
         <Reveal>
-          <FinalRecommendationCard product={recommendedProduct} />
-        </Reveal>
-      )}
-
-      {state.finalRecommendationVisible && (
-        <Reveal>
-          <ChipRow chips={DECISION_CHIPS.map((c) => ({ id: c.id, label: c.label }))} doneIds={state.answeredChips} primaryId="loan" onPick={handleDecisionChip} />
+          <div>
+            <FinalRecommendationCard product={recommendedProduct} />
+            <MessageSuggestionStack
+              suggestions={DECISION_SUGGESTIONS}
+              disabledIds={state.answeredChips}
+              onSelect={(suggestion) => handleDecisionChip(suggestion.id)}
+            />
+          </div>
         </Reveal>
       )}
 
@@ -387,87 +752,159 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       ))}
 
-      <ThinkingBeat show={state.loanStep === "introThinking"} messages={THINKING_TEXT.loanIntro} />
+      <ThinkingBeat show={state.loanStep === "introThinking"} messages={THINKING_TEXT.loanEntry} />
 
       {state.loanStep !== "closed" && state.loanStep !== "introThinking" && (
         <Reveal>
-          <AssistantText paragraphs={[`${LOAN_INTRO_PREFIX} ${faNum(recommendedProduct.price)} ${LOAN_INTRO_SUFFIX}`]} />
+          <AssistantText paragraphs={[LOAN_INTRO_TEXT]} />
         </Reveal>
       )}
 
-      {state.loanStep === "downPayment" && (
+      {state.loanStep === "preference" && (
         <Reveal>
-          <DownPaymentQuestion price={recommendedProduct.price} onSubmit={handleDownPaymentSubmit} />
+          <LoanPreferenceCard
+            productPrice={recommendedProductPriceToman}
+            initialAmount={state.loanAmount ?? undefined}
+            initialMonths={state.loanMonths ?? undefined}
+            onComplete={handleLoanPreferenceComplete}
+          />
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "monthsThinking"} messages={THINKING_TEXT.loanQ2} />
-
-      {state.loanStep === "months" && (
+      {state.loanAmount !== null && state.loanMonths !== null && state.loanStep !== "preference" && state.loanStep !== "introThinking" && (
         <Reveal>
-          <MonthsQuestion onSubmit={handleMonthsSubmit} />
+          <UserBubble text={buildLoanRequestMessage(state.loanAmount, state.loanMonths)} />
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "resultThinking"} messages={THINKING_TEXT.loanResult} />
+      <ThinkingBeat show={state.loanStep === "offerThinking"} messages={THINKING_TEXT.offerSearch} cycleMs={TIMING.offerSearchTextSwitch} />
 
-      {state.loanStep === "result" && loanEstimate && (
+      {(state.loanStep === "offerIntro" || state.loanStep === "offers") && (
         <Reveal>
-          <LoanResultCard price={recommendedProduct.price} estimate={loanEstimate} onRestart={handleLoanRestart} />
+          <AssistantText paragraphs={[LOAN_OFFER_INTRO, LOAN_OFFER_INTRO_SUPPORT]} />
         </Reveal>
       )}
 
-      {state.hesitationVisible && (
+      {state.loanStep === "offers" && (
         <Reveal>
-          <div>
-            <AssistantText paragraphs={[HESITATION_QUESTION]} />
-            <div style={{ marginTop: 16 }}>
-              <ChipRow
-                chips={HESITATION_OPTIONS.map((o) => ({ id: o.id, label: o.label }))}
-                doneIds={state.hesitationResponse ? HESITATION_OPTIONS.map((o) => o.id) : []}
-                onPick={handleHesitationPick}
+          <div className={styles.offerList}>
+            {state.loanOffers.map((offer) => (
+              <LoanOfferCard
+                key={offer.id}
+                offer={offer}
+                selected={state.selectedOfferId === offer.id}
+                onSelect={() => handleSelectOffer(offer.id)}
               />
-            </div>
-          </div>
-        </Reveal>
-      )}
-
-      {state.hesitationResponse === "thinking" && (
-        <Reveal>
-          <AssistantText paragraphs={[HESITATION_THINKING_REPLY]} />
-        </Reveal>
-      )}
-
-      <ThinkingBeat show={state.dealThinking} messages={THINKING_TEXT.deal} cycleMs={TIMING.searchThinkingTextSwitch} />
-
-      {state.dealActivated && state.deal && state.dealExpiresAt && (
-        <Reveal>
-          <DealCard price={recommendedProduct.price} deal={state.deal} expiresAt={state.dealExpiresAt} onPurchase={handleDealPurchase} />
-        </Reveal>
-      )}
-
-      {state.purchaseCtaShown && (
-        <Reveal>
-          <div>
-            <AssistantText paragraphs={[HANDOFF_TEXT]} />
+            ))}
             <button
               type="button"
               className={styles.ctaButton}
-              style={{ marginTop: 16 }}
-              disabled={state.handoffThinking || state.purchaseCompleted}
-              onClick={handleHandoffCta}
+              disabled={!state.selectedOfferId}
+              style={{ opacity: state.selectedOfferId ? 1 : 0.5 }}
+              onClick={handleOfferContinue}
             >
-              {HANDOFF_CTA}
+              {LOAN_OFFER_CONTINUE_CTA}
             </button>
           </div>
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.handoffThinking} messages={THINKING_TEXT.handoff} />
-
-      {state.trackingVisible && (
+      {state.selectedOfferId && isLoanStepAtLeast(state.loanStep, "offerContinueThinking") && (
         <Reveal>
-          <AssistantText paragraphs={[POST_PURCHASE_TEXT]} />
+          <UserBubble
+            text={buildOfferSelectionMessage(state.loanOffers.find((o) => o.id === state.selectedOfferId)?.providerName ?? "")}
+          />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "offerContinueThinking"} messages={THINKING_TEXT.offerPrep} />
+
+      {isLoanStepAtLeast(state.loanStep, "validationIntro") && (
+        <Reveal>
+          <AssistantText paragraphs={[LOAN_VALIDATION_INTRO, LOAN_VALIDATION_INTRO_SUPPORT]} />
+        </Reveal>
+      )}
+
+      {isLoanStepAtLeast(state.loanStep, "validating") && (
+        <Reveal>
+          <LoanValidationFlow stages={state.validationStages} onAllComplete={handleValidationComplete} />
+        </Reveal>
+      )}
+
+      {isLoanStepAtLeast(state.loanStep, "validationDone") && (
+        <Reveal>
+          <AssistantText paragraphs={[LOAN_VALIDATION_SUCCESS, LOAN_VALIDATION_SUCCESS_SUPPORT]} />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "invoiceThinking"} messages={THINKING_TEXT.invoicePrep} />
+
+      {isLoanStepAtLeast(state.loanStep, "invoice") && state.selectedOfferId && (
+        <Reveal>
+          <AssistantText paragraphs={[LOAN_INVOICE_INTRO]} />
+          <LoanInvoice
+            product={recommendedProduct}
+            offer={state.loanOffers.find((o) => o.id === state.selectedOfferId)!}
+            onConfirm={handleInvoiceContinue}
+          />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "orderThinking"} messages={THINKING_TEXT.orderPrep} />
+
+      {isLoanStepAtLeast(state.loanStep, "order") && (
+        <Reveal>
+          <AssistantText paragraphs={[ORDER_SUMMARY_INTRO]} />
+          <OrderSummaryCard
+            product={recommendedProduct}
+            unitPriceToman={recommendedProductPriceToman}
+            quantity={state.orderQuantity}
+            onQuantityChange={handleOrderQuantityChange}
+            onNext={handleOrderNext}
+          />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "addressThinking"} messages={THINKING_TEXT.addressPrep} />
+
+      {isLoanStepAtLeast(state.loanStep, "address") && (
+        <Reveal>
+          <AssistantText paragraphs={[ADDRESS_SELECTION_INTRO]} />
+          <AddressSelectionCard
+            addresses={ADDRESSES}
+            selectedId={state.selectedAddressId}
+            onSelect={handleSelectAddress}
+            onNext={handleAddressNext}
+          />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "deliveryThinking"} messages={THINKING_TEXT.deliveryPrep} />
+
+      {isLoanStepAtLeast(state.loanStep, "delivery") && (
+        <Reveal>
+          <AssistantText paragraphs={[DELIVERY_SELECTION_INTRO]} />
+          <DeliveryDaySelector
+            slots={DELIVERY_SLOTS}
+            selectedId={state.selectedDeliverySlotId}
+            onSelect={handleSelectDeliverySlot}
+            onConfirm={handleOpenConfirmation}
+          />
+        </Reveal>
+      )}
+
+      <ThinkingBeat show={state.loanStep === "paymentProcessing"} messages={THINKING_TEXT.paymentProcessing} />
+
+      {state.loanStep === "paymentDone" && state.selectedOfferId && state.orderCode && (
+        <Reveal>
+          <ReceiptCard
+            product={recommendedProduct}
+            offer={state.loanOffers.find((o) => o.id === state.selectedOfferId)!}
+            address={ADDRESSES.find((a) => a.id === state.selectedAddressId) ?? ADDRESSES[0]}
+            deliverySlot={DELIVERY_SLOTS.find((s) => s.id === state.selectedDeliverySlotId) ?? DELIVERY_SLOTS[0]}
+            immediatePayment={recommendedProductPriceToman - (state.loanAmount ?? 0)}
+            orderCode={state.orderCode}
+          />
         </Reveal>
       )}
 
@@ -477,6 +914,18 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
             product={deepDiveProduct}
             otherProducts={products.filter((p) => p.id !== deepDiveProduct.id)}
             onSelectAsFinal={handleSelectAsFinalFromDeepDive}
+          />
+        )}
+      </BottomSheet>
+
+      <BottomSheet open={state.confirmationOpen} onClose={handleCloseConfirmation} ariaLabel="تایید نهایی پرداخت">
+        {state.selectedOfferId && (
+          <PaymentConfirmationModal
+            product={recommendedProduct}
+            offer={state.loanOffers.find((o) => o.id === state.selectedOfferId)!}
+            immediatePayment={recommendedProductPriceToman - (state.loanAmount ?? 0)}
+            onConfirm={handleConfirmPayment}
+            onCancel={handleCloseConfirmation}
           />
         )}
       </BottomSheet>

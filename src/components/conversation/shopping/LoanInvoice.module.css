@@ -1,0 +1,115 @@
+.card {
+  background: var(--color-white);
+  border-radius: 22px;
+  padding: 18px 16px;
+  box-shadow: var(--shadow-card-soft);
+}
+
+.invoiceHeader {
+  margin-bottom: 16px;
+}
+
+.brandRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.brandRow img {
+  display: block;
+  width: var(--component-header-logo-size);
+  height: var(--component-header-logo-size);
+  object-fit: contain;
+}
+
+.productRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-soft);
+  margin-bottom: 14px;
+}
+
+.productImage {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 14px;
+  background: var(--color-surface-subtle);
+  outline: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 20px;
+}
+
+.productName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.productConfig {
+  font-size: 12.5px;
+  color: var(--color-history-heading);
+  margin-top: 2px;
+}
+
+.productPrice {
+  margin-inline-start: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-history-title);
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-history-heading);
+  margin-bottom: 8px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--color-history-title);
+}
+
+.rowHighlight strong {
+  color: var(--color-primary);
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border-soft);
+  margin: 12px 0;
+}
+
+.cta {
+  width: 100%;
+  height: 48px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.cta:active {
+  scale: 0.96;
+}

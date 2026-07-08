@@ -12,14 +12,24 @@ import { currentUser } from "@/config/user";
 import { getGreeting } from "@/lib/greeting";
 import type { SpaceConfig } from "@/types/space";
 
+const SPACES_PER_ROW = 4;
+
 function SpaceTile({ space }: { space: SpaceConfig }) {
   const content = (
     <>
       <span className={styles.tileIcon}>
-        <Image src={space.iconSrc} alt="" width={79} height={79} />
+        <Image
+          className={space.id === "kharid-supermarketi" ? styles.groceryTileImage : undefined}
+          src={space.iconSrc}
+          alt=""
+          width={79}
+          height={79}
+        />
         {space.hasNotification && <span className={styles.notificationDot} />}
       </span>
-      <span className={styles.tileLabel}>{space.label}</span>
+      <span className={`${styles.tileLabel} ${space.id === "kharid-supermarketi" ? styles.groceryTileLabel : ""}`}>
+        {space.label}
+      </span>
     </>
   );
 
@@ -42,6 +52,10 @@ export default function Home() {
   const [composerState, setComposerState] = useState<ComposerState>("idle");
   const greeting = getGreeting(currentUser.name, new Date());
   const isComposerFocused = composerState === "focused";
+  const visibleSpaces = spaces.slice(0, SPACES_PER_ROW * 2);
+  const spaceRows = Array.from({ length: Math.ceil(visibleSpaces.length / SPACES_PER_ROW) }, (_, index) =>
+    visibleSpaces.slice(index * SPACES_PER_ROW, index * SPACES_PER_ROW + SPACES_PER_ROW),
+  );
 
   return (
     <main className={styles.frame}>
@@ -61,17 +75,16 @@ export default function Home() {
           <p className={styles.greetingLine2}>{greeting.line2}</p>
         </div>
 
-        <div className={`${styles.spaceGridRow} ${styles.spaceGridRow1}`}>
-          {spaces.slice(0, 4).map((space) => (
-            <SpaceTile key={space.id} space={space} />
-          ))}
-        </div>
-
-        <div className={`${styles.spaceGridRow} ${styles.spaceGridRow2}`}>
-          {spaces.slice(4, 8).map((space) => (
-            <SpaceTile key={space.id} space={space} />
-          ))}
-        </div>
+        {spaceRows.map((row, index) => (
+          <div
+            key={index}
+            className={`${styles.spaceGridRow} ${styles[`spaceGridRow${index + 1}`] ?? ""}`}
+          >
+            {row.map((space) => (
+              <SpaceTile key={space.id} space={space} />
+            ))}
+          </div>
+        ))}
       </div>
 
       <Composer suggestions={homeComposerSuggestions} onStateChange={setComposerState} />

@@ -55,7 +55,8 @@
 .price {
   font-size: 15px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   color: var(--color-history-title);
 }
 
@@ -188,7 +189,6 @@
   font-size: 12px;
   color: var(--color-history-heading);
   text-align: right;
-  font-variant-numeric: tabular-nums;
 }
 
 .askForm {

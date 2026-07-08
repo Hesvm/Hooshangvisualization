@@ -158,6 +158,11 @@
   object-fit: contain;
 }
 
+.tileIcon .groceryTileImage {
+  width: 63px;
+  height: 63px;
+}
+
 .notificationDot {
   position: absolute;
   top: 1px;
@@ -170,9 +175,18 @@
 
 .tileLabel {
   font-size: 16px;
+  line-height: 20px;
   font-weight: 600;
   color: #000000;
   /* Labels wider than the 64px tile column stay on one line and overflow
      the tile centered, as in the reference (e.g. "مدیریت مالی"). */
   white-space: nowrap;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.groceryTileLabel {
+  width: max-content;
+  white-space: nowrap;
+  text-wrap: nowrap;
 }

@@ -89,10 +89,19 @@ export type ConversationBlock =
       products: ShoppingProduct[];
       /** id of the product the assistant will reveal as the personalized pick */
       recommendedProductId: string;
+    }
+  | {
+      id: string;
+      kind: "monthlyGroceryShopping";
+    }
+  | {
+      id: string;
+      kind: "financeCryptoAnalysis";
     };
 
 export type Conversation = {
   id: string;
   spaceId: string;
+  headerAccentRgb?: string;
   blocks: ConversationBlock[];
 };

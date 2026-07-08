@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { InfoCircle, ShieldTick, TickCircle, Truck, Refresh, Chart, Star1 } from "iconsax-react";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
+import { Price } from "@/components/Price";
+import { NumericText } from "@/components/NumericText";
 import type { ShoppingProduct } from "@/types/shopping";
 import styles from "./FinalRecommendationCard.module.css";
 
@@ -10,16 +13,12 @@ type FinalRecommendationCardProps = {
   product: ShoppingProduct;
 };
 
-const SELLER_WHY_TEXT =
-  "این فروشنده رو با توجه به قیمت رقابتی، رضایت بالای خریدارهای قبلی، ارسال سریع توسط دیجی‌کالا و امکان بازگشت کالا انتخاب کردیم.";
-
 export function FinalRecommendationCard({ product }: FinalRecommendationCardProps) {
   const [matchDetailsExpanded, setMatchDetailsExpanded] = useState(false);
-  const [sellerWhyExpanded, setSellerWhyExpanded] = useState(false);
 
   return (
     <div className={styles.card}>
-      <div className={styles.label}>انتخاب مناسب تو</div>
+      <ComponentHeader title="انتخاب مناسب تو" tone="accent" className={styles.labelHeader} />
 
       <div className={styles.heroFrame}>
         <div className={styles.imageSlot} aria-hidden>
@@ -30,12 +29,16 @@ export function FinalRecommendationCard({ product }: FinalRecommendationCardProp
       <div className={styles.identityBlock}>
         <div className={styles.name}>{product.name}</div>
         <div className={styles.config}>{product.configuration}</div>
-        <div className={styles.price}>{faNum(product.price)} میلیون تومان</div>
+        <div className={styles.price}>
+          <Price amount={faNum(product.price)} unit="میلیون تومان" />
+        </div>
       </div>
 
       <div className={styles.matchBlock}>
         <div className={styles.matchRow}>
-          <span className={styles.matchScore}>{faNum(product.matchScore)}٪ مناسب نیاز تو</span>
+          <span className={styles.matchScore}>
+            <NumericText>{faNum(product.matchScore)}٪</NumericText> مناسب نیاز تو
+          </span>
           <button
             type="button"
             className={styles.matchInfoButton}
@@ -82,41 +85,36 @@ export function FinalRecommendationCard({ product }: FinalRecommendationCardProp
       </div>
 
       <div className={styles.trustBlock}>
-        <div className={styles.trustTitle}>خرید مطمئن از دیجی‌کالا</div>
+        <ComponentHeader title="خرید مطمئن از دیجی‌کالا" logo="/images/brands/digikala-logo.svg" className={styles.trustHeader} />
 
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><TickCircle variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><TickCircle variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>{product.seller}</span>
         </div>
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><Chart variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><Chart variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>{faNum(product.sellerSatisfaction)}٪ رضایت از فروشنده</span>
         </div>
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><Truck variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><Truck variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>
             {product.fulfilledByDigikala ? "ارسال توسط دیجی‌کالا" : "ارسال توسط فروشنده"} · {product.deliveryEstimate}
           </span>
         </div>
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><ShieldTick variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><ShieldTick variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>{product.authenticityGuarantee ? "تضمین اصالت کالا" : ""}</span>
         </div>
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><Refresh variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><Refresh variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>{faNum(product.returnWindowDays)} روز امکان بازگشت</span>
         </div>
         <div className={styles.trustRow}>
-          <span className={styles.trustIcon}><Star1 variant="Bold" size={16} color="var(--color-primary)" /></span>
+          <span className={styles.trustIcon}><Star1 variant="Bold" size={16} color="var(--color-digikala-red)" /></span>
           <span>
             امتیاز {faNum(product.rating)} از ۵ · بر اساس {faNum(product.reviewCount)} نظر خریدار
           </span>
         </div>
-
-        <button type="button" className={styles.sellerWhyButton} onClick={() => setSellerWhyExpanded((v) => !v)}>
-          چرا این فروشنده؟
-        </button>
-        {sellerWhyExpanded && <div className={styles.sellerWhyText}>{SELLER_WHY_TEXT}</div>}
       </div>
     </div>
   );

@@ -1,0 +1,116 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  direction: rtl;
+  width: 100%;
+  min-height: 368px;
+  padding: 40px 28px 36px;
+  border-radius: 40px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.progressRing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(180px, 52vw, 220px);
+  aspect-ratio: 1;
+  margin-bottom: 28px;
+}
+
+.ringSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ringTrack,
+.ringFill {
+  fill: none;
+  stroke-width: 12px;
+}
+
+.ringTrack {
+  stroke: #e6e8ec;
+}
+
+.ringFill {
+  stroke: #12b99a;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 110px 110px;
+  transition-property: stroke-dashoffset;
+  transition-duration: 0.35s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.iconShell {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  color: #4b6fe5;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 70% 72%, rgba(79, 101, 225, 0.24), transparent 28%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(226, 231, 255, 0.86));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 10px 24px rgba(71, 91, 197, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.title {
+  max-width: 100%;
+  color: var(--color-history-title);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.04em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.remaining {
+  margin-top: 12px;
+  color: var(--color-history-heading);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+  text-wrap: pretty;
+  animation: remainingFadeIn 0.32s cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes remainingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .remaining {
+    animation: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .card {
+    min-height: 340px;
+    padding: 34px 22px 32px;
+    border-radius: 34px;
+  }
+
+  .progressRing {
+    margin-bottom: 24px;
+  }
+}

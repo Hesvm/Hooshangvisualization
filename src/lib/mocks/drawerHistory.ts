@@ -18,7 +18,7 @@ export const drawerHistoryGroups: DrawerHistoryGroup[] = [
     items: [
       {
         id: "h1",
-        title: "خطرات گلوکز بالای ۷.۹ میلی‌گرم",
+        title: "خطرات گلوکز بالای ۷٫۹ میلی‌گرم",
         threadType: "chat",
         href: "/spaces/badan/conversations/blood-test",
       },

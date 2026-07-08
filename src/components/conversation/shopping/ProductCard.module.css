@@ -81,7 +81,8 @@
 .ratingValue {
   font-weight: 700;
   color: var(--color-history-title);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
 }
 
 .info {
@@ -118,7 +119,8 @@
   margin-top: 9px;
   font-size: 15.5px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   color: var(--color-history-title);
   text-align: right;
   white-space: nowrap;

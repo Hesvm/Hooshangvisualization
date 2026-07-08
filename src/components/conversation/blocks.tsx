@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { ChevronLeft } from "@/components/icons/line";
+import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
 import type {
   ComparisonStatus,
@@ -10,6 +11,8 @@ import type {
 } from "@/types/conversation";
 import { QuestionOptionIcon } from "@/components/conversation/QuestionOptionIcon";
 import { LaptopShoppingFlow } from "@/components/conversation/shopping/LaptopShoppingFlow";
+import { MonthlyGroceryFlow } from "@/components/conversation/shopping/MonthlyGroceryFlow";
+import { CryptoPortfolioFlow } from "@/components/conversation/shopping/CryptoPortfolioFlow";
 import styles from "./conversation.module.css";
 
 const STATUS_LABEL: Record<ComparisonStatus, string> = {
@@ -149,7 +152,7 @@ function ComparisonTable({
 }: Extract<ConversationBlock, { kind: "comparisonTable" }>) {
   return (
     <div className={styles.cmpCard}>
-      <h3 className={styles.cmpTitle}>{title}</h3>
+      <ComponentHeader title={title} className={styles.cmpHeader} />
       <table className={styles.cmpTable}>
         <thead>
           <tr>
@@ -205,7 +208,7 @@ function ExerciseTable({
 }) {
   return (
     <div className={styles.exerciseCard}>
-      <h3 className={styles.exerciseTitle}>{title}</h3>
+      <ComponentHeader title={title} className={styles.exerciseHeader} />
       <table className={styles.exTable}>
         <thead>
           <tr>
@@ -289,7 +292,7 @@ function WeightChart({
 
   return (
     <div className={styles.chartCard}>
-      <h3 className={styles.chartTitle}>{title}</h3>
+      <ComponentHeader title={title} className={styles.chartHeader} />
       <svg className={styles.chartSvg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden>
         <defs>
           <linearGradient id="wt" x1="0" y1="0" x2="0" y2="1">
@@ -340,5 +343,9 @@ export function renderBlock(block: ConversationBlock) {
           recommendedProductId={block.recommendedProductId}
         />
       );
+    case "monthlyGroceryShopping":
+      return <MonthlyGroceryFlow key={block.id} />;
+    case "financeCryptoAnalysis":
+      return <CryptoPortfolioFlow key={block.id} />;
   }
 }

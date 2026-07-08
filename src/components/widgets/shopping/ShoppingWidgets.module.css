@@ -6,40 +6,6 @@
   box-shadow: 0 8px 28px rgba(20, 24, 32, 0.045);
 }
 
-.badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  min-width: 0;
-  height: 20px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: #0c2f34;
-  font-variant-numeric: tabular-nums;
-}
-
-.cardTitle {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  margin: 0;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: #0c2f34;
-}
-
 .itemList {
   list-style: none;
   margin: 40px 0 0;
@@ -85,16 +51,9 @@
   outline-offset: 3px;
 }
 
-.shoppingListTitle {
+.shoppingListHeader {
   flex: 0 0 auto;
-  margin: 0 0 10px;
-  color: #0c2f34;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  text-align: right;
-  text-wrap: balance;
+  margin-bottom: 10px;
 }
 
 .shoppingListGrid {
@@ -145,8 +104,8 @@
   font-size: 18px;
   line-height: 1;
   font-weight: 200;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   unicode-bidi: isolate;
 }
 
@@ -223,22 +182,7 @@
 }
 
 .purchaseHistoryHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
   margin-bottom: 13px;
-}
-
-.purchaseHistoryTitle {
-  margin: 0;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--color-history-title);
-  text-align: right;
-  text-wrap: balance;
 }
 
 .purchaseAnalysisButton {

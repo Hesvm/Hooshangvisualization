@@ -14,19 +14,52 @@
   flex-direction: column;
 }
 
+.shortlistBlock {
+  --shortlist-edge-gutter: 16px;
+  --shortlist-card-gap: 12px;
+  --shortlist-card-width: calc(100% - 56px);
+
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.viewChipBar {
+  min-width: 0;
+}
+
+.shortlistContentShell {
+  min-width: 0;
+}
+
+.shortlistViewPanel {
+  min-width: 0;
+}
+
+.shortlistViewActive {
+  display: block;
+  animation: shortlistViewSettle 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.shortlistViewHidden {
+  display: none;
+}
+
 .shortlistCarousel {
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  gap: var(--shortlist-card-gap);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0;
+  scroll-padding-inline: var(--shortlist-edge-gutter);
   scrollbar-width: none;
   -ms-overflow-style: none;
   touch-action: pan-x pan-y;
   direction: rtl;
-  padding-block: 2px 8px;
+  box-sizing: border-box;
+  padding: 2px var(--shortlist-edge-gutter) 10px;
 }
 
 .shortlistCarousel::-webkit-scrollbar {
@@ -34,11 +67,168 @@
 }
 
 .shortlistItem {
-  flex: 0 0 70%;
+  flex: 0 0 var(--shortlist-card-width);
   display: flex;
   min-width: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+.comparisonScroller,
+.tableScroller {
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x pan-y;
+  box-sizing: border-box;
+  scroll-padding-inline: var(--shortlist-edge-gutter);
+  padding: 2px var(--shortlist-edge-gutter) 10px;
+}
+
+.comparisonScroller::-webkit-scrollbar,
+.tableScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.quickCompareGrid,
+.fullTableGrid {
+  display: grid;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.055), 0 8px 24px rgba(0, 0, 0, 0.045);
+}
+
+.quickCompareGrid {
+  width: max-content;
+  grid-template-columns: 84px repeat(3, 168px);
+}
+
+.fullTableGrid {
+  width: max-content;
+  grid-template-columns: 96px repeat(3, 176px);
+}
+
+.compareRow,
+.tableRow {
+  display: contents;
+}
+
+.compareHeaderCell,
+.compareCell,
+.tableHeaderCell,
+.tableCell {
+  min-width: 0;
+  text-align: right;
+  letter-spacing: -0.05em;
+  text-wrap: pretty;
+}
+
+.compareHeaderCell,
+.tableHeaderCell {
+  min-height: 60px;
+  padding: 13px 12px 12px;
+  background: var(--color-white);
+  color: var(--color-history-title);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 17px;
+}
+
+.compareCell,
+.tableCell {
+  min-height: 52px;
+  padding: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.052);
+  color: var(--color-history-title);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.tableCell {
+  min-height: 58px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.compareLabelCell,
+.tableLabelCell {
+  background: var(--color-white);
+  color: var(--color-history-heading);
+  font-weight: 700;
+}
+
+.productHeaderCell,
+.tableHeaderCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compareProductRole,
+.tableProductRole {
+  display: block;
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+.compareProductName,
+.tableProductName {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--color-history-title);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 17px;
+}
+
+.compareProductTitle,
+.tableProductTitle {
+  display: flex;
+  min-width: 0;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 8px;
+}
+
+.compareProductImage,
+.tableProductImage {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 5px 14px rgba(0, 0, 0, 0.045);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.compareValueCell {
+  display: flex;
+  align-items: center;
+}
+
+.compareValueHighlighted {
+  background: rgba(69, 139, 237, 0.105);
+  color: var(--color-history-title);
+  font-weight: 800;
+}
+
+.recommendedColumn {
+  box-shadow: inset 0 0 0 999px rgba(69, 139, 237, 0.035);
 }
 
 .shortlistDecision {
@@ -76,4 +266,22 @@
 
 .ctaButton:active {
   scale: 0.96;
+}
+
+.offerList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@keyframes shortlistViewSettle {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

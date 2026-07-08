@@ -3,6 +3,7 @@
 import type { Icon } from "iconsax-react";
 import { CpuCharge, MedalStar, Star1, WalletMoney } from "iconsax-react";
 import { faNum } from "@/lib/faNum";
+import { Price } from "@/components/Price";
 import { PRODUCT_ROLE_LABEL, type ProductRole, type ShoppingProduct } from "@/types/shopping";
 import styles from "./ProductCard.module.css";
 
@@ -49,7 +50,9 @@ export function ProductCard({ product, onOpenDeepDive }: ProductCardProps) {
         <div className={styles.config}>{product.configuration}</div>
       </div>
 
-      <div className={styles.price}>{faNum(product.price)} میلیون تومان</div>
+      <div className={styles.price}>
+        <Price amount={faNum(product.price)} unit="میلیون تومان" />
+      </div>
 
       <div className={styles.copyBlock}>
         <p className={styles.positioning}>{product.suitableFor}</p>

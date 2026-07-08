@@ -142,12 +142,8 @@
   box-shadow: var(--shadow-card-soft);
 }
 
-.cmpTitle {
+.cmpHeader {
   margin: 0 4px 10px;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--color-history-title);
-  text-align: right;
 }
 
 .cmpTable {
@@ -171,11 +167,15 @@
   text-align: center;
   color: var(--color-history-title);
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+  /* Genuine column alignment across rows — tabular figures kept intentionally. */
   font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
 }
 
-.cmpMetric {
+td.cmpMetric {
   font-weight: 600;
+  letter-spacing: normal;
+  font-variant-numeric: normal;
 }
 
 .statusPill {
@@ -220,7 +220,8 @@
 .qProgress {
   font-size: 14px;
   color: var(--color-history-heading);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   direction: ltr;
 }
 
@@ -472,12 +473,8 @@
   margin-top: 16px;
 }
 
-.exerciseTitle {
+.exerciseHeader {
   margin: 0 4px 10px;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-history-title);
-  text-align: right;
 }
 
 .exTable {
@@ -507,12 +504,16 @@
   font-size: 14px;
   color: var(--color-history-title);
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+  /* Genuine column alignment across rows — tabular figures kept intentionally. */
   font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
 }
 
 .exTable td:first-child {
   text-align: right;
   font-weight: 500;
+  letter-spacing: normal;
+  font-variant-numeric: normal;
 }
 
 .exTable td:not(:first-child) {
@@ -527,12 +528,8 @@
   padding: 18px 16px 14px;
 }
 
-.chartTitle {
+.chartHeader {
   margin: 0 4px 14px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-history-title);
-  text-align: right;
 }
 
 .chartSvg {

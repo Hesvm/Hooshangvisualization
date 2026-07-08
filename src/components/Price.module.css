@@ -1,0 +1,16 @@
+.price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  direction: rtl;
+  white-space: nowrap;
+}
+
+.amount {
+  font-weight: 700;
+}
+
+.unit {
+  font-weight: 500;
+  letter-spacing: 0;
+}

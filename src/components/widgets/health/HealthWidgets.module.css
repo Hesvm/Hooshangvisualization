@@ -1,17 +1,5 @@
-.label {
-  margin: 0 0 8px;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--color-history-title);
-  /* Fixed left-top position regardless of page RTL direction, matching the
-     reference — the top-right corner is reserved for the icon. */
-  text-align: left;
-}
-
-.labelLight {
-  color: rgba(255, 255, 255, 0.85);
+.widgetHeader {
+  margin-bottom: 8px;
 }
 
 .value {
@@ -19,7 +7,8 @@
   font-family: var(--font-ravi);
   font-size: 26px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   text-align: center;
 }
 
@@ -66,19 +55,16 @@
 .statValueGreen {
   color: #8ce64b;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
 }
 
 .statValueCyan {
   color: #33d6d6;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
 }
 
 .statValueLight {
   color: var(--color-white);
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Movement */
@@ -140,7 +126,8 @@
   font-size: 22px;
   font-weight: 700;
   color: var(--color-white);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
   line-height: 1;
 }
 
@@ -180,7 +167,8 @@
   font-weight: 700;
   color: var(--color-white);
   line-height: 1.1;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: var(--numeric-letter-spacing);
 }
 
 .sleepQuality {

@@ -53,9 +53,45 @@ export const PRODUCT_ROLE_LABEL: Record<ProductRole, string> = {
   powerful: "قوی‌ترین گزینه",
 };
 
-export type LoanEstimate = {
-  downPayment: number;
-  months: number;
-  creditAmount: number;
+export type LoanOffer = {
+  id: string;
+  providerName: string;
+  providerInitial: string;
+  logoSrc: string;
+  annualRate: number;
+  loanAmount: number;
+  repaymentMonths: number;
   monthlyInstallment: number;
+  totalRepayment: number;
+  requiredMembership: string;
+  guaranteeType: string;
+  isRecommended: boolean;
+};
+
+export type ValidationStageStatus = "pending" | "active" | "completed" | "failed";
+
+export type ValidationStage = {
+  id: string;
+  title: string;
+  processingText: string;
+  icon: string;
+  status: ValidationStageStatus;
+  durationMs: number;
+  startedAt?: number;
+};
+
+export type Address = {
+  id: string;
+  label: string;
+  recipientName: string;
+  fullAddress: string;
+  postalCode: string;
+};
+
+export type DeliverySlot = {
+  id: string;
+  dayLabel: string;
+  dateLabel: string;
+  timeWindow: string;
+  isExpress?: boolean;
 };

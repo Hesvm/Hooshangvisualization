@@ -1,4 +1,5 @@
 import type { SpaceWidget } from "@/types/widget";
+import type { ComposerSuggestion } from "@/types/space";
 import type { HistoryItem } from "@/types/history";
 import { MovementWidget } from "@/components/widgets/health/MovementWidget";
 import { HeartWidget } from "@/components/widgets/health/HeartWidget";
@@ -7,8 +8,12 @@ import { StepsWidget } from "@/components/widgets/health/StepsWidget";
 import { PurchaseHistoryWidget } from "@/components/widgets/shopping/PurchaseHistoryWidget";
 import { ShoppingListWidget } from "@/components/widgets/shopping/ShoppingListWidget";
 import { YourItemsWidget } from "@/components/widgets/shopping/YourItemsWidget";
+import { MonthlyListNoteWidget, SmartReorderWidget } from "@/components/widgets/grocery/GroceryWidgets";
+import { SpendingWidget } from "@/components/widgets/finance/SpendingWidget";
 import { healthWidgetData, healthHistory } from "@/lib/mocks/health";
 import { purchaseDayActivity, shoppingListData, yourItemsData, shoppingHistory } from "@/lib/mocks/shopping";
+import { groceryHomeHistory, groceryMonthlyList, groceryReorderItems } from "@/lib/mocks/monthlyGrocery";
+import { SPENDING_DATA } from "@/lib/mocks/spending";
 
 export type SpacePageContent = {
   title: string;
@@ -18,6 +23,7 @@ export type SpacePageContent = {
   accentRgb: string;
   widgets: SpaceWidget[];
   history: HistoryItem[];
+  quickStarts?: ComposerSuggestion[];
 };
 
 export const spacePages: Record<string, SpacePageContent> = {
@@ -45,5 +51,43 @@ export const spacePages: Record<string, SpacePageContent> = {
       { id: "shoppingList", span: "half", component: ShoppingListWidget, data: shoppingListData },
     ],
     history: shoppingHistory,
+  },
+  "kharid-supermarketi": {
+    title: "خرید روزمره",
+    iconSrc: "/images/spaces/new-icons-symbol-130/grocery.png",
+    accentRgb: "245, 112, 34", // restrained grocery orange
+
+    widgets: [
+      {
+        id: "monthlyList",
+        span: "half",
+        component: MonthlyListNoteWidget,
+        data: groceryMonthlyList,
+      },
+      {
+        id: "smartReorder",
+        span: "half",
+        component: SmartReorderWidget,
+        data: { title: "وقت خرید دوباره", items: groceryReorderItems },
+      },
+    ],
+    quickStarts: [
+      {
+        id: "monthly-grocery",
+        label: "خرید ماهانه‌ام رو انجام بده",
+        icon: "shopping",
+        prompt: "ما ۴ نفریم و می‌خوام خرید ماهانه خونه رو انجام بدم.",
+        href: "/spaces/kharid-supermarketi/conversations/monthly-grocery-shopping",
+      },
+    ],
+    history: groceryHomeHistory,
+  },
+  "modiriat-mali": {
+    title: "سرمایه‌گذاری",
+    iconSrc: "/images/spaces/new-icons-symbol-130/finance.png",
+    accentRgb: "26, 158, 107", // finance green, from the success token
+
+    widgets: [{ id: "spending", span: "full", component: SpendingWidget, data: SPENDING_DATA }],
+    history: [],
   },
 };

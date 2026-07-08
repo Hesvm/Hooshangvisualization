@@ -1,0 +1,19 @@
+.spectrum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 52px;
+  padding: 0 4px;
+}
+
+.bar {
+  flex-shrink: 0;
+  width: 2px;
+  min-height: 6px;
+  border-radius: 999px;
+  background: var(--color-gray-neutral-800);
+  transition-property: height;
+  transition-duration: 70ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
