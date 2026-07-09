@@ -1,49 +1,67 @@
 export type MovementData = {
-  calories: number;
-  calorieGoal: number;
-  exerciseMinutes: string;
-  standHours: string;
+  moveValue: number;
+  moveGoal: number;
+  exerciseValue: number;
+  exerciseGoal: number;
+  standValue: number;
+  standGoal: number;
 };
 
 export type HeartData = {
   bpm: number;
+  minutesAgo: number;
   restingBpm: number;
-  normalRange: string;
+  rangeLow: number;
+  rangeHigh: number;
+  hrv: number;
 };
 
 export type SleepData = {
   score: number;
   quality: string;
-  duration: string;
+  sleepDuration: string;
+  inBed: string;
+  wakeUps: number;
 };
 
 export type StepsData = {
   count: string;
+  percent: number;
   distanceKm: number;
+  climbedFlights: number;
   activeTime: string;
 };
 
 export const healthWidgetData = {
   movement: {
-    calories: 735,
-    calorieGoal: 1070,
-    exerciseMinutes: "۴۴/۵۰",
-    standHours: "۱۰/۱۲",
+    moveValue: 1013,
+    moveGoal: 700,
+    exerciseValue: 52,
+    exerciseGoal: 45,
+    standValue: 17,
+    standGoal: 12,
   } satisfies MovementData,
   heart: {
-    bpm: 62,
-    restingBpm: 62,
-    normalRange: "۳۸–۱۸۷",
+    bpm: 74,
+    minutesAgo: 5,
+    restingBpm: 59,
+    rangeLow: 47,
+    rangeHigh: 163,
+    hrv: 29,
   } satisfies HeartData,
   sleep: {
-    score: 98,
-    quality: "عالی",
-    duration: "۴ ساعت و ۱۹ دقیقه",
+    score: 61,
+    quality: "متوسط",
+    sleepDuration: "۴:۳۳ ساعت",
+    inBed: "۴:۵۶ ساعت",
+    wakeUps: 5,
   } satisfies SleepData,
   steps: {
-    count: "۱۳٫۴k",
-    distanceKm: 10.2,
-    activeTime: "۵ ساعت و ۲۱ دقیقه",
+    count: "8.1k",
+    percent: 81,
+    distanceKm: 6.2,
+    climbedFlights: 1,
+    activeTime: "۹:۴۲ ساعت",
   } satisfies StepsData,
 };
 

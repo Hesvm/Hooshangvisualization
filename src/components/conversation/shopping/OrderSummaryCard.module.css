@@ -1,8 +1,21 @@
 .card {
+  position: relative;
   background: var(--color-white);
-  border-radius: 22px;
-  padding: 18px 16px;
+  border-radius: 22px 22px 0 0;
+  padding: 18px 16px 28px;
   box-shadow: var(--shadow-card-soft);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -10px;
+  height: 20px;
+  background:
+    radial-gradient(circle at 10px 0, transparent 10px, var(--color-white) 10.5px) 0 0 / 40px 20px repeat-x;
+  filter: drop-shadow(0 8px 12px rgba(20, 24, 32, 0.04));
 }
 
 .header {
@@ -28,7 +41,17 @@
   border-radius: 14px; /* concentric: 22px card - inset */
   background: var(--color-surface-subtle);
   outline: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 22px;
+  overflow: hidden;
+}
+
+.productPhoto {
+  display: block;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: contain;
+  outline: 1px solid rgba(0, 0, 0, 0.06);
+  outline-offset: -1px;
 }
 
 .productInfo {
@@ -43,17 +66,11 @@
   text-wrap: pretty;
 }
 
-.productConfig {
-  font-size: 12.5px;
-  color: var(--color-history-heading);
-  margin-top: 2px;
-}
-
 .unitPrice {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-history-title);
-  margin-top: 4px;
+  margin-top: 6px;
   font-variant-numeric: proportional-nums;
   letter-spacing: var(--numeric-letter-spacing);
 }

@@ -233,14 +233,6 @@ export function CryptoPortfolioFlow() {
     });
   }
 
-  function handleResetAllocation() {
-    if (!state.recommendedPresetId) return;
-    patch({
-      allocationItems: PRESETS[state.recommendedPresetId].map((item) => ({ ...item })),
-      allocationPresetId: state.recommendedPresetId,
-    });
-  }
-
   const selectedExchange = EXCHANGES.find((e) => e.id === state.selectedExchangeId) ?? null;
   const currentRiskQuestion =
     state.currentQuestionIndex >= 0 && state.currentQuestionIndex < RISK_QUESTIONS.length
@@ -346,7 +338,6 @@ export function CryptoPortfolioFlow() {
             activePresetId={state.allocationPresetId}
             onSliderChange={handleSliderChange}
             onPresetPick={handlePresetPick}
-            onReset={handleResetAllocation}
           />
         </Reveal>
       )}

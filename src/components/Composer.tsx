@@ -62,25 +62,35 @@ export function Composer({
   const devKeyboardRef = useRef<HTMLImageElement>(null);
   const suggestionExitTimerRef = useRef<number | null>(null);
   const valueRef = useRef(value);
-  valueRef.current = value;
+  const visibleSuggestions = useMemo(
+    () => suggestions?.slice(0, MAX_VISIBLE_SUGGESTIONS) ?? [],
+    [suggestions],
+  );
 
   const voice = useVoiceComposer({
     getDraft: () => valueRef.current,
     setDraft: setValue,
+    getMockTranscript: () => {
+      const firstSuggestion = visibleSuggestions[0];
+      return firstSuggestion?.prompt || firstSuggestion?.label || "";
+    },
     onRecordingStart: () => {
       inputRef.current?.blur();
       hideSuggestionRows();
+    },
+    onTranscriptReady: () => {
+      window.requestAnimationFrame(() => inputRef.current?.focus());
     },
   });
 
   const isSend = value.trim().length > 0;
   const isVoiceActive = voice.mode !== "idle" && voice.mode !== "error";
   const state: ComposerState = sending ? "submitting" : voice.mode !== "idle" ? voice.mode : focused ? "focused" : "idle";
-  const visibleSuggestions = useMemo(
-    () => suggestions?.slice(0, MAX_VISIBLE_SUGGESTIONS) ?? [],
-    [suggestions],
-  );
   const shouldRenderSuggestions = renderedSuggestions.length > 0 && !isVoiceActive;
+
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
 
   useEffect(() => {
     onStateChange?.(state);

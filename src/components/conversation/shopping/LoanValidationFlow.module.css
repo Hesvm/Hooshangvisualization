@@ -55,14 +55,9 @@
   width: 72px;
   height: 72px;
   color: #4b6fe5;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 70% 72%, rgba(79, 101, 225, 0.24), transparent 28%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(226, 231, 255, 0.86));
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.06),
-    0 10px 24px rgba(71, 91, 197, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .iconFrame {

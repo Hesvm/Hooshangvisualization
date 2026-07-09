@@ -51,8 +51,15 @@ export function LoanInvoice({ product, offer, onConfirm }: LoanInvoiceProps) {
           <div className={styles.productConfig}>{product.configuration}</div>
           <Price className={styles.productPrice} amount={formatPersianNumber(priceToman)} />
         </div>
-        <div className={styles.productImage} aria-hidden>
-          {product.imageGlyph}
+        <div className={styles.productImage}>
+          <Image
+            className={styles.productPhoto}
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            width={56}
+            height={56}
+            sizes="56px"
+          />
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { TickCircle } from "iconsax-react";
+import { Calendar, Home2, ReceiptText, ShieldTick, TickCircle, TruckFast } from "iconsax-react";
 import { Price } from "@/components/Price";
 import { faNum, formatPersianNumber } from "@/lib/faNum";
 import { LOAN_PAYMENT_SUCCESS, LOAN_PAYMENT_SUCCESS_SUPPORT } from "@/lib/mocks/shoppingScript";
@@ -27,34 +27,50 @@ export function ReceiptCard({ product, offer, address, deliverySlot, immediatePa
         </div>
       </div>
 
-      <div className={styles.tokenBox}>
-        <span className={styles.tokenLabel}>کد پیگیری سفارش</span>
-        <span className={styles.tokenValue}>{orderCode}</span>
-      </div>
+      <div className={styles.receiptGrid}>
+        <div className={styles.tokenBox}>
+          <ReceiptText variant="Bold" size={18} color="var(--color-primary)" />
+          <span className={styles.tokenLabel}>کد پیگیری</span>
+          <span className={styles.tokenValue}>{orderCode}</span>
+        </div>
 
-      <div className={styles.divider} />
-
-      <div className={styles.row}>
-        <span>کالا</span>
-        <strong>{product.name}</strong>
-      </div>
-      <div className={styles.row}>
-        <span>ارائه‌دهنده وام</span>
-        <strong>{offer.providerName}</strong>
-      </div>
-      <div className={styles.row}>
-        <span>آدرس تحویل</span>
-        <strong>{address.label}</strong>
-      </div>
-      <div className={styles.row}>
-        <span>زمان ارسال</span>
-        <strong>
-          {deliverySlot.dayLabel} · {faNum(deliverySlot.timeWindow)}
-        </strong>
-      </div>
-      <div className={`${styles.row} ${styles.rowHighlight}`}>
-        <span>پرداخت نقدی اولیه</span>
-        <strong>{immediatePayment > 0 ? <Price amount={formatPersianNumber(immediatePayment)} /> : "صفر تومان"}</strong>
+        <div className={styles.row}>
+          <span className={styles.rowIcon} aria-hidden>
+            <ShieldTick variant="Bold" size={15} color="currentColor" />
+          </span>
+          <span>کالا</span>
+          <strong>{product.name}</strong>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.rowIcon} aria-hidden>
+            <TruckFast variant="Bold" size={15} color="currentColor" />
+          </span>
+          <span>ارائه‌دهنده وام</span>
+          <strong>{offer.providerName}</strong>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.rowIcon} aria-hidden>
+            <Home2 variant="Bold" size={15} color="currentColor" />
+          </span>
+          <span>آدرس تحویل</span>
+          <strong>{address.label}</strong>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.rowIcon} aria-hidden>
+            <Calendar variant="Bold" size={15} color="currentColor" />
+          </span>
+          <span>زمان ارسال</span>
+          <strong>
+            {deliverySlot.dayLabel} · {faNum(deliverySlot.timeWindow)}
+          </strong>
+        </div>
+        <div className={`${styles.row} ${styles.rowHighlight}`}>
+          <span className={styles.rowIcon} aria-hidden>
+            <ReceiptText variant="Bold" size={15} color="currentColor" />
+          </span>
+          <span>پرداخت نقدی اولیه</span>
+          <strong>{immediatePayment > 0 ? <Price amount={formatPersianNumber(immediatePayment)} /> : "صفر تومان"}</strong>
+        </div>
       </div>
     </div>
   );

@@ -1,71 +1,63 @@
-.widgetHeader {
-  margin-bottom: 8px;
+/* Fixed-zone layout, shared by all 4 square health widgets:
+   Zone A (.visualZone) — fixed height, holds the chart/heart/moon graphic.
+   Zone B — main number + sublabel, either inside Zone A (overlaid, like the
+     reference) or directly under it.
+   Zone C (.metaZone) — exactly 2 secondary rows, fixed height each, never
+   wraps (nowrap + ellipsis is a hard safety net, not the primary layout).
+   Persian/RTL content, matching the rest of the app. */
+
+.visualZone {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.value {
-  margin: 0;
-  font-family: var(--font-ravi);
-  font-size: 26px;
-  font-weight: 700;
-  font-variant-numeric: proportional-nums;
-  letter-spacing: var(--numeric-letter-spacing);
-  text-align: center;
-}
-
-.valueLight {
-  color: var(--color-white);
-}
-
-.subValue {
-  margin: 2px 0 0;
-  font-family: var(--font-ravi);
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-}
-
-/* Normal flow (not absolute) inside a flex-column card, pushed to the
-   bottom via margin-top: auto — avoids overlapping the content above when
-   that content's height varies between widgets. */
-.statRows {
+.metaZone {
+  flex: 0 0 auto;
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
-.statRow {
+.metaRow {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.metaLabel {
   font-family: var(--font-ravi);
-  font-size: 13px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
-.statLabel {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.statLabelLight {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.statValueGreen {
-  color: #8ce64b;
+.metaValue {
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  line-height: 1.25;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: left;
 }
 
-.statValueCyan {
-  color: #33d6d6;
-  font-weight: 600;
-}
-
-.statValueLight {
-  color: var(--color-white);
-  font-weight: 600;
-}
+.valueGreen { color: #a6ff00; }
+.valueCyan { color: #35d8f2; }
+.valueWhite { color: var(--color-white); }
 
 /* Movement */
 .movement {
@@ -73,17 +65,35 @@
   color: var(--color-white);
   display: flex;
   flex-direction: column;
+  position: relative;
+  padding: 16px;
 }
 
-.movementIcon {
-  color: #8ce64b;
+.starBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #ffb800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3a2a00;
+  z-index: 1;
+}
+
+.movement .visualZone {
+  height: 64px;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .rings {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   display: block;
-  margin: 0 auto 8px;
 }
 
 /* Heart */
@@ -92,48 +102,48 @@
   color: var(--color-white);
   display: flex;
   flex-direction: column;
-}
-
-.heartTopIcon {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.heartGlyphWrap {
   position: relative;
-  width: 72px;
-  height: 65px;
-  margin: 0 auto 8px;
+  padding: 16px;
 }
 
-.heartGlyph {
-  width: 100%;
-  height: 100%;
+.heart .visualZone {
+  height: 78px;
+  margin-bottom: 8px;
+}
+
+.heartShape {
+  width: 100px;
+  height: auto;
   display: block;
 }
 
-.heartBpmWrap {
+.heartCenter {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 1px;
 }
 
-.heartBpm {
+.heartValue {
   font-family: var(--font-ravi);
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--color-white);
-  font-variant-numeric: proportional-nums;
-  letter-spacing: var(--numeric-letter-spacing);
+  color: #e8384f;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -8px;
 }
 
-.heartBpmUnit {
+.heartSub {
   font-family: var(--font-ravi);
-  font-size: 10px;
+  font-size: 11px;
+  color: rgba(232, 56, 79, 0.75);
+}
+
+.heart .metaLabel {
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -143,60 +153,117 @@
   color: var(--color-white);
   display: flex;
   flex-direction: column;
+  padding: 16px;
 }
 
-.sleepTopIcon {
-  color: rgba(255, 255, 255, 0.85);
+.sleep .visualZone {
+  height: 78px;
+  margin-bottom: 8px;
 }
 
-.sleepScoreCircle {
-  width: 68px;
-  height: 68px;
+.moon {
+  width: 78px;
+  height: 78px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
+  background: radial-gradient(circle at 35% 32%, #efe9ff 0%, #c8bdf5 38%, #8b7ce0 70%, #6a5cf0 100%);
+  box-shadow: 0 0 20px rgba(200, 189, 245, 0.5);
+  opacity: 0.5;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.sleepCenter {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 8px;
+  gap: 1px;
 }
 
-.sleepScore {
+.moon::before,
+.moon::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(90, 70, 160, 0.35);
+}
+
+.moon::before {
+  width: 11px;
+  height: 11px;
+  top: 11px;
+  left: 10px;
+}
+
+.moon::after {
+  width: 7px;
+  height: 7px;
+  bottom: 10px;
+  right: 11px;
+}
+
+.sleepValue {
   font-family: var(--font-ravi);
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-white);
-  line-height: 1.1;
-  font-variant-numeric: proportional-nums;
-  letter-spacing: var(--numeric-letter-spacing);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -8px;
 }
 
 .sleepQuality {
   font-family: var(--font-ravi);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Steps */
+/* Steps / Distance */
 .steps {
   background: #5a6472;
   color: var(--color-white);
   display: flex;
   flex-direction: column;
+  position: relative;
+  padding: 16px;
 }
 
-.stepsTopIcon {
-  color: rgba(255, 255, 255, 0.85);
+.steps .visualZone {
+  height: 78px;
+  margin-bottom: 8px;
 }
 
 .gauge {
-  width: 64px;
-  height: 34px;
+  width: 88px;
+  height: 88px;
   display: block;
-  margin: 4px auto 0;
+}
+
+.gaugeCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
 }
 
 .gaugeValue {
-  text-align: center;
-  margin-top: -6px;
+  font-family: var(--font-ravi);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -3px;
+}
+
+.gaugePercent {
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
 }

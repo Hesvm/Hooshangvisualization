@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import type { ComponentType } from "react";
+import { Chart2, Clock, Convertshape2, ShieldTick } from "iconsax-react";
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { NumericText } from "@/components/NumericText";
 import { faNum, formatTomanCompact } from "@/lib/faNum";
 import { TOTAL_INVESTABLE_AMOUNT } from "@/lib/allocation";
-import {
-  ALLOCATION_EDITOR_COPY,
-  ALLOCATION_SAVED_COPY,
-  ALLOCATION_SHARE_COMING_SOON_COPY,
-} from "@/lib/mocks/financeCopy";
+import { ALLOCATION_EDITOR_COPY } from "@/lib/mocks/financeCopy";
 import { deriveRiskSummary } from "@/lib/allocation";
 import type { AllocationItem, AllocationPresetId, LiquidityLevel, MarketId, RiskLevel } from "@/types/finance";
 import { ChipRow } from "./ChipRow";
@@ -21,7 +18,6 @@ type AllocationEditorProps = {
   activePresetId: AllocationPresetId | null;
   onSliderChange: (marketId: MarketId, value: number) => void;
   onPresetPick: (presetId: AllocationPresetId) => void;
-  onReset: () => void;
 };
 
 const PRESET_CHIPS: { id: string; label: string }[] = [
@@ -33,18 +29,21 @@ const PRESET_CHIPS: { id: string; label: string }[] = [
 const RISK_LABEL: Record<RiskLevel, string> = { low: "کم", medium: "متوسط", high: "بالا" };
 const LIQUIDITY_LABEL: Record<LiquidityLevel, string> = { low: "کم", medium: "متوسط", high: "بالا" };
 
-function SummaryStat({ label, value }: { label: string; value: string }) {
+type IconComponent = ComponentType<{ variant?: "Linear" | "Bold"; size?: number; color?: string }>;
+
+function SummaryStat({ label, value, icon: Icon }: { label: string; value: string; icon: IconComponent }) {
   return (
-    <div>
+    <div className={styles.summaryStat}>
+      <span className={styles.summaryStatIcon} aria-hidden>
+        <Icon variant="Bold" size={15} color="currentColor" />
+      </span>
       <div className={styles.summaryStatLabel}>{label}</div>
       <div className={styles.summaryStatValue}>{value}</div>
     </div>
   );
 }
 
-export function AllocationEditor({ items, activePresetId, onSliderChange, onPresetPick, onReset }: AllocationEditorProps) {
-  const [saved, setSaved] = useState(false);
-  const [shareNoticeShown, setShareNoticeShown] = useState(false);
+export function AllocationEditor({ items, activePresetId, onSliderChange, onPresetPick }: AllocationEditorProps) {
   const riskSummary = deriveRiskSummary(items);
 
   return (
@@ -94,50 +93,14 @@ export function AllocationEditor({ items, activePresetId, onSliderChange, onPres
       <div className={styles.summary}>
         <div className={styles.summaryTitle}>{ALLOCATION_EDITOR_COPY.summaryTitle}</div>
         <div className={styles.summaryGrid}>
-          <SummaryStat label="سطح ریسک" value={RISK_LABEL[riskSummary.riskLevel]} />
-          <SummaryStat label="نقدشوندگی" value={LIQUIDITY_LABEL[riskSummary.liquidityLevel]} />
-          <SummaryStat label="بازه نوسان مورد انتظار" value={riskSummary.expectedVolatilityRange} />
-          <SummaryStat label="افق زمانی پیشنهادی" value={riskSummary.recommendedMinimumHorizon} />
+          <SummaryStat label="سطح ریسک" value={RISK_LABEL[riskSummary.riskLevel]} icon={ShieldTick} />
+          <SummaryStat label="نقدشوندگی" value={LIQUIDITY_LABEL[riskSummary.liquidityLevel]} icon={Convertshape2} />
+          <SummaryStat label="بازه نوسان مورد انتظار" value={riskSummary.expectedVolatilityRange} icon={Chart2} />
+          <SummaryStat label="افق زمانی پیشنهادی" value={riskSummary.recommendedMinimumHorizon} icon={Clock} />
         </div>
       </div>
 
       <p className={styles.disclaimer}>{ALLOCATION_EDITOR_COPY.disclaimer}</p>
-
-      <div className={styles.actions}>
-        <button
-          type="button"
-          className={styles.actionButton}
-          onClick={() => {
-            onReset();
-            setSaved(false);
-            setShareNoticeShown(false);
-          }}
-        >
-          {ALLOCATION_EDITOR_COPY.secondaryActions.resetToPreset}
-        </button>
-
-        <button
-          type="button"
-          className={styles.actionButton}
-          disabled={saved}
-          style={{ opacity: saved ? 0.6 : 1 }}
-          onClick={() => setSaved(true)}
-        >
-          {ALLOCATION_EDITOR_COPY.secondaryActions.saveAllocation}
-        </button>
-        {saved && <div className={styles.ackNote}>{ALLOCATION_SAVED_COPY}</div>}
-
-        <button
-          type="button"
-          className={styles.actionButton}
-          disabled={shareNoticeShown}
-          style={{ opacity: shareNoticeShown ? 0.6 : 1 }}
-          onClick={() => setShareNoticeShown(true)}
-        >
-          {ALLOCATION_EDITOR_COPY.secondaryActions.shareAllocation}
-        </button>
-        {shareNoticeShown && <div className={styles.ackNote}>{ALLOCATION_SHARE_COMING_SOON_COPY}</div>}
-      </div>
     </div>
   );
 }

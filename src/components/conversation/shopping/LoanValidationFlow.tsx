@@ -54,7 +54,8 @@ export function LoanValidationFlow({ stages: initialStages, onAllComplete }: Loa
   const activeStage = stages.find((s) => s.status === "active");
   const activeElapsed = activeStage?.startedAt ? Math.max(0, now - activeStage.startedAt) : 0;
   const activeProgress = activeStage ? Math.min(1, activeElapsed / activeStage.durationMs) : 0;
-  const progress = stages.length > 0 ? Math.min(1, (completedCount + activeProgress) / stages.length) : 0;
+  const visibleStartProgress = stages.length > 0 ? 0.035 : 0;
+  const progress = stages.length > 0 ? Math.min(1, Math.max(visibleStartProgress, (completedCount + activeProgress) / stages.length)) : 0;
   const allComplete = stages.length > 0 && completedCount === stages.length;
   const displayStage = activeStage ?? stages[stages.length - 1];
   const ringRadius = 92;

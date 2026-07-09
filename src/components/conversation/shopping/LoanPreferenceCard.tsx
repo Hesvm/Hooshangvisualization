@@ -53,8 +53,8 @@ export function LoanPreferenceCard({ productPrice, initialAmount, initialMonths,
               onChange={setAmount}
             />
             <div className={styles.rangeLabels}>
-              <Price amount={formatPersianNumber(productPrice)} />
               <Price amount={formatPersianNumber(MIN_LOAN_AMOUNT)} />
+              <Price amount={formatPersianNumber(productPrice)} />
             </div>
           </motion.div>
         ) : (
@@ -75,8 +75,8 @@ export function LoanPreferenceCard({ productPrice, initialAmount, initialMonths,
               onChange={setMonths}
             />
             <div className={styles.rangeLabels}>
-              <span>{faNum(REPAYMENT_MONTH_OPTIONS[REPAYMENT_MONTH_OPTIONS.length - 1])} ماه</span>
               <span>{faNum(REPAYMENT_MONTH_OPTIONS[0])} ماه</span>
+              <span>{faNum(REPAYMENT_MONTH_OPTIONS[REPAYMENT_MONTH_OPTIONS.length - 1])} ماه</span>
             </div>
           </motion.div>
         )}

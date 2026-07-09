@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRecording } from "@soniox/react";
 import { AudioDeviceError, AudioPermissionError, AudioUnavailableError } from "@soniox/client";
@@ -22,7 +22,13 @@ export type VoiceError = {
   message: string;
 };
 
+export type VoiceTranscriptionMode = "mock" | "soniox";
+
 const FINALIZE_SLOW_MS = 1500;
+const MOCK_FINALIZE_MS = 320;
+const MOCK_FALLBACK_TRANSCRIPT = "می‌خوام اینو بیشتر بررسی کنم";
+const VOICE_TRANSCRIPTION_MODE: VoiceTranscriptionMode =
+  process.env.NEXT_PUBLIC_VOICE_TRANSCRIPTION_MODE === "soniox" ? "soniox" : "mock";
 
 function normalizeTranscript(text: string): string {
   return text.replace(/\s+/g, " ").trim();
@@ -44,10 +50,34 @@ function mapError(err: unknown): VoiceError {
 type UseVoiceComposerOptions = {
   getDraft: () => string;
   setDraft: (text: string) => void;
+  getMockTranscript?: () => string;
   onRecordingStart?: () => void;
+  onTranscriptReady?: () => void;
 };
 
-export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVoiceComposerOptions) {
+function stopMediaStream(stream: MediaStream | null) {
+  stream?.getTracks().forEach((track) => track.stop());
+}
+
+function mapPermissionError(err: unknown): VoiceError {
+  if (err instanceof DOMException) {
+    if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+      return { code: "permission_denied", message: "برای استفاده از ورودی صوتی، دسترسی میکروفون لازمه." };
+    }
+    if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+      return { code: "no_microphone", message: "میکروفونی پیدا نشد." };
+    }
+  }
+  return { code: "no_microphone", message: "ورودی صوتی روی این مرورگر پشتیبانی نمی‌شه." };
+}
+
+export function useVoiceComposer({
+  getDraft,
+  setDraft,
+  getMockTranscript,
+  onRecordingStart,
+  onTranscriptReady,
+}: UseVoiceComposerOptions) {
   const [mode, setMode] = useState<VoiceMode>("idle");
   const [error, setError] = useState<VoiceError | null>(null);
   const [isFinalizingSlow, setIsFinalizingSlow] = useState(false);
@@ -56,21 +86,19 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
   const sessionIdRef = useRef(0);
   const finalizeSlowTimerRef = useRef<number | null>(null);
   const pendingSubmitSessionRef = useRef<number | null>(null);
+  const mockStreamRef = useRef<MediaStream | null>(null);
+  const mockFinalizeTimerRef = useRef<number | null>(null);
   const pathname = usePathname();
 
-  const spectrum = useAudioSpectrum();
-  const attachStreamRef = useRef(spectrum.attachStream);
-  const detachStreamRef = useRef(spectrum.detachStream);
-  attachStreamRef.current = spectrum.attachStream;
-  detachStreamRef.current = spectrum.detachStream;
-
-  const sourceRef = useRef<SharedMicrophoneSource | null>(null);
-  if (!sourceRef.current) {
-    sourceRef.current = new SharedMicrophoneSource({
-      onStreamReady: (stream) => attachStreamRef.current(stream),
-      onStreamEnded: () => detachStreamRef.current(),
-    });
-  }
+  const { samples, attachStream, detachStream, startFakeSpectrum } = useAudioSpectrum();
+  const source = useMemo(
+    () =>
+      new SharedMicrophoneSource({
+        onStreamReady: (stream) => attachStream(stream),
+        onStreamEnded: () => detachStream(),
+      }),
+    [attachStream, detachStream],
+  );
 
   function clearFinalizeSlowTimer() {
     if (finalizeSlowTimerRef.current !== null) {
@@ -80,11 +108,25 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
     setIsFinalizingSlow(false);
   }
 
+  function clearMockFinalizeTimer() {
+    if (mockFinalizeTimerRef.current !== null) {
+      window.clearTimeout(mockFinalizeTimerRef.current);
+      mockFinalizeTimerRef.current = null;
+    }
+  }
+
+  const stopMockRecording = useCallback(() => {
+    clearMockFinalizeTimer();
+    stopMediaStream(mockStreamRef.current);
+    mockStreamRef.current = null;
+    detachStream();
+  }, [detachStream]);
+
   const rec = useRecording({
     config: fetchSonioxSessionConfig,
     model: "stt-rt-v5",
     language_hints: ["fa"],
-    source: sourceRef.current,
+    source,
     resetOnStart: true,
     onStateChange: ({ new_state }) => {
       if (new_state === "starting") setMode("requesting_permission");
@@ -102,7 +144,10 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
   });
 
   const recRef = useRef(rec);
-  recRef.current = rec;
+
+  useEffect(() => {
+    recRef.current = rec;
+  }, [rec]);
 
   // `rec.stop()` resolving does not guarantee this component has re-rendered
   // with the final transcript yet — `rec` here is only fresh once React has
@@ -123,8 +168,9 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
     if (rec.state !== "stopped") return;
 
     pendingSubmitSessionRef.current = null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resolves the committed Soniox stopped state.
     clearFinalizeSlowTimer();
-    sourceRef.current?.stop();
+    source.stop();
 
     const resolved = normalizeTranscript(rec.text);
     if (!resolved) {
@@ -137,29 +183,69 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
     setDraft(resolved);
     setMode("transcript_ready");
     setMode("idle");
+    onTranscriptReady?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rec.state, rec.text]);
 
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
     setError(null);
     sessionIdRef.current += 1;
     draftBeforeRecordingRef.current = getDraft();
     onRecordingStart?.();
     setMode("requesting_permission");
+
+    if (VOICE_TRANSCRIPTION_MODE === "mock") {
+      try {
+        // Demo mode: fake STT transcript from first suggestion chip until Soniox billing is enabled.
+        if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+          throw new AudioUnavailableError("navigator.mediaDevices.getUserMedia is not available");
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mockStreamRef.current = stream;
+        startFakeSpectrum();
+        setMode("recording");
+      } catch (err) {
+        stopMockRecording();
+        setError(mapPermissionError(err));
+        setMode("error");
+        setDraft(draftBeforeRecordingRef.current);
+      }
+      return;
+    }
+
     rec.start();
-  }, [rec, getDraft, onRecordingStart]);
+  }, [rec, getDraft, onRecordingStart, setDraft, startFakeSpectrum, stopMockRecording]);
 
   const cancel = useCallback(() => {
     sessionIdRef.current += 1;
     clearFinalizeSlowTimer();
-    rec.cancel();
-    sourceRef.current?.stop();
+    if (VOICE_TRANSCRIPTION_MODE === "mock") {
+      stopMockRecording();
+    } else {
+      rec.cancel();
+      source.stop();
+    }
     setError(null);
     setMode("idle");
     setDraft(draftBeforeRecordingRef.current);
-  }, [rec, setDraft]);
+  }, [rec, setDraft, source, stopMockRecording]);
 
   const submit = useCallback(() => {
+    if (VOICE_TRANSCRIPTION_MODE === "mock") {
+      const session = sessionIdRef.current;
+      setMode("finalizing");
+      clearMockFinalizeTimer();
+      mockFinalizeTimerRef.current = window.setTimeout(() => {
+        if (session !== sessionIdRef.current) return;
+        stopMockRecording();
+        setDraft(getMockTranscript?.() || MOCK_FALLBACK_TRANSCRIPT);
+        setMode("transcript_ready");
+        setMode("idle");
+        onTranscriptReady?.();
+      }, MOCK_FINALIZE_MS);
+      return;
+    }
+
     const session = sessionIdRef.current;
     pendingSubmitSessionRef.current = session;
     setMode("finalizing");
@@ -172,7 +258,7 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
       // Swallow — the effect above still resolves the outcome from
       // whatever `rec.state` ends up settling to (stopped/error/canceled).
     });
-  }, [rec]);
+  }, [rec, getMockTranscript, onTranscriptReady, setDraft, stopMockRecording]);
 
   const retry = useCallback(() => {
     setError(null);
@@ -192,16 +278,17 @@ export function useVoiceComposer({ getDraft, setDraft, onRecordingStart }: UseVo
   useEffect(() => {
     return () => {
       recRef.current.cancel();
-      sourceRef.current?.stop();
+      source.stop();
+      stopMockRecording();
       clearFinalizeSlowTimer();
     };
-  }, []);
+  }, [source, stopMockRecording]);
 
   return {
     mode,
     error,
     isFinalizingSlow,
-    amplitudeSamples: spectrum.samples,
+    amplitudeSamples: samples,
     start,
     cancel,
     submit,

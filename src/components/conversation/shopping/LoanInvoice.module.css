@@ -1,9 +1,21 @@
 .card {
   position: relative;
   background: var(--color-white);
-  border-radius: 22px;
-  padding: 16px;
+  border-radius: 22px 22px 0 0;
+  padding: 16px 16px 28px;
   box-shadow: var(--shadow-card-soft);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -10px;
+  height: 20px;
+  background:
+    radial-gradient(circle at 10px 0, transparent 10px, var(--color-white) 10.5px) 0 0 / 40px 20px repeat-x;
+  filter: drop-shadow(0 8px 12px rgba(20, 24, 32, 0.04));
 }
 
 .header {
@@ -113,7 +125,17 @@
   border-radius: 14px;
   background: var(--color-white);
   outline: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 24px;
+  overflow: hidden;
+}
+
+.productPhoto {
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  object-fit: contain;
+  outline: 1px solid rgba(0, 0, 0, 0.06);
+  outline-offset: -1px;
 }
 
 .todayBox {

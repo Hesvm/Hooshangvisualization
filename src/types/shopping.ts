@@ -16,8 +16,9 @@ export type ShoppingProduct = {
   id: string;
   name: string;
   configuration: string;
-  /** Placeholder glyph shown in the image slot — no real product photo asset exists yet. */
-  imageGlyph: string;
+  /** Product photo used across the recommendation, comparison, and checkout surfaces. */
+  imageSrc: string;
+  imageAlt: string;
   price: number;
   originalPrice?: number;
   role: ProductRole;

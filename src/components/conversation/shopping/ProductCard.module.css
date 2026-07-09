@@ -3,15 +3,15 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding-bottom: 2px;
+  padding: 0 2px 2px;
 }
 
 .hero {
   position: relative;
-  min-height: 174px;
-  border-radius: 20px;
+  min-height: 194px;
+  border-radius: 22px;
   background: var(--color-white);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.055);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 26px rgba(15, 23, 42, 0.055);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,75 +19,118 @@
 }
 
 .imageSlot {
+  width: 100%;
+  height: 100%;
+  padding: 28px 22px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 54px;
-  line-height: 1;
 }
 
-.rolePill {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.productImage {
+  display: block;
+  width: 100%;
+  max-width: 269px;
+  height: auto;
+  max-height: 170px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 22px rgba(15, 23, 42, 0.04);
+  animation: productImageSettle 360ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.statRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.statBox {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 7px 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.055), 0 6px 16px rgba(15, 23, 42, 0.04);
+}
+
+.ratingLine,
+.roleLine {
   display: inline-flex;
   flex-direction: row;
   direction: rtl;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-  max-width: calc(100% - 20px);
-  min-height: 28px;
-  padding: 5px 9px 5px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.05em;
+  max-width: 100%;
+  color: var(--color-history-title);
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
   white-space: nowrap;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.72);
 }
 
-.rolePill svg {
+.statSupport {
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--color-history-heading);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  white-space: nowrap;
+}
+
+.roleBox {
+  gap: 0;
+}
+
+.roleLine {
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.roleLine svg,
+.ratingLine svg {
   display: block;
   flex: 0 0 auto;
 }
 
 .roleEconomical {
-  background: #fff2d6;
+  background: #fff6df;
   color: #9a6100;
 }
 
 .roleBalanced {
-  background: #e4f0ff;
+  background: #edf6ff;
   color: #2d6fb5;
 }
 
 .rolePowerful {
-  background: #eee9ff;
+  background: #f2edff;
   color: #6a4bc2;
-}
-
-.ratingRow {
-  display: flex;
-  flex-direction: row;
-  direction: rtl;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  min-height: 19px;
-  font-size: 12px;
-  color: var(--color-history-heading);
 }
 
 .ratingValue {
   font-weight: 700;
   color: var(--color-history-title);
-  font-variant-numeric: proportional-nums;
+  font-variant-numeric: tabular-nums;
   letter-spacing: var(--numeric-letter-spacing);
 }
 
 .info {
   min-width: 0;
-  margin-top: 6px;
+  margin-top: 12px;
 }
 
 .name {
@@ -98,7 +141,7 @@
   font-size: 15px;
   line-height: 20px;
   font-weight: 700;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   color: var(--color-history-title);
   text-align: right;
   text-wrap: pretty;
@@ -108,7 +151,7 @@
   margin-top: 1px;
   overflow: hidden;
   font-size: 12px;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   color: var(--color-history-heading);
   text-align: right;
   white-space: nowrap;
@@ -119,7 +162,7 @@
   margin-top: 9px;
   font-size: 15.5px;
   font-weight: 700;
-  font-variant-numeric: proportional-nums;
+  font-variant-numeric: tabular-nums;
   letter-spacing: var(--numeric-letter-spacing);
   color: var(--color-history-title);
   text-align: right;
@@ -139,7 +182,7 @@
   overflow: hidden;
   font-size: 12.5px;
   line-height: 19px;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   color: var(--color-history-title);
   text-align: right;
   text-wrap: pretty;
@@ -150,7 +193,7 @@
   overflow: hidden;
   font-size: 12px;
   line-height: 18px;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   color: var(--color-history-heading);
   text-align: right;
   white-space: nowrap;
@@ -166,7 +209,7 @@
   background: var(--color-secondary-bg);
   color: var(--color-history-title);
   font-family: var(--font-ravi);
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -177,4 +220,23 @@
 
 .deepDiveButton:active {
   scale: 0.96;
+}
+
+@keyframes productImageSettle {
+  from {
+    opacity: 0;
+    scale: 0.985;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .productImage {
+    animation: none;
+  }
 }

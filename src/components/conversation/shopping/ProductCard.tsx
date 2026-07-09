@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { Icon } from "iconsax-react";
 import { CpuCharge, MedalStar, Star1, WalletMoney } from "iconsax-react";
 import { faNum } from "@/lib/faNum";
@@ -30,19 +31,34 @@ export function ProductCard({ product, onOpenDeepDive }: ProductCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.hero}>
-        <div className={styles.imageSlot} aria-hidden>
-          {product.imageGlyph}
+        <div className={styles.imageSlot}>
+          <Image
+            className={styles.productImage}
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            width={260}
+            height={184}
+            sizes="(max-width: 430px) 76vw, 300px"
+            priority={product.role === "balanced"}
+          />
         </div>
-        <span className={`${styles.rolePill} ${ROLE_CLASSES[product.role]}`}>
-          <RoleIcon variant="Bold" size={13} color="currentColor" />
-          {PRODUCT_ROLE_LABEL[product.role]}
-        </span>
       </div>
 
-      <div className={styles.ratingRow}>
-        <Star1 variant="Bold" size={14} color="var(--color-warning)" />
-        <span className={styles.ratingValue}>{faNum(product.rating)}</span>
-        <span>({faNum(product.reviewCount)} نظر)</span>
+      <div className={styles.statRow}>
+        <div className={styles.statBox}>
+          <div className={styles.ratingLine}>
+            <Star1 variant="Bold" size={15} color="var(--color-warning)" />
+            <span className={styles.ratingValue}>{faNum(product.rating)}</span>
+          </div>
+          <span className={styles.statSupport}>{faNum(product.reviewCount)} نظر</span>
+        </div>
+
+        <div className={`${styles.statBox} ${styles.roleBox} ${ROLE_CLASSES[product.role]}`}>
+          <div className={styles.roleLine}>
+            <RoleIcon variant="Bold" size={15} color="currentColor" />
+            <span>{PRODUCT_ROLE_LABEL[product.role]}</span>
+          </div>
+        </div>
       </div>
 
       <div className={styles.info}>

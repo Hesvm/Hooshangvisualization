@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppViewport } from "@/components/AppViewport";
 import "../styles/tokens.css";
 import "./globals.css";
 
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body>
+        <AppViewport>{children}</AppViewport>
+      </body>
     </html>
   );
 }

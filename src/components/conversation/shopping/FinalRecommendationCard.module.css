@@ -13,7 +13,6 @@
   min-height: clamp(220px, 58vw, 260px);
   border-radius: 18px;
   background: var(--color-white);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.055), 0 3px 10px rgba(0, 0, 0, 0.035);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,10 +24,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(72px, 20vw, 92px);
-  line-height: 1;
   transform-origin: center;
   animation: heroSettle 420ms cubic-bezier(0.2, 0, 0, 1) 90ms both;
+}
+
+.productImage {
+  display: block;
+  width: 100%;
+  max-width: 292px;
+  height: auto;
+  max-height: 190px;
+  object-fit: contain;
 }
 
 .identityBlock {

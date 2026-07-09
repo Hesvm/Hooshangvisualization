@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { InfoCircle, ShieldTick, TickCircle, Truck, Refresh, Chart, Star1 } from "iconsax-react";
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
@@ -21,8 +22,15 @@ export function FinalRecommendationCard({ product }: FinalRecommendationCardProp
       <ComponentHeader title="انتخاب مناسب تو" tone="accent" className={styles.labelHeader} />
 
       <div className={styles.heroFrame}>
-        <div className={styles.imageSlot} aria-hidden>
-          {product.imageGlyph}
+        <div className={styles.imageSlot}>
+          <Image
+            className={styles.productImage}
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            width={320}
+            height={220}
+            sizes="(max-width: 430px) 76vw, 360px"
+          />
         </div>
       </div>
 

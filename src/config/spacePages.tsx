@@ -33,10 +33,10 @@ export const spacePages: Record<string, SpacePageContent> = {
     accentRgb: "232, 56, 79", // soft pink, from the heart icon
 
     widgets: [
-      { id: "movement", span: "half", component: MovementWidget, data: healthWidgetData.movement },
       { id: "heart", span: "half", component: HeartWidget, data: healthWidgetData.heart },
-      { id: "sleep", span: "half", component: SleepWidget, data: healthWidgetData.sleep },
+      { id: "movement", span: "half", component: MovementWidget, data: healthWidgetData.movement },
       { id: "steps", span: "half", component: StepsWidget, data: healthWidgetData.steps },
+      { id: "sleep", span: "half", component: SleepWidget, data: healthWidgetData.sleep },
     ],
     history: healthHistory,
   },
@@ -69,15 +69,6 @@ export const spacePages: Record<string, SpacePageContent> = {
         span: "half",
         component: SmartReorderWidget,
         data: { title: "وقت خرید دوباره", items: groceryReorderItems },
-      },
-    ],
-    quickStarts: [
-      {
-        id: "monthly-grocery",
-        label: "خرید ماهانه‌ام رو انجام بده",
-        icon: "shopping",
-        prompt: "ما ۴ نفریم و می‌خوام خرید ماهانه خونه رو انجام بدم.",
-        href: "/spaces/kharid-supermarketi/conversations/monthly-grocery-shopping",
       },
     ],
     history: groceryHomeHistory,

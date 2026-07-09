@@ -2,21 +2,20 @@
   position: relative;
   background: var(--color-white);
   border-radius: 22px 22px 0 0;
-  padding: 18px 16px 26px;
+  padding: 18px 16px 30px;
   box-shadow: var(--shadow-card-soft);
 }
 
 .card::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 14px;
-  background-image: linear-gradient(135deg, var(--color-bg-gradient-bottom) 50%, transparent 50%),
-    linear-gradient(225deg, var(--color-bg-gradient-bottom) 50%, transparent 50%);
-  background-size: 16px 16px;
-  background-position: bottom left;
+  left: 14px;
+  right: 14px;
+  bottom: -10px;
+  height: 20px;
+  background:
+    radial-gradient(circle at 10px 0, transparent 10px, var(--color-white) 10.5px) 0 0 / 40px 20px repeat-x;
+  filter: drop-shadow(0 8px 12px rgba(20, 24, 32, 0.04));
   background-repeat: repeat-x;
 }
 
@@ -43,15 +42,21 @@
   text-wrap: pretty;
 }
 
-.tokenBox {
+.receiptGrid {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.tokenBox {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   border: 1.5px dashed var(--color-border-soft);
   border-radius: 14px; /* concentric: 22px card - inset */
-  padding: 12px 14px;
-  margin-bottom: 14px;
+  padding: 12px;
   background: var(--color-surface-subtle);
 }
 
@@ -61,27 +66,51 @@
 }
 
 .tokenValue {
-  font-size: 20px;
+  margin-right: auto;
+  font-size: 17px;
   font-weight: 800;
   color: var(--color-history-title);
   font-variant-numeric: proportional-nums;
   letter-spacing: 0.08em;
 }
 
-.divider {
-  height: 1px;
-  background: var(--color-border-soft);
-  margin: 12px 0;
-}
-
 .row {
   display: flex;
   flex-direction: row;
+  direction: rtl;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 14px;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(242, 242, 244, 0.58);
+  font-size: 13px;
   color: var(--color-history-title);
+}
+
+.rowIcon {
+  display: grid;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--color-white);
+  color: var(--color-history-heading);
+}
+
+.row span:not(.rowIcon) {
+  color: var(--color-history-heading);
+}
+
+.row strong {
+  margin-right: auto;
+  max-width: 52%;
+  overflow: hidden;
+  color: var(--color-history-title);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rowHighlight strong {

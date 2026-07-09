@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { AssistantText, UserBubble } from "@/components/conversation/blocks";
 import { ThinkingBeat } from "@/components/conversation/HooshangThinkingState";
 import { BottomSheet } from "@/components/BottomSheet";
@@ -380,8 +381,15 @@ function QuickCompareView({ products, recommendedProductId }: { products: Shoppi
           >
             <span className={styles.compareProductRole}>{PRODUCT_ROLE_LABEL[product.role]}</span>
             <span className={styles.compareProductTitle}>
-              <span className={styles.compareProductImage} aria-hidden>
-                {product.imageGlyph}
+              <span className={styles.compareProductImage}>
+                <Image
+                  className={styles.compareProductPhoto}
+                  src={product.imageSrc}
+                  alt={product.imageAlt}
+                  width={34}
+                  height={34}
+                  sizes="34px"
+                />
               </span>
               <span className={styles.compareProductName}>{product.name}</span>
             </span>
@@ -419,8 +427,15 @@ function FullTableView({ products, recommendedProductId }: { products: ShoppingP
           <div key={product.id} className={`${styles.tableHeaderCell} ${product.id === recommendedProductId ? styles.recommendedColumn : ""}`}>
             <span className={styles.tableProductRole}>{PRODUCT_ROLE_LABEL[product.role]}</span>
             <span className={styles.tableProductTitle}>
-              <span className={styles.tableProductImage} aria-hidden>
-                {product.imageGlyph}
+              <span className={styles.tableProductImage}>
+                <Image
+                  className={styles.tableProductPhoto}
+                  src={product.imageSrc}
+                  alt={product.imageAlt}
+                  width={34}
+                  height={34}
+                  sizes="34px"
+                />
               </span>
               <span className={styles.tableProductName}>{product.name}</span>
             </span>

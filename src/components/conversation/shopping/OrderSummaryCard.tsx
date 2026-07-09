@@ -48,12 +48,18 @@ export function OrderSummaryCard({
       />
 
       <div className={styles.productRow}>
-        <div className={styles.productImage} aria-hidden>
-          {product.imageGlyph}
+        <div className={styles.productImage}>
+          <Image
+            className={styles.productPhoto}
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            width={48}
+            height={48}
+            sizes="48px"
+          />
         </div>
         <div className={styles.productInfo}>
           <div className={styles.productName}>{product.name}</div>
-          <div className={styles.productConfig}>{product.configuration}</div>
           <Price className={styles.unitPrice} amount={formatPersianNumber(unitPriceToman)} />
         </div>
         <div className={styles.quantityControl}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { faNum } from "@/lib/faNum";
 import { Price } from "@/components/Price";
 import { PRODUCT_ROLE_LABEL, type ShoppingProduct } from "@/types/shopping";
@@ -25,8 +26,15 @@ export function DeepDiveSheet({ product, otherProducts, onSelectAsFinal }: DeepD
   return (
     <div>
       <div className={styles.header}>
-        <div className={styles.imageSlot} aria-hidden>
-          {product.imageGlyph}
+        <div className={styles.imageSlot}>
+          <Image
+            className={styles.productImage}
+            src={product.imageSrc}
+            alt={product.imageAlt}
+            width={56}
+            height={56}
+            sizes="56px"
+          />
         </div>
         <div className={styles.headerInfo}>
           <div className={styles.name}>{product.name}</div>

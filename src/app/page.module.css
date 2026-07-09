@@ -2,7 +2,7 @@
   position: relative;
   width: 100%;
   max-width: 390px;
-  min-height: 100dvh;
+  height: 100%;
   margin: 0 auto;
   background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
   overflow: hidden;

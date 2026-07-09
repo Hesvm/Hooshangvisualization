@@ -212,8 +212,18 @@
   border-radius: 12px;
   background: var(--color-white);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 5px 14px rgba(0, 0, 0, 0.045);
-  font-size: 20px;
-  line-height: 1;
+  overflow: hidden;
+}
+
+.compareProductPhoto,
+.tableProductPhoto {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: contain;
+  outline: 1px solid rgba(0, 0, 0, 0.06);
+  outline-offset: -1px;
 }
 
 .compareValueCell {
