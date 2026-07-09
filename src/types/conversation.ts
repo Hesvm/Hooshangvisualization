@@ -97,6 +97,10 @@ export type ConversationBlock =
   | {
       id: string;
       kind: "financeCryptoAnalysis";
+    }
+  | {
+      id: string;
+      kind: "rentalHouseSearch";
     };
 
 export type Conversation = {

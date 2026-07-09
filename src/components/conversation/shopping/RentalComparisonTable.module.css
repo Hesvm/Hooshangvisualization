@@ -1,0 +1,67 @@
+.card {
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 16px;
+}
+
+.scroller {
+  overflow-x: auto;
+  margin-top: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  direction: rtl;
+  min-width: 100%;
+}
+
+.headCell,
+.cell {
+  padding: 10px 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rowLabelCell {
+  position: sticky;
+  right: 0;
+  background: var(--color-white);
+  color: var(--color-history-heading);
+  font-size: 12.5px;
+  font-weight: 650;
+  z-index: 1;
+}
+
+.headCell {
+  color: var(--color-history-title);
+  font-size: 12.5px;
+  font-weight: 750;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cell {
+  color: var(--color-history-title);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.bestColumn {
+  background: rgba(59, 147, 235, 0.08);
+}
+
+.bestLabel {
+  display: inline-block;
+  margin-right: 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+}

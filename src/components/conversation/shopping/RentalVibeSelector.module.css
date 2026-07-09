@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
+  transition-property: scale, outline-color;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.card:active {
+  scale: 0.97;
+}
+
+.cardSelected {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.labelPill {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  border-radius: 10px;
+  background: rgba(16, 16, 19, 0.55);
+  backdrop-filter: blur(6px);
+  color: var(--color-white);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 10px;
+  text-align: right;
+  text-wrap: balance;
+}

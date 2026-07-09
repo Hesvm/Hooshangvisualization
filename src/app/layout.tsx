@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppViewport } from "@/components/AppViewport";
+import { VirtualNotificationProvider } from "@/components/notifications/VirtualNotificationProvider";
 import "../styles/tokens.css";
 import "./globals.css";
 
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <AppViewport>{children}</AppViewport>
+        <VirtualNotificationProvider>
+          <AppViewport>{children}</AppViewport>
+        </VirtualNotificationProvider>
       </body>
     </html>
   );

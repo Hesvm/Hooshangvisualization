@@ -13,6 +13,7 @@ import { QuestionOptionIcon } from "@/components/conversation/QuestionOptionIcon
 import { LaptopShoppingFlow } from "@/components/conversation/shopping/LaptopShoppingFlow";
 import { MonthlyGroceryFlow } from "@/components/conversation/shopping/MonthlyGroceryFlow";
 import { CryptoPortfolioFlow } from "@/components/conversation/shopping/CryptoPortfolioFlow";
+import { RentalHouseFlow } from "@/components/conversation/shopping/RentalHouseFlow";
 import styles from "./conversation.module.css";
 
 const STATUS_LABEL: Record<ComparisonStatus, string> = {
@@ -347,5 +348,7 @@ export function renderBlock(block: ConversationBlock) {
       return <MonthlyGroceryFlow key={block.id} />;
     case "financeCryptoAnalysis":
       return <CryptoPortfolioFlow key={block.id} />;
+    case "rentalHouseSearch":
+      return <RentalHouseFlow key={block.id} />;
   }
 }

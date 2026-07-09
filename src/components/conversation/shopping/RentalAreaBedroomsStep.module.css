@@ -1,0 +1,49 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section + .section {
+  margin-top: 18px;
+}
+
+.label {
+  color: var(--color-history-heading);
+  font-size: 13px;
+  font-weight: 650;
+  text-align: right;
+}
+
+.pillRow {
+  display: flex;
+  direction: rtl;
+  gap: 8px;
+}
+
+.pill {
+  flex: 1;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition-property: scale, background-color, color;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.pill:active {
+  scale: 0.96;
+}
+
+.pillSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}

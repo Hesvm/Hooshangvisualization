@@ -1,0 +1,107 @@
+.card {
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 18px 16px;
+}
+
+.head {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  color: var(--color-history-title);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.score {
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-size: 12px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--color-history-heading);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.section {
+  margin-top: 16px;
+}
+
+.sectionLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-history-title);
+  font-size: 13px;
+  font-weight: 750;
+  text-align: right;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item {
+  display: flex;
+  direction: rtl;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--color-assistant-ink);
+  font-size: 13px;
+  line-height: 19px;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.itemIconGood {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-success);
+}
+
+.itemIconWarn {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-warning);
+}
+
+.cta {
+  display: flex;
+  height: 42px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition-property: scale, opacity;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.cta:active {
+  scale: 0.96;
+}

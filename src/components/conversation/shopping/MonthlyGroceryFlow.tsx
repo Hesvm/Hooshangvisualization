@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Add, ArrowLeft2, Minus, TickCircle, Trash, TruckFast } from "iconsax-react";
 import { BottomSheet } from "@/components/BottomSheet";
 import { ComponentHeader } from "@/components/ComponentHeader";
+import { useVirtualNotifications } from "@/components/notifications/VirtualNotificationProvider";
 import { ThinkingBeat } from "@/components/conversation/HooshangThinkingState";
 import { QuestionOptionIcon } from "@/components/conversation/QuestionOptionIcon";
 import { AssistantText, UserBubble } from "@/components/conversation/blocks";
@@ -313,6 +314,7 @@ export function MonthlyGroceryFlow() {
   const [replacementTarget, setReplacementTarget] = useState<GroceryItem | null>(null);
   const [routineChoice, setRoutineChoice] = useState<string | null>(null);
   const timers = useRef<number[]>([]);
+  const { showNotification } = useVirtualNotifications();
 
   const consolidatedUserMessage = useMemo(() => (answers ? buildConsolidatedUserMessage(answers) : ""), [answers]);
 
@@ -381,6 +383,18 @@ export function MonthlyGroceryFlow() {
     document.querySelector<HTMLInputElement>("input[placeholder]")?.focus();
   }
 
+  function completeCheckout() {
+    setStep("handoff");
+    showNotification({
+      sourceName: "DigiJet",
+      title: "سفارش شما ثبت شد",
+      body: "تحویل حدود ۲۰ تا ۳۰ دقیقه",
+      icon: DIGI_JET_LOGO_SRC,
+      timestampLabel: "now",
+      kind: "success",
+    });
+  }
+
   return (
     <div className={styles.flowColumn}>
       <ThinkingBeat show={step === "initialThinking"} messages={INITIAL_THINKING} />
@@ -426,7 +440,7 @@ export function MonthlyGroceryFlow() {
             onReplace={setReplacementTarget}
             onQuickAction={applyQuickAction}
             onAddItem={focusComposerForAddItem}
-            onCheckout={() => setStep("handoff")}
+            onCheckout={completeCheckout}
           />
         </Reveal>
       )}

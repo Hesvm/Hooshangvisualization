@@ -1,0 +1,112 @@
+.card {
+  min-height: 320px;
+  border-radius: 22px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 18px 16px;
+}
+
+.cardComplete {
+  min-height: 136px;
+}
+
+.head {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.title {
+  color: var(--color-history-title);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 23px;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.progress {
+  color: var(--color-history-heading);
+  direction: ltr;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  white-space: nowrap;
+}
+
+.body {
+  animation: settle 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.completedText {
+  margin: 0;
+  color: var(--color-assistant-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: right;
+}
+
+.footer {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.nextButton,
+.backButton {
+  border: 0;
+  font-family: var(--font-ravi);
+  letter-spacing: 0;
+  cursor: pointer;
+  transition-property: scale, background-color, opacity;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.nextButton:active,
+.backButton:active {
+  scale: 0.96;
+}
+
+.nextButton {
+  display: flex;
+  height: 40px;
+  min-width: 94px;
+  direction: rtl;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 18px 0 16px;
+}
+
+.backButton {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+}

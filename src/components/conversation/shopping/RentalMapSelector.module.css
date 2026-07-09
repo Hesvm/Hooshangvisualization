@@ -1,0 +1,129 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.search {
+  height: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  font-size: 13.5px;
+  padding: 0 16px;
+  text-align: right;
+  direction: rtl;
+}
+
+.search::placeholder {
+  color: var(--color-history-heading);
+}
+
+.mapCard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 360 / 260;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #eef2f6 0%, #e3e9ee 100%);
+  outline: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.blob {
+  fill: rgba(59, 147, 235, 0.14);
+  stroke: rgba(59, 147, 235, 0.3);
+  stroke-width: 1.5;
+  transition-property: fill, stroke;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.blobSelected {
+  fill: rgba(16, 16, 19, 0.85);
+  stroke: rgba(16, 16, 19, 0.9);
+}
+
+.blobDimmed {
+  opacity: 0.35;
+}
+
+.districtButton {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.districtLabel {
+  border-radius: 999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  color: var(--color-history-title);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  white-space: nowrap;
+  transition-property: background-color, color, scale;
+  transition-duration: 0.2s, 0.2s, 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.districtButton:active .districtLabel {
+  scale: 0.96;
+}
+
+.districtLabelSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}
+
+.chipRow {
+  display: flex;
+  direction: rtl;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-selected);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 650;
+  padding: 0 8px 0 12px;
+  cursor: pointer;
+  transition-property: scale, opacity;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.chip:active {
+  scale: 0.96;
+}
+
+.emptyChips {
+  color: var(--color-history-heading);
+  font-size: 12.5px;
+}

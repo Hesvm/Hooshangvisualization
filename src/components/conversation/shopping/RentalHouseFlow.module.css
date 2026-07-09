@@ -1,0 +1,15 @@
+.flowColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.viewSwitcherRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.followUpRow {
+  display: flex;
+  justify-content: flex-start;
+}

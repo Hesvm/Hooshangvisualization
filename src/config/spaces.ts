@@ -2,6 +2,7 @@ import type { ComposerSuggestion, SpaceConfig } from "@/types/space";
 import { INITIAL_USER_MESSAGE } from "@/lib/mocks/shoppingScript";
 import { MONTHLY_GROCERY_CONVERSATION_ID, MONTHLY_GROCERY_PROMPT, MONTHLY_GROCERY_USER_MESSAGE } from "@/lib/mocks/monthlyGrocery";
 import { CRYPTO_ANALYSIS_CONVERSATION_ID, EXCHANGE_STEP_COPY } from "@/lib/mocks/financeCopy";
+import { RENTAL_HOUSE_CONVERSATION_ID, RENTAL_HOUSE_USER_MESSAGE } from "@/lib/mocks/rentalHouse";
 
 const CRYPTO_ANALYSIS_SUGGESTION: ComposerSuggestion = {
   id: "crypto-analysis",
@@ -27,7 +28,16 @@ const MONTHLY_GROCERY_SUGGESTION: ComposerSuggestion = {
   href: `/spaces/kharid-supermarketi/conversations/${MONTHLY_GROCERY_CONVERSATION_ID}`,
 };
 
+const RENTAL_HOUSE_SUGGESTION: ComposerSuggestion = {
+  id: "rental-house",
+  label: RENTAL_HOUSE_USER_MESSAGE,
+  icon: "shopping",
+  prompt: RENTAL_HOUSE_USER_MESSAGE,
+  href: `/spaces/kharid/conversations/${RENTAL_HOUSE_CONVERSATION_ID}`,
+};
+
 export const homeComposerSuggestions: ComposerSuggestion[] = [
+  RENTAL_HOUSE_SUGGESTION,
   LAPTOP_SHOPPING_SUGGESTION,
   { id: "today", label: "برنامه امروزمو بررسی کن", icon: "daily", prompt: "برنامه امروزمو بررسی کن" },
   { id: "trip", label: "برای سفرم برنامه بچین", icon: "travel", prompt: "برای سفرم برنامه بچین" },

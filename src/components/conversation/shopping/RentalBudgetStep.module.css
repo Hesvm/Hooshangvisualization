@@ -1,0 +1,63 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field + .field {
+  margin-top: 20px;
+}
+
+.fieldHead {
+  display: flex;
+  direction: rtl;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.label {
+  color: var(--color-history-heading);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.value {
+  color: var(--color-history-title);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.presetRow {
+  display: flex;
+  direction: rtl;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.preset {
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 650;
+  padding: 0 14px;
+  cursor: pointer;
+  transition-property: scale, background-color, color;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.preset:active {
+  scale: 0.96;
+}
+
+.presetSelected {
+  background: var(--color-selected);
+  color: var(--color-white);
+}

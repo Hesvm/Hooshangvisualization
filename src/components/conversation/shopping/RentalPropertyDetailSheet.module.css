@@ -1,0 +1,184 @@
+.imageStrip {
+  display: flex;
+  gap: 8px;
+  margin: 0 -4px 14px;
+  padding: 0 4px;
+  overflow-x: auto;
+}
+
+.imageTile {
+  flex-shrink: 0;
+  width: 140px;
+  height: 100px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
+}
+
+.title {
+  margin: 0 0 4px;
+  color: var(--color-history-title);
+  font-size: 17px;
+  font-weight: 800;
+  text-align: right;
+  text-wrap: balance;
+}
+
+.metaLine {
+  margin: 0 0 16px;
+  color: var(--color-history-heading);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.priceRow {
+  display: flex;
+  direction: rtl;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.priceTile {
+  flex: 1;
+  border-radius: 14px;
+  background: var(--color-surface-subtle);
+  padding: 10px 12px;
+  text-align: right;
+}
+
+.priceLabel {
+  display: block;
+  color: var(--color-history-heading);
+  font-size: 11.5px;
+  font-weight: 650;
+  margin-bottom: 4px;
+}
+
+.priceValue {
+  color: var(--color-history-title);
+  font-size: 14.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.chipRow {
+  display: flex;
+  direction: rtl;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.featureChip {
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-title);
+  font-size: 12px;
+  font-weight: 650;
+  padding: 6px 12px;
+}
+
+.section {
+  margin-bottom: 16px;
+}
+
+.sectionLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-history-title);
+  font-size: 13px;
+  font-weight: 750;
+  text-align: right;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item {
+  display: flex;
+  direction: rtl;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--color-assistant-ink);
+  font-size: 13px;
+  line-height: 19px;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.itemIconGood {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-success);
+}
+
+.itemIconWarn {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-warning);
+}
+
+.accessibilityNote {
+  margin: 0 0 18px;
+  color: var(--color-history-heading);
+  font-size: 12.5px;
+  line-height: 19px;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.ctaRow {
+  display: flex;
+  direction: rtl;
+  gap: 8px;
+}
+
+.ctaPrimary {
+  flex: 1;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition-property: scale, opacity;
+  transition-duration: 0.15s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ctaSecondary {
+  flex: 1;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-secondary-bg);
+  color: var(--color-history-title);
+  font-family: var(--font-ravi);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition-property: scale, background-color, color;
+  transition-duration: 0.15s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ctaSecondary:active,
+.ctaPrimary:active {
+  scale: 0.96;
+}
+
+.ctaSaved {
+  background: var(--color-selected);
+  color: var(--color-white);
+}
