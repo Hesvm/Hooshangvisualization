@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { DocumentText } from "iconsax-react";
+import Image from "next/image";
+import { AnimatePresence, motion } from "motion/react";
 import type { ValidationStage } from "@/types/shopping";
 import styles from "./LoanValidationFlow.module.css";
 
@@ -55,6 +56,7 @@ export function LoanValidationFlow({ stages: initialStages, onAllComplete }: Loa
   const activeProgress = activeStage ? Math.min(1, activeElapsed / activeStage.durationMs) : 0;
   const progress = stages.length > 0 ? Math.min(1, (completedCount + activeProgress) / stages.length) : 0;
   const allComplete = stages.length > 0 && completedCount === stages.length;
+  const displayStage = activeStage ?? stages[stages.length - 1];
   const ringRadius = 92;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const ringOffset = ringCircumference * (1 - progress);
@@ -74,7 +76,20 @@ export function LoanValidationFlow({ stages: initialStages, onAllComplete }: Loa
           />
         </svg>
         <div className={styles.iconShell}>
-          <DocumentText variant="Bulk" size={64} color="currentColor" />
+          <AnimatePresence initial={false}>
+            {displayStage && (
+              <motion.div
+                key={displayStage.id}
+                className={styles.iconFrame}
+                initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+              >
+                <Image src={displayStage.icon} alt="" width={64} height={64} className={styles.stageIcon} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

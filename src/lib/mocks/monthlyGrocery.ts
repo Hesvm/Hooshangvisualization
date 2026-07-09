@@ -23,12 +23,6 @@ export const groceryReorderItems = [
     image: "/images/grocery/yogurt.png",
     status: "تاریخش نزدیکه",
   },
-  {
-    id: "toast",
-    name: "نان تست",
-    image: "/images/grocery/toast.png",
-    status: "احتمالاً رو به اتمامه",
-  },
 ];
 
 export const groceryMonthlyList = {

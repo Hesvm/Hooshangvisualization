@@ -277,15 +277,18 @@ function GroceryBasket({
 
         <div className={styles.cartFooter}>
           <div className={styles.footerSummary}>
-            <div>
+            <div className={styles.footerTotal}>
               <span>جمع سبد:</span>
               <strong>
                 <Price amount={formatPersianNumber(basketTotal(items))} />
               </strong>
             </div>
-            <div>
-              <TruckFast variant="Linear" size={25} color="currentColor" />
+            <div className={styles.footerDelivery}>
               <span>{groceryContext.deliveryEstimate}</span>
+              <span className={styles.footerDeliveryCost}>
+                <TruckFast variant="Linear" size={15} color="currentColor" />
+                ارسال رایگان
+              </span>
             </div>
           </div>
 

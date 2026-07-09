@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { More, Refresh2, TickCircle } from "iconsax-react";
+import { TickCircle } from "iconsax-react";
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
 import shared from "@/components/widgets/shared.module.css";
@@ -13,6 +13,10 @@ export type ReorderItem = {
   name: string;
   image: string;
   status: string;
+  /** Per-asset tuning so odd product photos don't force layout changes on the fixed square card. */
+  imageScale?: number;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
 };
 
 export type ReorderWidgetData = {
@@ -50,39 +54,33 @@ export function SmartReorderWidget({ data }: { data: unknown }) {
   }, [d.items.length]);
 
   return (
-    <article className={`${shared.card} ${styles.reorderCard}`} dir="rtl">
-      <ComponentHeader
-        as="div"
-        title={d.title}
-        titleAs="h3"
-        className={styles.reorderHeader}
-        action={<Refresh2 variant="Linear" size={20} color="currentColor" />}
-      />
+    <article
+      className={`${shared.card} ${styles.reorderCard}`}
+      dir="rtl"
+      aria-label={`${faNum(activeIndex + 1)} از ${faNum(d.items.length)}`}
+    >
+      <ComponentHeader as="div" title={d.title} titleAs="h3" className={styles.reorderHeader} />
 
-      <div key={activeItem.id} className={styles.reorderStage}>
-        <div className={styles.productFrame}>
-          <Image
-            className={styles.productImage}
-            src={activeItem.image}
-            alt={activeItem.name}
-            width={92}
-            height={92}
-            sizes="92px"
-            priority={activeIndex === 0}
-          />
+      <div key={`copy-${activeItem.id}`} className={styles.reorderStage}>
+        <div className={styles.reorderCopy}>
+          <strong className={styles.productName}>{activeItem.name}</strong>
+          <span className={styles.productStatus}>{activeItem.status}</span>
         </div>
-        <p className={styles.productName}>{activeItem.name}</p>
-        <p className={styles.productStatus}>{activeItem.status}</p>
       </div>
-
-      <div className={styles.dots} aria-label={`${faNum(activeIndex + 1)} از ${faNum(d.items.length)}`}>
-        {d.items.map((item, index) => (
-          <span
-            key={item.id}
-            className={`${styles.dot} ${index === activeIndex ? styles.dotActive : ""}`}
-          />
-        ))}
-      </div>
+      <Image
+        key={`image-${activeItem.id}`}
+        className={styles.productImage}
+        src={activeItem.image}
+        alt={activeItem.name}
+        width={140}
+        height={140}
+        sizes="140px"
+        priority={activeIndex === 0}
+        style={{
+          width: `${74 * (activeItem.imageScale ?? 1)}%`,
+          transform: `translateX(calc(-50% + ${activeItem.imageOffsetX ?? 0}px)) translateY(${activeItem.imageOffsetY ?? 0}px)`,
+        }}
+      />
     </article>
   );
 }
@@ -95,19 +93,22 @@ export function MonthlyListNoteWidget({ data }: { data: unknown }) {
       <header className={styles.noteHeader}>
         <span className={styles.noteCount}>{faNum(d.count)}</span>
         <h3 className={styles.noteTitle}>{d.title}</h3>
-        <span className={styles.noteMenu} aria-hidden>
-          <More variant="Linear" size={20} color="currentColor" />
-        </span>
       </header>
 
       <ul className={styles.noteList}>
         {d.items.map((item) => (
           <li key={item.id} className={styles.noteItem}>
+            <span
+              className={styles.noteCheck}
+              data-state={item.checked ? "checked" : "unchecked"}
+              aria-label={item.checked ? "خریده شده" : "خریده نشده"}
+            >
+              {item.checked && (
+                <TickCircle className={styles.noteCheckIcon} variant="Bold" size={11.2} color="currentColor" />
+              )}
+            </span>
             <span className={`${styles.noteText} ${item.checked ? styles.noteTextChecked : ""}`}>
               {item.label}
-            </span>
-            <span className={styles.noteCheck} aria-label={item.checked ? "خریده شده" : "خریده نشده"}>
-              {item.checked && <TickCircle variant="Linear" size={22} color="currentColor" />}
             </span>
           </li>
         ))}

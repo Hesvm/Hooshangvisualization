@@ -7,8 +7,10 @@
 
 .full {
   grid-column: 1 / -1;
+  min-width: 0;
 }
 
 .half {
   grid-column: span 1;
+  min-width: 0;
 }

@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Add, Minus } from "iconsax-react";
+import { Add, Minus, TruckFast } from "iconsax-react";
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { Price } from "@/components/Price";
 import { faNum, formatPersianNumber } from "@/lib/faNum";
-import { ORDER_SUMMARY_NEXT_CTA } from "@/lib/mocks/shoppingScript";
+import { ORDER_SUMMARY_DELIVERY_ETA, ORDER_SUMMARY_NEXT_CTA } from "@/lib/mocks/shoppingScript";
 import type { ShoppingProduct } from "@/types/shopping";
 import styles from "./OrderSummaryCard.module.css";
 
@@ -15,12 +15,20 @@ type OrderSummaryCardProps = {
   quantity: number;
   onQuantityChange: (quantity: number) => void;
   onNext: () => void;
+  deliveryFeeToman?: number;
 };
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 3;
 
-export function OrderSummaryCard({ product, unitPriceToman, quantity, onQuantityChange, onNext }: OrderSummaryCardProps) {
+export function OrderSummaryCard({
+  product,
+  unitPriceToman,
+  quantity,
+  onQuantityChange,
+  onNext,
+  deliveryFeeToman = 0,
+}: OrderSummaryCardProps) {
   const total = unitPriceToman * quantity;
 
   return (
@@ -69,11 +77,22 @@ export function OrderSummaryCard({ product, unitPriceToman, quantity, onQuantity
         </div>
       </div>
 
-      <div className={styles.divider} />
-
-      <div className={styles.totalRow}>
-        <span>مبلغ قابل پرداخت</span>
-        <Price className={styles.totalPrice} amount={formatPersianNumber(total)} />
+      <div className={styles.summary}>
+        <div className={styles.summaryTotal}>
+          <span className={styles.summaryTotalLabel}>جمع سبد</span>
+          <Price className={styles.summaryTotalValue} amount={formatPersianNumber(total)} />
+        </div>
+        <div className={styles.summaryDelivery}>
+          <span className={styles.summaryDeliveryTime}>{ORDER_SUMMARY_DELIVERY_ETA}</span>
+          <span className={styles.summaryDeliveryCost}>
+            <TruckFast variant="Linear" size={14} color="currentColor" />
+            {deliveryFeeToman > 0 ? (
+              <Price amount={formatPersianNumber(deliveryFeeToman)} />
+            ) : (
+              "ارسال رایگان"
+            )}
+          </span>
+        </div>
       </div>
 
       <button type="button" className={styles.cta} onClick={onNext}>
