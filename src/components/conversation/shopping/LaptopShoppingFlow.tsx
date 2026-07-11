@@ -10,7 +10,6 @@ import { isFastPreviewMode, makeInitialValidationStages } from "@/lib/mocks/vali
 import {
   ASSISTANT_INTRO,
   QUESTIONS,
-  THINKING_TEXT,
   TIMING,
   SHORTLIST_INTRO,
   RECOMMENDATION_REASONING,
@@ -32,6 +31,19 @@ import {
   buildOfferSelectionMessage,
   buildOrderCode,
 } from "@/lib/mocks/shoppingScript";
+import {
+  LAPTOP_ADDRESS_PREP_PIPELINE,
+  LAPTOP_DELIVERY_PREP_PIPELINE,
+  LAPTOP_INITIAL_PIPELINE,
+  LAPTOP_INVOICE_PREP_PIPELINE,
+  LAPTOP_LOAN_ENTRY_PIPELINE,
+  LAPTOP_OFFER_PREP_PIPELINE,
+  LAPTOP_OFFER_SEARCH_PIPELINE,
+  LAPTOP_ORDER_PREP_PIPELINE,
+  LAPTOP_PAYMENT_PROCESSING_PIPELINE,
+  LAPTOP_RECOMMENDATION_PIPELINE,
+  LAPTOP_SEARCH_PIPELINE,
+} from "@/lib/thinking/pipelines/laptopShopping";
 import { ADDRESSES, DELIVERY_SLOTS } from "@/lib/mocks/addresses";
 import { faNum } from "@/lib/faNum";
 import { PRODUCT_ROLE_LABEL, type LoanOffer, type ShoppingProduct, type ValidationStage } from "@/types/shopping";
@@ -523,19 +535,15 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
     setState((prev) => ({ ...prev, ...partial }));
   }
 
-  // Stage 5 → 7: initialThinking starts true (see makeInitialState) the moment
-  // the pre-baked user message is on screen; this effect just advances it forward.
-  useEffect(() => {
+  function handleInitialThinkingComplete() {
+    patch({ initialThinking: false });
     schedule(() => {
-      patch({ initialThinking: false });
+      patch({ introVisible: true });
       schedule(() => {
-        patch({ introVisible: true });
-        schedule(() => {
-          patch({ currentQuestionIndex: 0 });
-        }, TIMING.q1AfterIntro);
-      }, TIMING.introAfterThinking);
-    }, TIMING.initialThinking);
-  }, []);
+        patch({ currentQuestionIndex: 0 });
+      }, TIMING.q1AfterIntro);
+    }, TIMING.introAfterThinking);
+  }
 
   const recommendedProduct = products.find((p) => p.id === state.recommendedProductId) ?? products[0];
   const deepDiveProduct = products.find((p) => p.id === state.deepDiveProductId) ?? null;
@@ -560,13 +568,14 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
       // True boundary: the whole batch is answered and Hooshang is now actually
       // processing the shortlist — this is where the thinking state belongs.
       patch({ currentQuestionIndex: QUESTIONS.length, searchThinking: true });
-      schedule(() => {
-        patch({ searchThinking: false, shortlistIntroVisible: true });
-        schedule(() => {
-          patch({ shortlistVisible: true });
-        }, TIMING.shortlistAfterSearch);
-      }, TIMING.searchThinking);
     }
+  }
+
+  function handleSearchThinkingComplete() {
+    patch({ searchThinking: false, shortlistIntroVisible: true });
+    schedule(() => {
+      patch({ shortlistVisible: true });
+    }, TIMING.shortlistAfterSearch);
   }
 
   function handleQuestionBack() {
@@ -588,12 +597,13 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
       recommendationThinking: true,
       ...(productId ? { recommendedProductId: productId } : {}),
     });
+  }
+
+  function handleRecommendationThinkingComplete() {
+    patch({ recommendationThinking: false, reasoningVisible: true });
     schedule(() => {
-      patch({ recommendationThinking: false, reasoningVisible: true });
-      schedule(() => {
-        patch({ finalRecommendationVisible: true });
-      }, TIMING.reasoningAfterThinking);
-    }, TIMING.recommendationThinking);
+      patch({ finalRecommendationVisible: true });
+    }, TIMING.reasoningAfterThinking);
   }
 
   function handleSelectAsFinalFromDeepDive(productId: string) {
@@ -605,10 +615,13 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
     if (state.answeredChips.includes(chipId)) return;
     if (chipId === "loan") {
       patch({ answeredChips: [...state.answeredChips, chipId], loanStep: "introThinking" });
-      schedule(() => patch({ loanStep: "preference" }), TIMING.loanEntryThinking);
       return;
     }
     patch({ answeredChips: [...state.answeredChips, chipId], chipResponses: [...state.chipResponses, chipId] });
+  }
+
+  function handleLoanEntryThinkingComplete() {
+    patch({ loanStep: "preference" });
   }
 
   function handleLoanPreferenceComplete(amount: number, months: number) {
@@ -620,10 +633,11 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
       loanOffers: offers,
       loanStep: "offerThinking",
     });
-    schedule(() => {
-      patch({ loanStep: "offerIntro" });
-      schedule(() => patch({ loanStep: "offers" }), TIMING.offersAfterIntro);
-    }, TIMING.offerSearchThinking);
+  }
+
+  function handleOfferThinkingComplete() {
+    patch({ loanStep: "offerIntro" });
+    schedule(() => patch({ loanStep: "offers" }), TIMING.offersAfterIntro);
   }
 
   function handleSelectOffer(offerId: string) {
@@ -633,26 +647,33 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
   function handleOfferContinue() {
     if (!state.selectedOfferId) return;
     patch({ loanStep: "offerContinueThinking" });
-    schedule(() => {
-      patch({
-        loanStep: "validationIntro",
-        validationStages: makeInitialValidationStages(isFastPreviewMode()),
-      });
-      schedule(() => patch({ loanStep: "validating" }), TIMING.validationIntroAfterThinking);
-    }, TIMING.offerPrepThinking);
+  }
+
+  function handleOfferContinueThinkingComplete() {
+    patch({
+      loanStep: "validationIntro",
+      validationStages: makeInitialValidationStages(isFastPreviewMode()),
+    });
+    schedule(() => patch({ loanStep: "validating" }), TIMING.validationIntroAfterThinking);
   }
 
   function handleValidationComplete() {
     patch({ loanStep: "validationDone" });
     schedule(() => {
       patch({ loanStep: "invoiceThinking" });
-      schedule(() => patch({ loanStep: "invoice" }), TIMING.invoiceAfterThinking);
-    }, TIMING.invoicePrepThinking);
+    }, TIMING.invoiceAfterThinking);
+  }
+
+  function handleInvoiceThinkingComplete() {
+    patch({ loanStep: "invoice" });
   }
 
   function handleInvoiceContinue() {
     patch({ loanStep: "orderThinking" });
-    schedule(() => patch({ loanStep: "order" }), TIMING.orderPrepThinking);
+  }
+
+  function handleOrderThinkingComplete() {
+    patch({ loanStep: "order" });
   }
 
   function handleOrderQuantityChange(quantity: number) {
@@ -661,7 +682,10 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
   function handleOrderNext() {
     patch({ loanStep: "addressThinking" });
-    schedule(() => patch({ loanStep: "address" }), TIMING.addressPrepThinking);
+  }
+
+  function handleAddressThinkingComplete() {
+    patch({ loanStep: "address" });
   }
 
   function handleSelectAddress(addressId: string) {
@@ -670,7 +694,10 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
   function handleAddressNext() {
     patch({ loanStep: "deliveryThinking" });
-    schedule(() => patch({ loanStep: "delivery" }), TIMING.deliveryPrepThinking);
+  }
+
+  function handleDeliveryThinkingComplete() {
+    patch({ loanStep: "delivery" });
   }
 
   function handleSelectDeliverySlot(slotId: string) {
@@ -687,7 +714,10 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
   function handleConfirmPayment() {
     patch({ confirmationOpen: false, loanStep: "paymentProcessing" });
-    schedule(() => patch({ loanStep: "paymentDone", orderCode: buildOrderCode() }), TIMING.paymentProcessing);
+  }
+
+  function handlePaymentProcessingComplete() {
+    patch({ loanStep: "paymentDone", orderCode: buildOrderCode() });
   }
 
   const currentQuestionDef =
@@ -697,7 +727,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
 
   return (
     <div className={styles.column}>
-      <ThinkingBeat show={state.initialThinking} messages={THINKING_TEXT.initial} cycleMs={TIMING.searchThinkingTextSwitch} />
+      <ThinkingBeat show={state.initialThinking} pipeline={LAPTOP_INITIAL_PIPELINE} onComplete={handleInitialThinkingComplete} />
 
       {state.introVisible && (
         <Reveal>
@@ -718,7 +748,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.searchThinking} messages={THINKING_TEXT.search} cycleMs={TIMING.searchThinkingTextSwitch} />
+      <ThinkingBeat show={state.searchThinking} pipeline={LAPTOP_SEARCH_PIPELINE} onComplete={handleSearchThinkingComplete} />
 
       {state.shortlistIntroVisible && (
         <Reveal>
@@ -740,7 +770,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.recommendationThinking} messages={THINKING_TEXT.recommendation} />
+      <ThinkingBeat show={state.recommendationThinking} pipeline={LAPTOP_RECOMMENDATION_PIPELINE} onComplete={handleRecommendationThinkingComplete} />
 
       {state.reasoningVisible && (
         <Reveal>
@@ -767,7 +797,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       ))}
 
-      <ThinkingBeat show={state.loanStep === "introThinking"} messages={THINKING_TEXT.loanEntry} />
+      <ThinkingBeat show={state.loanStep === "introThinking"} pipeline={LAPTOP_LOAN_ENTRY_PIPELINE} onComplete={handleLoanEntryThinkingComplete} />
 
       {state.loanStep !== "closed" && state.loanStep !== "introThinking" && (
         <Reveal>
@@ -792,7 +822,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "offerThinking"} messages={THINKING_TEXT.offerSearch} cycleMs={TIMING.offerSearchTextSwitch} />
+      <ThinkingBeat show={state.loanStep === "offerThinking"} pipeline={LAPTOP_OFFER_SEARCH_PIPELINE} onComplete={handleOfferThinkingComplete} />
 
       {(state.loanStep === "offerIntro" || state.loanStep === "offers") && (
         <Reveal>
@@ -832,7 +862,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "offerContinueThinking"} messages={THINKING_TEXT.offerPrep} />
+      <ThinkingBeat show={state.loanStep === "offerContinueThinking"} pipeline={LAPTOP_OFFER_PREP_PIPELINE} onComplete={handleOfferContinueThinkingComplete} />
 
       {isLoanStepAtLeast(state.loanStep, "validationIntro") && (
         <Reveal>
@@ -852,7 +882,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "invoiceThinking"} messages={THINKING_TEXT.invoicePrep} />
+      <ThinkingBeat show={state.loanStep === "invoiceThinking"} pipeline={LAPTOP_INVOICE_PREP_PIPELINE} onComplete={handleInvoiceThinkingComplete} />
 
       {isLoanStepAtLeast(state.loanStep, "invoice") && state.selectedOfferId && (
         <Reveal>
@@ -865,7 +895,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "orderThinking"} messages={THINKING_TEXT.orderPrep} />
+      <ThinkingBeat show={state.loanStep === "orderThinking"} pipeline={LAPTOP_ORDER_PREP_PIPELINE} onComplete={handleOrderThinkingComplete} />
 
       {isLoanStepAtLeast(state.loanStep, "order") && (
         <Reveal>
@@ -880,7 +910,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "addressThinking"} messages={THINKING_TEXT.addressPrep} />
+      <ThinkingBeat show={state.loanStep === "addressThinking"} pipeline={LAPTOP_ADDRESS_PREP_PIPELINE} onComplete={handleAddressThinkingComplete} />
 
       {isLoanStepAtLeast(state.loanStep, "address") && (
         <Reveal>
@@ -894,7 +924,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "deliveryThinking"} messages={THINKING_TEXT.deliveryPrep} />
+      <ThinkingBeat show={state.loanStep === "deliveryThinking"} pipeline={LAPTOP_DELIVERY_PREP_PIPELINE} onComplete={handleDeliveryThinkingComplete} />
 
       {isLoanStepAtLeast(state.loanStep, "delivery") && (
         <Reveal>
@@ -908,7 +938,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.loanStep === "paymentProcessing"} messages={THINKING_TEXT.paymentProcessing} />
+      <ThinkingBeat show={state.loanStep === "paymentProcessing"} pipeline={LAPTOP_PAYMENT_PROCESSING_PIPELINE} onComplete={handlePaymentProcessingComplete} />
 
       {state.loanStep === "paymentDone" && state.selectedOfferId && state.orderCode && (
         <Reveal>

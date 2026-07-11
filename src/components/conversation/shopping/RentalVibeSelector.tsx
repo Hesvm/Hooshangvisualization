@@ -22,6 +22,9 @@ export function RentalVibeSelector({ vibeId, onChange }: RentalVibeSelectorProps
             aria-pressed={selected}
             onClick={() => onChange(vibe.id)}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className={styles.photo} src={vibe.imageSrc} alt="" />
+            <span className={styles.scrim} />
             <span className={styles.labelPill}>{vibe.label}</span>
           </button>
         );

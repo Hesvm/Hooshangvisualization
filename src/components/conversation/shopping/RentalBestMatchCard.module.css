@@ -5,42 +5,116 @@
   padding: 18px 16px;
 }
 
-.head {
+.labelHeader {
+  margin-bottom: 16px;
+}
+
+.heroFrame {
+  border-radius: 16px;
+  overflow: hidden;
+  transform-origin: center;
+  animation: heroSettle 420ms cubic-bezier(0.2, 0, 0, 1) 90ms both;
+}
+
+.heroPhoto {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 44vw, 200px);
+  object-fit: cover;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.identityBlock {
+  margin-top: 16px;
+}
+
+.name {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 750;
+  color: var(--color-history-title);
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.config {
+  margin-top: 6px;
+  color: var(--color-history-heading);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.priceRow {
   display: flex;
   direction: rtl;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
-.title {
+.priceItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 12px;
+  background: var(--color-surface-subtle);
+  padding: 8px 10px;
+}
+
+.priceLabel {
+  color: var(--color-history-heading);
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.priceValue {
   color: var(--color-history-title);
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.score {
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: var(--color-success-bg);
-  color: var(--color-success);
-  font-size: 12px;
+  font-family: var(--font-ravi);
+  font-size: 13px;
   font-weight: 750;
   font-variant-numeric: tabular-nums;
-  padding: 5px 12px;
-  white-space: nowrap;
+  letter-spacing: var(--numeric-letter-spacing);
 }
 
-.subtitle {
-  margin: 4px 0 0;
-  color: var(--color-history-heading);
-  font-size: 13px;
-  font-weight: 600;
-  text-align: right;
+.matchBlock {
+  margin-top: 14px;
+  border-radius: 14px;
+  background: var(--color-success-bg);
+  padding: 12px 14px;
+}
+
+.matchScore {
+  color: var(--color-success);
+  font-size: 14px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
 }
 
 .section {
   margin-top: 16px;
+}
+
+@keyframes heroSettle {
+  from {
+    opacity: 0;
+    scale: 0.985;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroFrame {
+    animation: none;
+  }
 }
 
 .sectionLabel {

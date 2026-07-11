@@ -1,0 +1,90 @@
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-card);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+}
+
+.iconCar {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+.iconHealth {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.iconLife {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: right;
+}
+
+.label {
+  font-family: var(--font-ravi);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.coverage {
+  font-family: var(--font-ravi);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.renewal {
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.premium {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.premiumAmount {
+  font-family: var(--font-ravi);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+.premiumLabel {
+  font-family: var(--font-ravi);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}

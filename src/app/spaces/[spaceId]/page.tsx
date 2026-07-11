@@ -4,7 +4,7 @@ import { SpaceHeader } from "@/components/SpaceHeader";
 import { WidgetGrid } from "@/components/WidgetGrid";
 import { HistoryList } from "@/components/HistoryList";
 import { QuickStartSection } from "@/components/QuickStartSection";
-import { FinanceStartSection } from "@/components/widgets/finance/FinanceStartSection";
+import { FinanceSpaceHome } from "@/components/widgets/finance/FinanceSpaceHome";
 import { spacePages } from "@/config/spacePages";
 import { spaces } from "@/config/spaces";
 
@@ -21,18 +21,22 @@ export default async function SpacePage({ params }: SpacePageProps) {
   }
 
   const suggestions = spaces.find((s) => s.id === spaceId)?.composerSuggestions;
-  const historySlot = spaceId === "modiriat-mali" ? <FinanceStartSection /> : <HistoryList items={content.history} />;
+  const isFinance = spaceId === "modiriat-mali";
 
   return (
     <SpacePageLayout
       header={<SpaceHeader title={content.title} iconSrc={content.iconSrc} accentRgb={content.accentRgb} />}
       widgets={
-        <>
-          <WidgetGrid widgets={content.widgets} />
-          {content.quickStarts && <QuickStartSection title="شروع سریع" suggestions={content.quickStarts} />}
-        </>
+        isFinance ? (
+          <FinanceSpaceHome />
+        ) : (
+          <>
+            {content.widgets.length > 0 && <WidgetGrid widgets={content.widgets} />}
+            {content.quickStarts && <QuickStartSection title="شروع سریع" suggestions={content.quickStarts} />}
+          </>
+        )
       }
-      history={historySlot}
+      history={isFinance ? null : <HistoryList items={content.history} />}
       suggestions={suggestions}
     />
   );

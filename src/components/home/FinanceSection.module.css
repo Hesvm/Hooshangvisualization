@@ -1,0 +1,97 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.valueCard {
+  border-radius: 21px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 18px 20px 14px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.valueHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.totalToman {
+  font-family: var(--font-ravi);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.totalUsd {
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.changePill {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.changeUp {
+  background: rgba(26, 158, 107, 0.1);
+  color: var(--color-success);
+}
+
+.changeDown {
+  background: rgba(229, 72, 77, 0.1);
+  color: var(--color-danger);
+}
+
+.tabs {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.tab {
+  flex: 1;
+  min-height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-history-heading);
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition-property: background-color, color, scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tab:active {
+  scale: 0.96;
+}
+
+.tabActive {
+  background: var(--color-history-title);
+  color: var(--color-white);
+}

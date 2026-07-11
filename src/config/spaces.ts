@@ -2,7 +2,7 @@ import type { ComposerSuggestion, SpaceConfig } from "@/types/space";
 import { INITIAL_USER_MESSAGE } from "@/lib/mocks/shoppingScript";
 import { MONTHLY_GROCERY_CONVERSATION_ID, MONTHLY_GROCERY_PROMPT, MONTHLY_GROCERY_USER_MESSAGE } from "@/lib/mocks/monthlyGrocery";
 import { CRYPTO_ANALYSIS_CONVERSATION_ID, EXCHANGE_STEP_COPY } from "@/lib/mocks/financeCopy";
-import { RENTAL_HOUSE_CONVERSATION_ID, RENTAL_HOUSE_USER_MESSAGE } from "@/lib/mocks/rentalHouse";
+import { RENTAL_HOUSE_CONVERSATION_ID, RENTAL_HOUSE_SPACE_ID, RENTAL_HOUSE_USER_MESSAGE } from "@/lib/mocks/rentalHouse";
 
 const CRYPTO_ANALYSIS_SUGGESTION: ComposerSuggestion = {
   id: "crypto-analysis",
@@ -33,7 +33,7 @@ const RENTAL_HOUSE_SUGGESTION: ComposerSuggestion = {
   label: RENTAL_HOUSE_USER_MESSAGE,
   icon: "shopping",
   prompt: RENTAL_HOUSE_USER_MESSAGE,
-  href: `/spaces/kharid/conversations/${RENTAL_HOUSE_CONVERSATION_ID}`,
+  href: `/spaces/${RENTAL_HOUSE_SPACE_ID}/conversations/${RENTAL_HOUSE_CONVERSATION_ID}`,
 };
 
 export const homeComposerSuggestions: ComposerSuggestion[] = [
@@ -122,14 +122,14 @@ export const spaces: SpaceConfig[] = [
     ],
   },
   {
-    id: "sargarmi",
-    label: "سرگرمی",
-    iconSrc: "/images/spaces/new-icons-symbol-130/popcorn.png",
+    id: RENTAL_HOUSE_SPACE_ID,
+    label: "اجاره خونه",
+    iconSrc: "/images/spaces/new-icons-symbol-130/house.png",
     hasNotification: false,
     composerSuggestions: [
-      { id: "movie", label: "امشب چی ببینم؟", icon: "daily", prompt: "امشب چی ببینم؟" },
-      { id: "game", label: "یه بازی سبک پیشنهاد بده", icon: "learning", prompt: "یه بازی سبک پیشنهاد بده" },
-      { id: "playlist", label: "برای تمرکز پلی‌لیست بساز", icon: "daily", prompt: "برای تمرکز پلی‌لیست بساز" },
+      RENTAL_HOUSE_SUGGESTION,
+      { id: "rental-saved", label: "خونه‌های ذخیره‌شده رو نشونم بده", icon: "shopping", prompt: "خونه‌های ذخیره‌شده رو نشونم بده" },
+      { id: "rental-visit", label: "برای بازدید از یه خونه وقت بگیر", icon: "shopping", prompt: "برای بازدید از یه خونه وقت بگیر" },
     ],
   },
   {

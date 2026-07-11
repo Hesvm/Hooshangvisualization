@@ -1,0 +1,180 @@
+.chartRow {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.centerValue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  text-align: center;
+}
+
+.centerAmount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.centerUnit {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ravi);
+  font-size: 13px;
+}
+
+.legendDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.legendLabel {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-history-title);
+  font-weight: 500;
+}
+
+.legendPercentage {
+  flex-shrink: 0;
+  color: var(--color-history-heading);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.scoreGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scoreLabelRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+}
+
+.scoreLabel {
+  color: var(--color-history-heading);
+}
+
+.scoreValue {
+  color: var(--color-history-title);
+  font-weight: 600;
+  letter-spacing: var(--numeric-letter-spacing);
+}
+
+.scoreTrack {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 999px;
+  background: #7f9db4;
+  transition-property: width;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.rebalanceCard {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  box-sizing: border-box;
+  text-align: right;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.rebalanceCard:active {
+  scale: 0.98;
+}
+
+.rebalanceIcon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.rebalanceText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rebalanceTitle {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  text-wrap: balance;
+}
+
+.rebalanceBody {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--color-history-heading);
+  text-wrap: pretty;
+}
+
+.rebalanceChevron {
+  flex-shrink: 0;
+  color: var(--color-history-heading);
+}

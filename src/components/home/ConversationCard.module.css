@@ -1,0 +1,70 @@
+.card {
+  position: relative;
+  width: 100%;
+  min-height: 68px;
+  border-radius: 21px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 14px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.card:active {
+  scale: 0.96;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.preview {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  flex-shrink: 0;
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+  font-variant-numeric: tabular-nums;
+}

@@ -2,7 +2,7 @@
 
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
-import { RENTAL_BEST_MATCH_PROPERTY_ID, RENTAL_PROPERTIES, TEHRAN_DISTRICTS, formatRentalPrice } from "@/lib/mocks/rentalHouse";
+import { RENTAL_BEST_MATCH_PROPERTY_ID, RENTAL_CURATED_PROPERTIES, TEHRAN_DISTRICTS, formatRentalPrice } from "@/lib/mocks/rentalHouse";
 import styles from "./RentalComparisonTable.module.css";
 
 const ROWS = [
@@ -18,7 +18,7 @@ function districtLabel(districtId: string): string {
   return TEHRAN_DISTRICTS.find((d) => d.id === districtId)?.label ?? "";
 }
 
-function cellValue(rowKey: (typeof ROWS)[number]["key"], property: (typeof RENTAL_PROPERTIES)[number]): string {
+function cellValue(rowKey: (typeof ROWS)[number]["key"], property: (typeof RENTAL_CURATED_PROPERTIES)[number]): string {
   switch (rowKey) {
     case "area":
       return `${faNum(property.area)} متر`;
@@ -45,7 +45,7 @@ export function RentalComparisonTable() {
           <thead>
             <tr>
               <th className={`${styles.headCell} ${styles.rowLabelCell}`}>محله</th>
-              {RENTAL_PROPERTIES.map((property) => {
+              {RENTAL_CURATED_PROPERTIES.map((property) => {
                 const isBest = property.id === RENTAL_BEST_MATCH_PROPERTY_ID;
                 return (
                   <th key={property.id} className={`${styles.headCell} ${isBest ? styles.bestColumn : ""}`}>
@@ -60,7 +60,7 @@ export function RentalComparisonTable() {
             {ROWS.map((row) => (
               <tr key={row.key}>
                 <td className={`${styles.cell} ${styles.rowLabelCell}`}>{row.label}</td>
-                {RENTAL_PROPERTIES.map((property) => {
+                {RENTAL_CURATED_PROPERTIES.map((property) => {
                   const isBest = property.id === RENTAL_BEST_MATCH_PROPERTY_ID;
                   return (
                     <td key={property.id} className={`${styles.cell} ${isBest ? styles.bestColumn : ""}`}>

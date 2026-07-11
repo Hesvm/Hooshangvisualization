@@ -1,0 +1,9 @@
+.wrapper {
+  margin-top: 4px;
+}
+
+.wrapper :global(.recharts-wrapper),
+.wrapper :global(.recharts-surface),
+.wrapper :global(.recharts-layer) {
+  outline: none;
+}

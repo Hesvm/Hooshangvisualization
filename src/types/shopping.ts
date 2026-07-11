@@ -46,6 +46,25 @@ export type ShoppingProduct = {
 
   /** No real Digikala integration exists yet — kept null until one does. */
   productUrl: string | null;
+
+  /** Only meaningful once this product becomes the personalized pick, like matchScore. */
+  affordability?: AffordabilityInsight;
+};
+
+export type AffordabilityForecastPoint = {
+  /** e.g. "الان", "۶ ماه دیگه" */
+  label: string;
+  /** Million toman, same unit as ShoppingProduct.price. */
+  price: number;
+};
+
+export type AffordabilityInsight = {
+  /** Short headline verdict, e.g. "خرید الان از نظر مالی به‌صرفه‌ست". */
+  verdict: string;
+  /** 1-2 short paragraphs backing the verdict with budget/price-trend reasoning. */
+  reasons: string[];
+  /** Exactly two points: current price and a projected price further out. */
+  forecast: AffordabilityForecastPoint[];
 };
 
 export const PRODUCT_ROLE_LABEL: Record<ProductRole, string> = {

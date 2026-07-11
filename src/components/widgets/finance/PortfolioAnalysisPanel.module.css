@@ -1,0 +1,113 @@
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gaugeTrack {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(to left, #e5484d, #f5a524, #1a9e6b);
+}
+
+.gaugePointer {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-white);
+  border: 3px solid var(--color-history-title);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transform: translate(50%, -50%);
+  transition-property: left;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.gaugeLabels {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.gaugeCurrentLabel {
+  align-self: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.insight {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-history-title);
+  text-wrap: pretty;
+}
+
+.insight strong {
+  font-weight: 700;
+}
+
+.ctaButton {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition-property: scale, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ctaButton:active {
+  scale: 0.96;
+}
+
+.timestamp {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-ravi);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+  letter-spacing: var(--numeric-letter-spacing);
+}

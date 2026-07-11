@@ -28,6 +28,7 @@
   flex-shrink: 0;
   width: 40px;
   height: 40px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,15 +47,15 @@
   position: relative;
   flex: 1;
   min-width: 0;
-  /* Stable height so cycling phrases never nudge the row. */
-  min-height: 22px;
+  /* Reserve room for up to 2 lines so a longer phrase never nudges the row. */
+  min-height: 44px;
   display: flex;
   align-items: center;
   overflow: hidden;
 }
 
 .text {
-  display: block;
+  display: -webkit-box;
   font-family: var(--font-ravi);
   font-size: 14px;
   font-weight: 500;
@@ -63,9 +64,12 @@
   /* Subtle, secondary tone — warm neutral-500, not primary ink and not 800. */
   color: var(--color-neutral-500);
   text-align: right;
-  white-space: nowrap;
+  text-wrap: pretty;
+  white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   max-width: 100%;
 }
 

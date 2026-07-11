@@ -1,20 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { BottomSheet } from "@/components/BottomSheet";
 import { ThinkingBeat } from "@/components/conversation/HooshangThinkingState";
 import { AssistantText, UserBubble } from "@/components/conversation/blocks";
 import { useVirtualNotifications } from "@/components/notifications/VirtualNotificationProvider";
 import {
-  RENTAL_BEST_MATCH_THINKING_MESSAGES,
   RENTAL_INTRO_TEXT,
   RENTAL_NEGOTIATION_TIPS,
   RENTAL_RESULT_INTRO_TEXT,
-  RENTAL_THINKING_MESSAGES,
   RENTAL_VIEW_CHIPS,
   buildRentalSummaryMessage,
   type RentalAnswers,
 } from "@/lib/mocks/rentalHouse";
+import {
+  RENTAL_BEST_MATCH_PIPELINE,
+  RENTAL_INTRO_PIPELINE,
+  buildRentalSearchPipeline,
+} from "@/lib/thinking/pipelines/rentalHouse";
 import { ChipRow } from "./ChipRow";
 import { Reveal } from "./Reveal";
 import { RentalQuestionnaire } from "./RentalQuestionnaire";
@@ -37,7 +40,7 @@ const FOLLOW_UP_NEGOTIATION = "negotiation";
 export function RentalHouseFlow() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [answers, setAnswers] = useState<RentalAnswers | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("smart");
+  const [viewMode, setViewMode] = useState<ViewMode>("map");
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [bestMatchThinking, setBestMatchThinking] = useState(false);
   const [bestMatchRevealed, setBestMatchRevealed] = useState(false);
@@ -45,34 +48,15 @@ export function RentalHouseFlow() {
   const [visitConfirmedLabel, setVisitConfirmedLabel] = useState<string | null>(null);
   const [autoSearchEnabled, setAutoSearchEnabled] = useState(false);
   const [negotiationTipsShown, setNegotiationTipsShown] = useState(false);
-  const timers = useRef<number[]>([]);
   const { showNotification } = useVirtualNotifications();
-
-  function schedule(next: () => void, ms: number) {
-    const timer = window.setTimeout(next, ms);
-    timers.current.push(timer);
-  }
-
-  useEffect(() => {
-    const activeTimers = timers.current;
-    schedule(() => setPhase("questionnaire"), 900);
-    return () => {
-      activeTimers.forEach((timer) => window.clearTimeout(timer));
-    };
-  }, []);
 
   function completeQuestionnaire(nextAnswers: RentalAnswers) {
     setAnswers(nextAnswers);
     setPhase("thinking");
-    schedule(() => setPhase("results"), 3200);
   }
 
   function handleBestMatch() {
     setBestMatchThinking(true);
-    schedule(() => {
-      setBestMatchThinking(false);
-      setBestMatchRevealed(true);
-    }, 1600);
   }
 
   function handleFollowUp(id: string) {
@@ -112,7 +96,9 @@ export function RentalHouseFlow() {
         </Reveal>
       )}
 
-      {phase === "intro" && <ThinkingBeat show messages={["دارم چندتا سؤال کوتاه آماده می‌کنم..."]} />}
+      {phase === "intro" && (
+        <ThinkingBeat show pipeline={RENTAL_INTRO_PIPELINE} onComplete={() => setPhase("questionnaire")} />
+      )}
 
       {phase === "questionnaire" && (
         <Reveal>
@@ -126,7 +112,9 @@ export function RentalHouseFlow() {
         </Reveal>
       )}
 
-      <ThinkingBeat show={phase === "thinking"} messages={RENTAL_THINKING_MESSAGES} cycleMs={1500} />
+      {phase === "thinking" && answers && (
+        <ThinkingBeat show pipeline={buildRentalSearchPipeline(answers)} onComplete={() => setPhase("results")} />
+      )}
 
       {phase === "results" && (
         <>
@@ -151,19 +139,26 @@ export function RentalHouseFlow() {
             {viewMode === "table" && <RentalComparisonTable />}
           </Reveal>
 
+          <ThinkingBeat
+            show={bestMatchThinking}
+            pipeline={RENTAL_BEST_MATCH_PIPELINE}
+            onComplete={() => {
+              setBestMatchThinking(false);
+              setBestMatchRevealed(true);
+            }}
+          />
+
+          {bestMatchRevealed && (
+            <Reveal>
+              <RentalBestMatchCard onViewProperty={setSelectedPropertyId} />
+            </Reveal>
+          )}
+
           {followUpChips.length > 0 && (
             <Reveal>
               <div className={styles.followUpRow}>
                 <ChipRow chips={followUpChips} ariaLabel="اقدام بعدی" onPick={handleFollowUp} />
               </div>
-            </Reveal>
-          )}
-
-          <ThinkingBeat show={bestMatchThinking} messages={RENTAL_BEST_MATCH_THINKING_MESSAGES} cycleMs={1200} />
-
-          {bestMatchRevealed && (
-            <Reveal>
-              <RentalBestMatchCard onViewProperty={setSelectedPropertyId} />
             </Reveal>
           )}
 

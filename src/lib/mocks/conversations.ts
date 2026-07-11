@@ -3,7 +3,12 @@ import { laptopShortlist, RECOMMENDED_PRODUCT_ID } from "@/lib/mocks/shoppingPro
 import { INITIAL_USER_MESSAGE } from "@/lib/mocks/shoppingScript";
 import { MONTHLY_GROCERY_HEADER_ACCENT_RGB, MONTHLY_GROCERY_USER_MESSAGE } from "@/lib/mocks/monthlyGrocery";
 import { CRYPTO_ANALYSIS_CONVERSATION_ID, EXCHANGE_STEP_COPY, FINANCE_HEADER_ACCENT_RGB } from "@/lib/mocks/financeCopy";
-import { RENTAL_HOUSE_CONVERSATION_ID, RENTAL_HOUSE_HEADER_ACCENT_RGB, RENTAL_HOUSE_USER_MESSAGE } from "@/lib/mocks/rentalHouse";
+import {
+  RENTAL_HOUSE_CONVERSATION_ID,
+  RENTAL_HOUSE_HEADER_ACCENT_RGB,
+  RENTAL_HOUSE_SPACE_ID,
+  RENTAL_HOUSE_USER_MESSAGE,
+} from "@/lib/mocks/rentalHouse";
 
 /**
  * Reference reproductions of the two Health conversation mocks. Note (flagged to
@@ -216,7 +221,7 @@ const cryptoPortfolioAnalysis: Conversation = {
 
 const rentalHouseSearch: Conversation = {
   id: RENTAL_HOUSE_CONVERSATION_ID,
-  spaceId: "kharid",
+  spaceId: RENTAL_HOUSE_SPACE_ID,
   headerAccentRgb: RENTAL_HOUSE_HEADER_ACCENT_RGB,
   blocks: [
     { id: "u1", kind: "userText", text: RENTAL_HOUSE_USER_MESSAGE },

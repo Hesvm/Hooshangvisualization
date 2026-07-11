@@ -32,6 +32,19 @@ type ComposerProps = {
   onSend?: (text: string) => void;
   onStateChange?: (state: ComposerState) => void;
   placeholder?: string;
+  /**
+   * "floating" (default): self-positions full-screen, own pill shadows — the
+   * original standalone usage. "embedded": renders in-flow with no shadows of
+   * its own, for nesting inside another surface that already owns the elevation
+   * (e.g. BottomDock's unified dock card).
+   */
+  variant?: "floating" | "embedded";
+  /**
+   * Embedded only: reports the live OS-keyboard inset so the parent surface
+   * (e.g. BottomDock) can lift its whole card — icons included — above the
+   * keyboard, instead of just this composer sliding out from under them.
+   */
+  onKeyboardInsetChange?: (inset: number) => void;
 };
 
 /**
@@ -48,6 +61,8 @@ export function Composer({
   onSend,
   onStateChange,
   placeholder = "چیکار میتونم برات کنم؟",
+  variant = "floating",
+  onKeyboardInsetChange,
 }: ComposerProps) {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
@@ -155,6 +170,11 @@ export function Composer({
 
   const effectiveKbInset = showDevKeyboard ? devKeyboardHeight : kbInset;
 
+  useEffect(() => {
+    if (variant !== "embedded") return;
+    onKeyboardInsetChange?.(effectiveKbInset);
+  }, [variant, effectiveKbInset, onKeyboardInsetChange]);
+
   function clearSuggestionExitTimer() {
     if (suggestionExitTimerRef.current === null) return;
     window.clearTimeout(suggestionExitTimerRef.current);
@@ -253,7 +273,7 @@ export function Composer({
       )}
 
       <div
-        className={`${styles.dock} ${shouldRenderSuggestions ? styles.hasSuggestions : ""}`}
+        className={`${styles.dock} ${variant === "embedded" ? styles.embedded : ""} ${shouldRenderSuggestions ? styles.hasSuggestions : ""}`}
         style={{ "--kb-inset": `${effectiveKbInset}px` } as CSSProperties}
       >
         {/* Bottom edge fade/blur — content dissolves downward beneath the sharp composer. */}

@@ -1,0 +1,75 @@
+.statsRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  flex: 1 1 auto;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statLabel {
+  font-family: var(--font-ravi);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.statValue {
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+}
+
+.deadlineRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 4px 0;
+  font-family: var(--font-ravi);
+}
+
+.deadlineRow + .deadlineRow {
+  border-top: 1px solid rgba(0, 0, 0, 0.045);
+}
+
+.deadlineIcon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.deadlineLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-history-title);
+}
+
+.deadlineDate {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-history-heading);
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+}

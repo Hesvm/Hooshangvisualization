@@ -6,23 +6,49 @@
  */
 
 import type { QuestionDef } from "@/lib/mocks/shoppingScript";
+import type { HistoryItem } from "@/types/history";
+import type { ComposerSuggestion } from "@/types/space";
 
 export const CRYPTO_ANALYSIS_CONVERSATION_ID = "crypto-portfolio-analysis";
 export const FINANCE_HEADER_ACCENT_RGB = "26, 158, 107";
 
+export const FINANCE_HISTORY: HistoryItem[] = [
+  {
+    id: CRYPTO_ANALYSIS_CONVERSATION_ID,
+    title: "تحلیل پرتفوی کریپتو",
+    subtitle: "ترکیب دارایی‌ها، سود و زیان و امتیاز ریسک",
+    isUnread: false,
+    href: `/spaces/modiriat-mali/conversations/${CRYPTO_ANALYSIS_CONVERSATION_ID}`,
+  },
+  {
+    id: "monthly-budget",
+    title: "بودجه اقتصادی این ماه",
+    subtitle: "پیشنهاد سقف خرج برای هر دسته",
+    isUnread: true,
+  },
+  {
+    id: "weekly-expenses",
+    title: "بررسی خرج‌های این هفته",
+    subtitle: "مقایسه با میانگین سه ماه اخیر",
+    isUnread: false,
+  },
+];
+
+export const FINANCE_SUGGESTED_PROMPTS: ComposerSuggestion[] = [
+  { id: "expenses", label: "خرج‌های این هفته رو بررسی کن", icon: "finance", prompt: "خرج‌های این هفته رو بررسی کن" },
+  { id: "budget", label: "یه بودجه اقتصادی بچین", icon: "finance", prompt: "یه بودجه اقتصادی بچین" },
+  { id: "rebalance", label: "پیشنهاد بازتوزیع پرتفوی بده", icon: "finance", prompt: "پیشنهاد بازتوزیع پرتفوی بده" },
+];
+
 export const TIMING = {
-  initialThinkingMs: 900,
-  promptToListMs: 400,
-  connectionThinkingMs: 3200,
-  thinkingCycleMs: 1500,
-  portfolioIntroDelayMs: 500,
-  portfolioResultDelayMs: 500,
-  chipFollowupDelayMs: 350,
-  allocationUserMessageDelayMs: 300,
-  allocationPromptDelayMs: 500,
-  questionAdvanceMs: 400,
-  allocationThinkingMs: 2200,
-  allocationEditorDelayMs: 500,
+  promptToListMs: 280,
+  portfolioIntroDelayMs: 350,
+  portfolioResultDelayMs: 350,
+  chipFollowupDelayMs: 240,
+  allocationUserMessageDelayMs: 210,
+  allocationPromptDelayMs: 350,
+  questionAdvanceMs: 280,
+  allocationEditorDelayMs: 350,
 };
 
 export const FINANCE_START_COPY = {
@@ -46,15 +72,6 @@ export const EXCHANGE_SHEET_COPY = {
 
 export const EXCHANGE_UNAVAILABLE_NOTE =
   "فعلاً فقط اتصال به بیت‌پین در این نسخه فعاله — این گزینه به‌زودی اضافه می‌شه.";
-
-export const INITIAL_THINKING_MESSAGES = ["دارم درخواستت رو بررسی می‌کنم", "دارم صرافی‌های پشتیبانی‌شده رو آماده می‌کنم"];
-
-export const CONNECTING_THINKING_MESSAGES = [
-  "در حال اتصال به بیت‌پین…",
-  "در حال دریافت موجودی و تراکنش‌ها…",
-  "در حال محاسبه ترکیب دارایی‌ها…",
-  "در حال تحلیل ریسک پرتفوی…",
-];
 
 export const PORTFOLIO_RESULT_COPY = {
   intro: "تحلیل پرتفوت آماده شد. این خلاصه‌ای از وضعیت فعلیه:",
@@ -119,5 +136,3 @@ export const ALLOCATION_EDITOR_COPY = {
 export const ALLOCATION_SAVED_COPY = "این ترکیب ذخیره شد. هر وقت خواستی می‌تونی بهش برگردی.";
 
 export const ALLOCATION_SHARE_COMING_SOON_COPY = "اشتراک‌گذاری با مشاور به‌زودی اضافه می‌شه.";
-
-export const ALLOCATION_THINKING_MESSAGES = ["در حال بررسی پاسخ‌ها…", "در حال پیشنهاد ترکیب دارایی…"];

@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { InfoCircle, ShieldTick, TickCircle, Truck, Refresh, Chart, Star1 } from "iconsax-react";
+import { InfoCircle, ShieldTick, TickCircle, Truck, Refresh, Chart, Star1, TrendUp } from "iconsax-react";
 import { ComponentHeader } from "@/components/ComponentHeader";
 import { faNum } from "@/lib/faNum";
 import { Price } from "@/components/Price";
 import { NumericText } from "@/components/NumericText";
+import { AffordabilityForecastChart } from "./AffordabilityForecastChart";
 import type { ShoppingProduct } from "@/types/shopping";
 import styles from "./FinalRecommendationCard.module.css";
 
@@ -79,6 +80,40 @@ export function FinalRecommendationCard({ product }: FinalRecommendationCardProp
           ))}
         </ul>
       </div>
+
+      {product.affordability && (
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>چرا الان برای تو به‌صرفه‌ست؟</div>
+          <div className={styles.affordabilityBlock}>
+            <div className={styles.affordabilityVerdictRow}>
+              <span className={styles.affordabilityVerdictIcon}>
+                <TrendUp variant="Bold" size={18} color="var(--color-success)" />
+              </span>
+              <span className={styles.affordabilityVerdict}>{product.affordability.verdict}</span>
+            </div>
+
+            {product.affordability.reasons.map((reason) => (
+              <p key={reason} className={styles.affordabilityText}>
+                {reason}
+              </p>
+            ))}
+
+            {product.affordability.forecast.length === 2 && (
+              <div className={styles.savingsBadge}>
+                <NumericText className={styles.savingsAmount}>
+                  {faNum(
+                    product.affordability.forecast[1].price - product.affordability.forecast[0].price
+                  )}
+                </NumericText>
+                <span>میلیون تومان صرفه‌جویی نسبت به خرید {product.affordability.forecast[1].label}</span>
+              </div>
+            )}
+
+            <div className={styles.forecastLabel}>روند قیمت پیش‌بینی‌شده</div>
+            <AffordabilityForecastChart forecast={product.affordability.forecast} />
+          </div>
+        </div>
+      )}
 
       <div className={`${styles.section} ${styles.limitationsSection}`}>
         <div className={styles.sectionTitle}>چه محدودیت‌هایی داره؟</div>

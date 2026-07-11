@@ -9,18 +9,20 @@ import { PORTFOLIO_DATA } from "@/lib/mocks/portfolio";
 import { PRESETS, redistribute } from "@/lib/allocation";
 import {
   ALLOCATION_INTRO_COPY,
-  ALLOCATION_THINKING_MESSAGES,
   CHIP_FOLLOWUP_COPY,
-  CONNECTING_THINKING_MESSAGES,
   EXCHANGE_SHEET_COPY,
   EXCHANGE_STEP_COPY,
   EXCHANGE_UNAVAILABLE_NOTE,
-  INITIAL_THINKING_MESSAGES,
   PORTFOLIO_CHIPS,
   PORTFOLIO_RESULT_COPY,
   RISK_QUESTIONS,
   TIMING,
 } from "@/lib/mocks/financeCopy";
+import {
+  FINANCE_ALLOCATION_PIPELINE,
+  FINANCE_CONNECTING_PIPELINE,
+  FINANCE_INITIAL_PIPELINE,
+} from "@/lib/thinking/pipelines/finance";
 import type { AllocationItem, AllocationPresetId, MarketId } from "@/types/finance";
 import { ChipRow } from "./ChipRow";
 import { QuestionCard, type QuestionAnswer } from "./QuestionCard";
@@ -125,14 +127,12 @@ export function CryptoPortfolioFlow() {
     setState((prev) => ({ ...prev, ...partial }));
   }
 
-  useEffect(() => {
+  function handleInitialThinkingComplete() {
+    patch({ initialThinking: false, promptVisible: true });
     schedule(() => {
-      patch({ initialThinking: false, promptVisible: true });
-      schedule(() => {
-        patch({ exchangeListVisible: true });
-      }, TIMING.promptToListMs);
-    }, TIMING.initialThinkingMs);
-  }, []);
+      patch({ exchangeListVisible: true });
+    }, TIMING.promptToListMs);
+  }
 
   function handleSelectExchange(id: string) {
     if (id !== "bitpin") {
@@ -148,15 +148,16 @@ export function CryptoPortfolioFlow() {
 
   function handleConfirmConnection() {
     patch({ sheetOpen: false, connecting: true });
+  }
+
+  function handleConnectingComplete() {
+    patch({ connecting: false });
     schedule(() => {
-      patch({ connecting: false });
+      patch({ portfolioIntroVisible: true });
       schedule(() => {
-        patch({ portfolioIntroVisible: true });
-        schedule(() => {
-          patch({ portfolioResultVisible: true });
-        }, TIMING.portfolioResultDelayMs);
-      }, TIMING.portfolioIntroDelayMs);
-    }, TIMING.connectionThinkingMs);
+        patch({ portfolioResultVisible: true });
+      }, TIMING.portfolioResultDelayMs);
+    }, TIMING.portfolioIntroDelayMs);
   }
 
   function handleChipPick(chipId: string) {
@@ -198,20 +199,21 @@ export function CryptoPortfolioFlow() {
 
     schedule(() => {
       patch({ currentQuestionIndex: RISK_QUESTIONS.length, allocationThinking: true });
-      schedule(() => {
-        setState((prev) => {
-          const presetId = pickPreset(prev.riskAnswers);
-          return {
-            ...prev,
-            allocationThinking: false,
-            recommendedPresetId: presetId,
-            allocationPresetId: presetId,
-            allocationItems: PRESETS[presetId].map((item) => ({ ...item })),
-          };
-        });
-        schedule(() => patch({ allocationEditorVisible: true }), TIMING.allocationEditorDelayMs);
-      }, TIMING.allocationThinkingMs);
     }, TIMING.questionAdvanceMs);
+  }
+
+  function handleAllocationThinkingComplete() {
+    setState((prev) => {
+      const presetId = pickPreset(prev.riskAnswers);
+      return {
+        ...prev,
+        allocationThinking: false,
+        recommendedPresetId: presetId,
+        allocationPresetId: presetId,
+        allocationItems: PRESETS[presetId].map((item) => ({ ...item })),
+      };
+    });
+    schedule(() => patch({ allocationEditorVisible: true }), TIMING.allocationEditorDelayMs);
   }
 
   function handleRiskQuestionBack() {
@@ -242,7 +244,7 @@ export function CryptoPortfolioFlow() {
 
   return (
     <div className={styles.column}>
-      <ThinkingBeat show={state.initialThinking} messages={INITIAL_THINKING_MESSAGES} cycleMs={TIMING.thinkingCycleMs} />
+      <ThinkingBeat show={state.initialThinking} pipeline={FINANCE_INITIAL_PIPELINE} onComplete={handleInitialThinkingComplete} />
 
       {state.promptVisible && (
         <Reveal>
@@ -266,7 +268,7 @@ export function CryptoPortfolioFlow() {
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.connecting} messages={CONNECTING_THINKING_MESSAGES} cycleMs={TIMING.thinkingCycleMs} />
+      <ThinkingBeat show={state.connecting} pipeline={FINANCE_CONNECTING_PIPELINE} onComplete={handleConnectingComplete} />
 
       {state.portfolioIntroVisible && (
         <Reveal>
@@ -329,7 +331,11 @@ export function CryptoPortfolioFlow() {
         </Reveal>
       )}
 
-      <ThinkingBeat show={state.allocationThinking} messages={ALLOCATION_THINKING_MESSAGES} cycleMs={TIMING.thinkingCycleMs} />
+      <ThinkingBeat
+        show={state.allocationThinking}
+        pipeline={FINANCE_ALLOCATION_PIPELINE}
+        onComplete={handleAllocationThinkingComplete}
+      />
 
       {state.allocationEditorVisible && (
         <Reveal>

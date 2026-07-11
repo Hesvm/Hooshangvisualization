@@ -1,0 +1,94 @@
+.statsRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 12px;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statLabel {
+  font-family: var(--font-ravi);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.statValue {
+  font-family: var(--font-ravi);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-history-title);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+}
+
+.progressRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressLabelRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ravi);
+  font-size: 11.5px;
+  color: var(--color-history-heading);
+}
+
+.track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-info);
+}
+
+.creditFill {
+  background: var(--color-success);
+}
+
+.eligibleRow {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 4px 0;
+  font-family: var(--font-ravi);
+}
+
+.eligibleRow + .eligibleRow {
+  border-top: 1px solid rgba(0, 0, 0, 0.045);
+}
+
+.eligibleLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-history-title);
+}
+
+.eligibleAmount {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-success);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+}

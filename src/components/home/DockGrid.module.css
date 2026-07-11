@@ -1,0 +1,20 @@
+.grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: start;
+  gap: 4px;
+  padding: 14px 8px 6px;
+}
+
+.rowClip {
+  overflow: hidden;
+}
+
+.rowClip .row {
+  padding-top: 6px;
+}

@@ -1,0 +1,123 @@
+.card {
+  border-radius: 21px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  padding: 18px 20px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gaugeHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gaugeTitle {
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-history-title);
+}
+
+.gaugeLabel {
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.gaugeTrack {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  /* RTL-aware: low risk (0%) sits at inline-start (right in RTL), high risk
+     (100%) at inline-end (left). `to left` walks the same direction. */
+  background: linear-gradient(to left, var(--color-success) 0%, var(--color-warning) 50%, var(--color-danger) 100%);
+}
+
+.gaugePointer {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-floating);
+  border: 2px solid var(--color-history-title);
+  transform: translate(50%, -50%);
+  transition-property: inset-inline-start;
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.gaugeScale {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+}
+
+.insight {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  line-height: 19px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+  text-wrap: pretty;
+}
+
+.insight strong {
+  font-weight: 700;
+  color: var(--color-history-title);
+}
+
+.footer {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.updated {
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-history-heading);
+}
+
+.cta {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  min-height: 40px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition-property: scale;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.cta:active {
+  scale: 0.96;
+}

@@ -11,22 +11,24 @@ import {
   usePresence,
   useReducedMotion,
 } from "motion/react";
+import { useThinkingPipeline } from "@/lib/thinking/useThinkingPipeline";
+import { useTypewriter } from "@/lib/thinking/useTypewriter";
+import type { ThinkingPipeline } from "@/lib/thinking/types";
 import styles from "./HooshangThinkingState.module.css";
 
 /** Refined, non-elastic easing used across the whole thinking module. */
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-const APPEAR_DELAY_MS = 520; // wait before showing, so quick beats never flash
-const LOGO_HOLD_MS = 90; // brief hold on the real silhouette before morphing
-const MORPH_IN_MS = 460; // silhouette → circle
-const MIN_ACTIVE_MS = 5500; // real "thinking" needs to read as deliberate, not decorative
-const MORPH_OUT_MS = 400; // circle → silhouette on exit
-const SETTLE_MS = 280; // dots settle to 3 equal circles before the exit morph starts
-const PHRASE_INTERVAL_MS = 2600;
+const APPEAR_DELAY_MS = 365; // wait before showing, so quick beats never flash
+const LOGO_HOLD_MS = 65; // brief hold on the real silhouette before morphing
+const MORPH_IN_MS = 320; // silhouette → circle
+const MIN_ACTIVE_MS = 3850; // real "thinking" needs to read as deliberate, not decorative
+const MORPH_OUT_MS = 280; // circle → silhouette on exit
+const SETTLE_MS = 200; // dots settle to 3 equal circles before the exit morph starts
 
 // One dot's full shape-cycle: transition between shapes, then a brief hold.
-const DOT_TRANSITION_S = 0.42;
-const DOT_HOLD_MS = 300;
+const DOT_TRANSITION_S = 0.29;
+const DOT_HOLD_MS = 210;
 const DOT_LOOP_MS = (DOT_TRANSITION_S * 1000 + DOT_HOLD_MS) * 4;
 // Stagger so the 3 dots are always a different shape from one another —
 // a travelling wave, not a synchronized pulse.
@@ -97,10 +99,11 @@ const SHAPE = {
 const DOT_SEQUENCE = [SHAPE.pillTall, SHAPE.compact, SHAPE.normal, SHAPE.pillShort] as const;
 
 type HooshangThinkingStateProps = {
-  /** One or more Persian status phrases, cycled in order while mounted. */
-  messages: readonly string[];
+  /** Investigation pipeline driving the status text while mounted. */
+  pipeline: ThinkingPipeline;
+  /** Called once, after the pipeline's final step has held for its full duration. */
+  onComplete?: () => void;
   appearDelayMs?: number;
-  cycleMs?: number;
 };
 
 /**
@@ -120,12 +123,10 @@ type HooshangThinkingStateProps = {
  * Exit is coordinated through `usePresence`, so the caller wraps this in an
  * `<AnimatePresence>` (see `ThinkingBeat`) and the return morph actually plays.
  */
-export function HooshangThinkingState({
-  messages,
-  appearDelayMs = APPEAR_DELAY_MS,
-  cycleMs = PHRASE_INTERVAL_MS,
-}: HooshangThinkingStateProps) {
+export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = APPEAR_DELAY_MS }: HooshangThinkingStateProps) {
   const reduceMotion = useReducedMotion();
+  const stepText = useThinkingPipeline(pipeline, onComplete);
+  const activePhrase = useTypewriter(stepText);
   const [isPresent, safeToRemove] = usePresence();
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -137,15 +138,11 @@ export function HooshangThinkingState({
   const containerOpacity = useMotionValue(0);
   const containerY = useMotionValue(6);
 
-  const [mounted, setMounted] = useState(false); // container visible (past appear delay)
   const [active, setActive] = useState(false); // circle reached → dots cycle
   const [settling, setSettling] = useState(false); // exit: dots resting as equal circles
-  const [phraseIndex, setPhraseIndex] = useState(0);
   const activeAtRef = useRef(0);
   const mountedRef = useRef(false);
   const activeRef = useRef(false);
-
-  const activePhrase = messages[phraseIndex % messages.length] ?? "";
 
   // Resolves once the circle has actually been reached, so an exit that's
   // requested while still mid morph-in waits for the forward morph to finish
@@ -175,7 +172,6 @@ export function HooshangThinkingState({
   useEffect(() => {
     if (vphase === "delay" || mountedRef.current) return;
     mountedRef.current = true;
-    setMounted(true);
     animate(containerOpacity, 1, { duration: reduceMotion ? 0.15 : 0.28, ease: EASE });
     animate(containerY, 0, { duration: reduceMotion ? 0.15 : 0.34, ease: EASE });
     const raf = window.requestAnimationFrame(() => {
@@ -272,15 +268,6 @@ export function HooshangThinkingState({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPresent]);
 
-  // ---- Phrase cycling (isolated: never restarts the shell morph) ------------
-  useEffect(() => {
-    if (!mounted || messages.length < 2) return;
-    const id = window.setInterval(() => {
-      setPhraseIndex((i) => (i + 1) % messages.length);
-    }, cycleMs);
-    return () => window.clearInterval(id);
-  }, [mounted, messages.length, cycleMs]);
-
   return (
     <motion.div
       ref={rootRef}
@@ -293,18 +280,7 @@ export function HooshangThinkingState({
         <MorphingLogo d={dString} active={active} settling={settling} reduceMotion={!!reduceMotion} />
 
         <div className={styles.textSlot}>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={phraseIndex % messages.length}
-              className={`${styles.text} ${reduceMotion ? "" : styles.shimmer}`}
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5 }}
-              transition={{ duration: reduceMotion ? 0.15 : 0.28, ease: EASE }}
-            >
-              {activePhrase}
-            </motion.span>
-          </AnimatePresence>
+          <span className={`${styles.text} ${reduceMotion ? "" : styles.shimmer}`}>{activePhrase}</span>
         </div>
       </div>
     </motion.div>
@@ -329,7 +305,14 @@ function MorphingLogo({
 }) {
   return (
     <div className={styles.logoSystem} aria-hidden>
-      <svg className={styles.logoSvg} viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        className={styles.logoSvg}
+        viewBox="0 0 23 21"
+        width={38}
+        height={35}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path d={d} fill={SHELL_FILL} />
         <ShellDot cx={LANE.left} startIndex={0} active={active} settling={settling} reduceMotion={reduceMotion} />
         <ShellDot
@@ -445,16 +428,16 @@ function ShellDot({
 /**
  * Wraps a thinking beat in `<AnimatePresence>` so `HooshangThinkingState` can
  * play its circle→silhouette exit morph before it is removed. Callers render
- * `<ThinkingBeat show={…} messages={…} />` instead of a bare conditional.
+ * `<ThinkingBeat show={…} pipeline={…} />` instead of a bare conditional.
  */
 export function ThinkingBeat({
   show,
-  messages,
-  cycleMs,
+  pipeline,
+  onComplete,
 }: {
   show: boolean;
-  messages: readonly string[];
-  cycleMs?: number;
+  pipeline: ThinkingPipeline;
+  onComplete?: () => void;
 }) {
-  return <AnimatePresence>{show && <HooshangThinkingState messages={messages} cycleMs={cycleMs} />}</AnimatePresence>;
+  return <AnimatePresence>{show && <HooshangThinkingState pipeline={pipeline} onComplete={onComplete} />}</AnimatePresence>;
 }

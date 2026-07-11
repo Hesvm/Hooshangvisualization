@@ -9,11 +9,11 @@ import { PurchaseHistoryWidget } from "@/components/widgets/shopping/PurchaseHis
 import { ShoppingListWidget } from "@/components/widgets/shopping/ShoppingListWidget";
 import { YourItemsWidget } from "@/components/widgets/shopping/YourItemsWidget";
 import { MonthlyListNoteWidget, SmartReorderWidget } from "@/components/widgets/grocery/GroceryWidgets";
-import { SpendingWidget } from "@/components/widgets/finance/SpendingWidget";
 import { healthWidgetData, healthHistory } from "@/lib/mocks/health";
 import { purchaseDayActivity, shoppingListData, yourItemsData, shoppingHistory } from "@/lib/mocks/shopping";
 import { groceryHomeHistory, groceryMonthlyList, groceryReorderItems } from "@/lib/mocks/monthlyGrocery";
-import { SPENDING_DATA } from "@/lib/mocks/spending";
+import { RENTAL_HOME_HISTORY, RENTAL_HOUSE_SPACE_ID } from "@/lib/mocks/rentalHouse";
+import { SPACE_ACCENT_RGB } from "@/config/spaceColors";
 
 export type SpacePageContent = {
   title: string;
@@ -30,7 +30,7 @@ export const spacePages: Record<string, SpacePageContent> = {
   badan: {
     title: "بدن و سلامتی",
     iconSrc: "/images/spaces/new-icons-symbol-130/health.png",
-    accentRgb: "232, 56, 79", // soft pink, from the heart icon
+    accentRgb: SPACE_ACCENT_RGB.badan,
 
     widgets: [
       { id: "heart", span: "half", component: HeartWidget, data: healthWidgetData.heart },
@@ -43,7 +43,7 @@ export const spacePages: Record<string, SpacePageContent> = {
   kharid: {
     title: "خرید",
     iconSrc: "/images/spaces/new-icons-symbol-130/shopping.png",
-    accentRgb: "80, 130, 220", // soft blue, from the shopping icon
+    accentRgb: SPACE_ACCENT_RGB.kharid,
 
     widgets: [
       { id: "purchaseHistory", span: "full", component: PurchaseHistoryWidget, data: purchaseDayActivity },
@@ -55,7 +55,7 @@ export const spacePages: Record<string, SpacePageContent> = {
   "kharid-supermarketi": {
     title: "خرید روزمره",
     iconSrc: "/images/spaces/new-icons-symbol-130/grocery.png",
-    accentRgb: "245, 112, 34", // restrained grocery orange
+    accentRgb: SPACE_ACCENT_RGB["kharid-supermarketi"],
 
     widgets: [
       {
@@ -76,9 +76,18 @@ export const spacePages: Record<string, SpacePageContent> = {
   "modiriat-mali": {
     title: "سرمایه‌گذاری",
     iconSrc: "/images/spaces/new-icons-symbol-130/finance.png",
-    accentRgb: "26, 158, 107", // finance green, from the success token
+    accentRgb: SPACE_ACCENT_RGB["modiriat-mali"],
 
-    widgets: [{ id: "spending", span: "full", component: SpendingWidget, data: SPENDING_DATA }],
+    /* Rendered entirely by FinanceSpaceHome (tab chips + panels) — see page.tsx. */
+    widgets: [],
     history: [],
+  },
+  [RENTAL_HOUSE_SPACE_ID]: {
+    title: "اجاره خونه",
+    iconSrc: "/images/spaces/new-icons-symbol-130/house.png",
+    accentRgb: SPACE_ACCENT_RGB[RENTAL_HOUSE_SPACE_ID],
+
+    widgets: [],
+    history: RENTAL_HOME_HISTORY,
   },
 };

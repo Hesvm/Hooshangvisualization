@@ -1,0 +1,34 @@
+.pill {
+  position: absolute;
+  z-index: 30;
+  left: 23px;
+  right: 71px;
+  top: 20px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  box-shadow: var(--shadow-floating);
+  box-sizing: border-box;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-ravi);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Overrides HamburgerMenu's default top:63/right:23 to align with .pill's
+   new top:20/height:56 without editing HamburgerMenu.module.css. */
+.menuTrigger {
+  top: 28px !important;
+  right: 23px !important;
+}

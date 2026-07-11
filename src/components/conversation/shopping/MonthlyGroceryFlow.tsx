@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Add, ArrowLeft2, Minus, TickCircle, Trash, TruckFast } from "iconsax-react";
 import { BottomSheet } from "@/components/BottomSheet";
 import { ComponentHeader } from "@/components/ComponentHeader";
@@ -20,21 +20,10 @@ import {
   type GroceryQuestion,
   type GroceryReplacement,
 } from "@/lib/mocks/monthlyGrocery";
+import { GROCERY_BASKET_PIPELINE, GROCERY_INITIAL_PIPELINE } from "@/lib/thinking/pipelines/grocery";
 import { ChipRow } from "./ChipRow";
 import { Reveal } from "./Reveal";
 import styles from "./MonthlyGroceryFlow.module.css";
-
-const INITIAL_THINKING = [
-  "دارم برای خرید ماهانه‌تون برنامه می‌چینم...",
-  `دارم نیازهای یک خانواده ${faNum(groceryContext.householdSize)} نفره رو در نظر می‌گیرم...`,
-] as const;
-
-const BASKET_THINKING = [
-  `دارم مصرف یک‌ماهه خانواده ${faNum(groceryContext.householdSize)} نفره رو تخمین می‌زنم...`,
-  "دارم قیمت و موجودی کالاهای نزدیکت رو بررسی می‌کنم...",
-  "دارم خریدها رو بر اساس ضرورت و بودجه مرتب می‌کنم...",
-  "دارم سبد نهایی دیجی‌جت رو آماده می‌کنم...",
-] as const;
 
 const QUICK_ACTIONS = [
   { id: "cheaper", label: "ارزان‌ترش کن" },
@@ -313,28 +302,13 @@ export function MonthlyGroceryFlow() {
   const [items, setItems] = useState<GroceryItem[]>(groceryItems);
   const [replacementTarget, setReplacementTarget] = useState<GroceryItem | null>(null);
   const [routineChoice, setRoutineChoice] = useState<string | null>(null);
-  const timers = useRef<number[]>([]);
   const { showNotification } = useVirtualNotifications();
 
   const consolidatedUserMessage = useMemo(() => (answers ? buildConsolidatedUserMessage(answers) : ""), [answers]);
 
-  function schedule(next: () => void, ms: number) {
-    const timer = window.setTimeout(next, ms);
-    timers.current.push(timer);
-  }
-
-  useEffect(() => {
-    const activeTimers = timers.current;
-    schedule(() => setStep("setup"), 1400);
-    return () => {
-      activeTimers.forEach((timer) => window.clearTimeout(timer));
-    };
-  }, []);
-
   function completeSetup(nextAnswers: AnswerMap) {
     setAnswers(nextAnswers);
     setStep("basketThinking");
-    schedule(() => setStep("basket"), 2600);
   }
 
   function updateQuantity(itemId: string, delta: number) {
@@ -397,7 +371,11 @@ export function MonthlyGroceryFlow() {
 
   return (
     <div className={styles.flowColumn}>
-      <ThinkingBeat show={step === "initialThinking"} messages={INITIAL_THINKING} />
+      <ThinkingBeat
+        show={step === "initialThinking"}
+        pipeline={GROCERY_INITIAL_PIPELINE}
+        onComplete={() => setStep("setup")}
+      />
 
       {step !== "initialThinking" && (
         <Reveal>
@@ -423,7 +401,11 @@ export function MonthlyGroceryFlow() {
         </Reveal>
       )}
 
-      <ThinkingBeat show={step === "basketThinking"} messages={BASKET_THINKING} cycleMs={1500} />
+      <ThinkingBeat
+        show={step === "basketThinking"}
+        pipeline={GROCERY_BASKET_PIPELINE}
+        onComplete={() => setStep("basket")}
+      />
 
       {(step === "basket" || step === "handoff" || step === "postPurchase" || step === "routineSaved") && (
         <Reveal>

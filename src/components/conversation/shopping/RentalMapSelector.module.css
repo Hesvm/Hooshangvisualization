@@ -1,129 +1,125 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.search {
-  height: 40px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  background: var(--color-surface-subtle);
-  color: var(--color-history-title);
-  font-family: var(--font-ravi);
-  font-size: 13.5px;
-  padding: 0 16px;
-  text-align: right;
-  direction: rtl;
-}
-
-.search::placeholder {
-  color: var(--color-history-heading);
+  gap: 10px;
 }
 
 .mapCard {
   position: relative;
   width: 100%;
-  aspect-ratio: 360 / 260;
+  aspect-ratio: 320 / 180;
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(160deg, #eef2f6 0%, #e3e9ee 100%);
-  outline: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--color-surface-subtle);
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  touch-action: none;
+  user-select: none;
 }
 
-.svg {
+.zoomLayer {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  transform-origin: center center;
+  will-change: transform;
 }
 
-.blob {
-  fill: rgba(59, 147, 235, 0.14);
-  stroke: rgba(59, 147, 235, 0.3);
-  stroke-width: 1.5;
-  transition-property: fill, stroke;
-  transition-duration: 0.2s;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-}
-
-.blobSelected {
-  fill: rgba(16, 16, 19, 0.85);
-  stroke: rgba(16, 16, 19, 0.9);
-}
-
-.blobDimmed {
-  opacity: 0.35;
-}
-
-.districtButton {
+.mapImage {
   position: absolute;
-  transform: translate(-50%, -50%);
-  min-width: 40px;
-  min-height: 40px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.45;
+  user-select: none;
+  pointer-events: none;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.16);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+  background-color: transparent;
+  box-shadow: inset 0 0 0 0 #3b93eb;
+  cursor: pointer;
+  transition-property: background-color, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell:nth-child(4n) {
+  border-right: none;
+}
+
+.cell:nth-child(n + 9) {
+  border-bottom: none;
+}
+
+.cell:hover {
+  background-color: rgba(59, 147, 235, 0.08);
+}
+
+.cell:active {
+  transform: scale(0.96);
+}
+
+.cellSelected,
+.cellSelected:hover {
+  background-color: rgba(59, 147, 235, 0.22);
+  box-shadow: inset 0 0 0 2px #3b93eb;
+}
+
+.cell:focus-visible {
+  outline: 2px solid #3b93eb;
+  outline-offset: -2px;
+}
+
+.checkBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  padding: 4px 6px;
-}
-
-.districtLabel {
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   background: var(--color-white);
-  box-shadow: var(--shadow-card);
-  color: var(--color-history-title);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 4px 10px;
-  white-space: nowrap;
-  transition-property: background-color, color, scale;
-  transition-duration: 0.2s, 0.2s, 0.15s;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  filter: drop-shadow(0 1px 3px rgba(16, 16, 19, 0.25));
 }
 
-.districtButton:active .districtLabel {
-  scale: 0.96;
-}
-
-.districtLabelSelected {
-  background: var(--color-selected);
-  color: var(--color-white);
-}
-
-.chipRow {
-  display: flex;
-  direction: rtl;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--color-selected);
-  color: var(--color-white);
-  font-family: var(--font-ravi);
-  font-size: 12.5px;
-  font-weight: 650;
-  padding: 0 8px 0 12px;
-  cursor: pointer;
-  transition-property: scale, opacity;
-  transition-duration: 0.15s, 0.2s;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-}
-
-.chip:active {
-  scale: 0.96;
-}
-
-.emptyChips {
+.label {
   color: var(--color-history-heading);
-  font-size: 12.5px;
+  font-family: var(--font-ravi);
+  font-size: 11px;
+  font-weight: 600;
+  text-wrap: balance;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.9),
+    0 0 6px rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-history-heading);
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
 }

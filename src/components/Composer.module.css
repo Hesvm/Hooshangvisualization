@@ -41,6 +41,35 @@
   --bottom-edge-height: 288px;
 }
 
+/* Embedded: nested inside another surface (BottomDock) that already owns the
+   card's background/shadow/radius — drop this dock's own full-screen absolute
+   positioning and the page-background bottom fade (it would paint a translucent
+   gradient over the parent card, "bleeding" the page through), and drop the
+   inner controls' own floating shadows so there's exactly one elevation, not
+   a stack of nested ones. */
+.dock.embedded {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  flex-shrink: 0;
+  /* The parent (BottomDock) lifts the whole card — icons included — above the
+     keyboard using the inset reported via onKeyboardInsetChange, so this
+     composer must not also translate itself (it would double-move / clip
+     against the parent's overflow:hidden). */
+  transform: none;
+}
+
+.dock.embedded .bottomEdge {
+  display: none;
+}
+
+.dock.embedded .plusButton,
+.dock.embedded .composer {
+  box-shadow: none;
+  background: var(--color-surface-subtle);
+}
+
 /* Bottom edge: transparent at the top → page background at full opacity at the
    bottom, blur ramped in toward the bottom by a gradient mask. */
 .bottomEdge {

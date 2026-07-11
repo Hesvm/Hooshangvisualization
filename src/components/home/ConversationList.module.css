@@ -1,0 +1,28 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heading {
+  margin: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-family: var(--font-ravi);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-history-heading);
+}
+
+.headingIcon {
+  color: var(--color-history-heading);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

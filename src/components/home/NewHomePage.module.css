@@ -1,0 +1,46 @@
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: 100%;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
+  overflow: hidden;
+}
+
+.scrollArea {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+  padding: 96px 23px 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: transform, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scrollAreaRaised {
+  opacity: 0.16;
+  transform: translateY(-64px);
+  transition-duration: 220ms;
+}
+
+.scrollArea::-webkit-scrollbar {
+  display: none;
+}
+
+.topWidgetsRow {
+  margin-top: 4px;
+}

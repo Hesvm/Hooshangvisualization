@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--font-ravi);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-history-heading);
+}
+
+.change {
+  font-family: var(--font-ravi);
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--numeric-letter-spacing);
+  unicode-bidi: isolate;
+}
+
+.changeUp {
+  color: var(--color-success);
+}
+
+.changeDown {
+  color: var(--color-danger);
+}
+
+.sparkline {
+  width: 100%;
+  height: 36px;
+}
