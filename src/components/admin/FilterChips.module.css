@@ -1,0 +1,39 @@
+.row {
+  direction: rtl;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-white);
+  font-family: var(--font-ravi);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition-property: background, color, border-color;
+  transition-duration: 120ms;
+  transition-timing-function: ease;
+}
+
+.chip:active {
+  scale: 0.96;
+}
+
+.chip.active {
+  background: var(--color-selected);
+  color: var(--color-white);
+  border-color: var(--color-selected);
+}
