@@ -1,0 +1,55 @@
+.strip {
+  direction: rtl;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex-shrink: 0;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 14px 16px;
+  border-radius: var(--radius-widget);
+  background: var(--color-white);
+  box-shadow: var(--shadow-card-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text {
+  margin: 0;
+  font-family: var(--font-ravi);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  text-wrap: pretty;
+}
+
+.delta {
+  align-self: flex-start;
+  font-family: var(--font-ravi);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
+}
+
+.delta.positive {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.delta.negative {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
