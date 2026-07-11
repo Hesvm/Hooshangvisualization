@@ -1,0 +1,8 @@
+.canvas {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  background: var(--color-bg-gradient-bottom);
+  border-radius: var(--radius-sheet);
+  overflow: hidden;
+}
