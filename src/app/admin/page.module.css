@@ -1,0 +1,17 @@
+.page {
+  direction: rtl;
+  display: flex;
+  gap: 16px;
+  height: 100vh;
+  padding: 16px;
+  background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
+  box-sizing: border-box;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
