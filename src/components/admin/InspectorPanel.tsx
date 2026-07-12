@@ -1,11 +1,14 @@
-import { CloseCircle, MessageText1, MagicStar, Chart21 } from "iconsax-react";
-import type { ConfidenceLevel, IntelligenceNode, UserProfile } from "@/types/intelligence";
+import Image from "next/image";
+import { CloseCircle, MessageText1, MagicStar, Chart21, User, Warning2, Ranking } from "iconsax-react";
+import type { ConfidenceLevel, IntelligenceCategory, IntelligenceNode, UserProfile } from "@/types/intelligence";
 import { CATEGORY_ACCENT_RGB, CATEGORY_ICONS, CATEGORY_LABELS } from "@/config/intelligenceColors";
+import { getCategoryVolumes, getUserOverview } from "@/lib/intelligenceInsights";
 import styles from "./InspectorPanel.module.css";
 
 type InspectorPanelProps = {
   profile: UserProfile;
   selectedNodeId: string | null;
+  activeCategories: "all" | ReadonlySet<IntelligenceCategory>;
   onSelectNode: (nodeId: string) => void;
   onClose: () => void;
 };
@@ -92,11 +95,268 @@ function DistributionBar({ leaves, accent }: { leaves: IntelligenceNode[]; accen
   );
 }
 
-export function InspectorPanel({ profile, selectedNodeId, onSelectNode, onClose }: InspectorPanelProps) {
-  const node = selectedNodeId ? profile.nodes.find((n) => n.id === selectedNodeId) ?? null : null;
+function UserOverviewView({ profile }: { profile: UserProfile }) {
+  const overview = getUserOverview(profile);
+  const maxVolume = overview.categoryVolumes[0]?.count ?? 1;
 
-  if (!node) return <div className={styles.panelCollapsed} />;
+  return (
+    <>
+      <div className={styles.header}>
+        <div className={styles.identity}>
+          <span className={styles.avatarFrame}>
+            <Image src={profile.avatarUrl} alt="" width={44} height={44} className={styles.avatarImage} />
+          </span>
+          <div className={styles.identityText}>
+            <h2 className={styles.title}>{profile.name}</h2>
+            <span className={styles.overviewConfidence}>اطمینان کلی: {overview.confidenceScore}٪</span>
+          </div>
+        </div>
+        <p className={styles.aiSentence}>{overview.summarySentence}</p>
+      </div>
 
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>
+          <User variant="Bold" size={14} color="currentColor" />
+          خلاصه پروفایل کاربر
+        </h3>
+        <ul className={styles.bulletList}>
+          {overview.profileBullets.map((bullet, index) => {
+            const accent = bullet.category ? CATEGORY_ACCENT_RGB[bullet.category] : "120, 130, 145";
+            const Icon = bullet.category ? CATEGORY_ICONS[bullet.category] : User;
+            return (
+              <li key={index} className={`${styles.bulletItem} ${bullet.tone === "warning" ? styles.bulletWarning : ""}`}>
+                <span
+                  className={styles.bulletIcon}
+                  style={{ ["--node-accent" as string]: bullet.tone === "warning" ? "212, 100, 60" : accent }}
+                >
+                  {bullet.tone === "warning" ? (
+                    <Warning2 variant="Bold" size={14} color="currentColor" />
+                  ) : (
+                    <Icon variant="Bold" size={14} color="currentColor" />
+                  )}
+                </span>
+                <span className={styles.bulletText}>{bullet.text}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>
+          <Chart21 variant="Bold" size={14} color="currentColor" />
+          کارت‌های بینش
+        </h3>
+
+        <div className={styles.insightCard}>
+          <h4 className={styles.insightCardTitle}>پراکندگی اطلاعات</h4>
+          <div className={styles.volumeChart}>
+            {overview.categoryVolumes.slice(0, 6).map((volume) => (
+              <div key={volume.category} className={styles.volumeRow}>
+                <span className={styles.volumeLabel}>{CATEGORY_LABELS[volume.category]}</span>
+                <span className={styles.volumeTrack}>
+                  <span
+                    className={styles.volumeFill}
+                    style={{
+                      width: `${(volume.count / maxVolume) * 100}%`,
+                      background: `rgb(${CATEGORY_ACCENT_RGB[volume.category]})`,
+                    }}
+                  />
+                </span>
+                <span className={styles.volumeCount}>{volume.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.insightCard}>
+          <h4 className={styles.insightCardTitle}>کیفیت پروفایل</h4>
+          <div className={styles.completenessRow}>
+            <span className={styles.completenessValue}>{overview.completeness}٪</span>
+            <span className={styles.completenessLabel}>کامل</span>
+          </div>
+          {overview.missingCategories.length > 0 && (
+            <div className={styles.missingList}>
+              <span className={styles.missingLabel}>موارد ناقص:</span>
+              <div className={styles.missingChips}>
+                {overview.missingCategories.slice(0, 5).map((category) => (
+                  <span key={category} className={styles.missingChip}>
+                    {CATEGORY_LABELS[category]}
+                  </span>
+                ))}
+                {overview.missingCategories.length > 5 && (
+                  <span className={styles.missingChip}>+{overview.missingCategories.length - 5} دیگر</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.insightCard}>
+          <h4 className={styles.insightCardTitle}>علایق اصلی</h4>
+          <div className={styles.interestChips}>
+            {overview.topInterests.map((leaf) => (
+              <span
+                key={leaf.id}
+                className={styles.interestChip}
+                style={{ ["--node-accent" as string]: CATEGORY_ACCENT_RGB[leaf.category] }}
+              >
+                {leaf.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function CategoryOverviewView({
+  profile,
+  category,
+  onSelectNode,
+}: {
+  profile: UserProfile;
+  category: IntelligenceCategory;
+  onSelectNode: (nodeId: string) => void;
+}) {
+  const accent = CATEGORY_ACCENT_RGB[category];
+  const CategoryIcon = CATEGORY_ICONS[category];
+  const leaves = profile.nodes.filter((n) => n.kind === "leaf" && n.category === category);
+  const sortedLeaves = [...leaves].sort((a, b) => b.confidenceScore - a.confidenceScore);
+  const avgScore = leaves.length
+    ? Math.round(leaves.reduce((sum, leaf) => sum + leaf.confidenceScore, 0) / leaves.length)
+    : 0;
+
+  const volumes = getCategoryVolumes(profile);
+  const rank = volumes.findIndex((v) => v.category === category) + 1;
+  const maxLeafScore = sortedLeaves[0]?.confidenceScore ?? 1;
+
+  const evidenceItems = sortedLeaves
+    .filter((leaf) => leaf.evidence.length > 0)
+    .slice(0, 3)
+    .flatMap((leaf) => leaf.evidence.slice(0, 2).map((text) => ({ text, source: leaf.label })));
+
+  const recommendation = sortedLeaves.find((leaf) => leaf.aiRecommendation)?.aiRecommendation;
+
+  return (
+    <>
+      <div className={styles.header}>
+        <div className={styles.headerTop}>
+          <span className={styles.categoryChip} style={{ ["--node-accent" as string]: accent }}>
+            نمای حوزه
+          </span>
+        </div>
+        <div className={styles.identity}>
+          <span className={styles.iconAvatar} style={{ ["--node-accent" as string]: accent }}>
+            <CategoryIcon variant="Bold" size={22} color={`rgb(${accent})`} />
+          </span>
+          <div className={styles.identityText}>
+            <h2 className={styles.title}>{CATEGORY_LABELS[category]}</h2>
+            {rank > 0 && (
+              <span className={styles.rankBadge}>
+                رتبه {rank} از {volumes.length} حوزه
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <section className={styles.statsRow}>
+        <ConfidenceGauge score={avgScore} accent={accent} />
+        <div className={styles.statChips}>
+          <div className={styles.statChip}>
+            <span className={styles.statValue}>{leaves.length}</span>
+            <span className={styles.statLabel}>زیرمجموعه</span>
+          </div>
+          <div className={styles.statChip}>
+            <span className={styles.statValue}>{avgScore}٪</span>
+            <span className={styles.statLabel}>میانگین اطمینان</span>
+          </div>
+        </div>
+      </section>
+
+      {leaves.length > 0 && (
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <Chart21 variant="Bold" size={14} color="currentColor" />
+            توزیع اطمینان زیرمجموعه‌ها
+          </h3>
+          <DistributionBar leaves={leaves} accent={accent} />
+        </section>
+      )}
+
+      {sortedLeaves.length > 0 && (
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <Ranking variant="Bold" size={14} color="currentColor" />
+            رتبه‌بندی زیرمجموعه‌ها
+          </h3>
+          <div className={styles.rankingList}>
+            {sortedLeaves.map((leaf, index) => (
+              <button
+                key={leaf.id}
+                type="button"
+                className={styles.rankingRow}
+                onClick={() => onSelectNode(leaf.id)}
+                style={{ ["--node-accent" as string]: accent }}
+              >
+                <span className={styles.rankingIndex}>{index + 1}</span>
+                <span className={styles.rankingLabel}>{leaf.label}</span>
+                <span className={styles.rankingTrack}>
+                  <span
+                    className={styles.rankingFill}
+                    style={{ width: `${(leaf.confidenceScore / maxLeafScore) * 100}%` }}
+                  />
+                </span>
+                <span className={styles.rankingScore}>{leaf.confidenceScore}٪</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {evidenceItems.length > 0 && (
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>شواهد پشتیبان</h3>
+          <ul className={styles.list}>
+            {evidenceItems.map((item, index) => (
+              <li key={index} className={styles.evidenceItem}>
+                <span className={styles.evidenceDot} style={{ ["--node-accent" as string]: accent }} />
+                <span className={styles.evidenceText}>
+                  {item.text}
+                  {item.source && <span className={styles.evidenceSource}> · {item.source}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {recommendation && (
+        <section className={`${styles.section} ${styles.recommendation}`} style={{ ["--node-accent" as string]: accent }}>
+          <h3 className={styles.sectionTitle}>
+            <MagicStar variant="Bold" size={14} color="currentColor" />
+            پیشنهاد هوش مصنوعی
+          </h3>
+          <p className={styles.body}>{recommendation}</p>
+        </section>
+      )}
+    </>
+  );
+}
+
+function NodeDetailView({
+  profile,
+  node,
+  onSelectNode,
+  onClose,
+}: {
+  profile: UserProfile;
+  node: IntelligenceNode;
+  onSelectNode: (nodeId: string) => void;
+  onClose: () => void;
+}) {
   const accent = CATEGORY_ACCENT_RGB[node.category];
   const CategoryIcon = CATEGORY_ICONS[node.category];
   const isCategory = node.kind === "category";
@@ -126,7 +386,7 @@ export function InspectorPanel({ profile, selectedNodeId, onSelectNode, onClose 
     : `چرا فکر می‌کنی من به «${node.label}» علاقه دارم؟`;
 
   return (
-    <aside className={styles.panel} key={node.id}>
+    <>
       <div className={styles.header}>
         <div className={styles.headerTop}>
           <span className={styles.categoryChip} style={{ ["--node-accent" as string]: accent }}>
@@ -258,6 +518,28 @@ export function InspectorPanel({ profile, selectedNodeId, onSelectNode, onClose 
           </h3>
           <p className={styles.body}>{recommendation}</p>
         </section>
+      )}
+    </>
+  );
+}
+
+export function InspectorPanel({ profile, selectedNodeId, activeCategories, onSelectNode, onClose }: InspectorPanelProps) {
+  const node = selectedNodeId ? profile.nodes.find((n) => n.id === selectedNodeId) ?? null : null;
+  const singleActiveCategory =
+    !node && activeCategories !== "all" && activeCategories.size === 1
+      ? [...activeCategories][0]
+      : null;
+
+  const panelKey = node?.id ?? singleActiveCategory ?? profile.id;
+
+  return (
+    <aside className={styles.panel} key={panelKey}>
+      {node ? (
+        <NodeDetailView profile={profile} node={node} onSelectNode={onSelectNode} onClose={onClose} />
+      ) : singleActiveCategory ? (
+        <CategoryOverviewView profile={profile} category={singleActiveCategory} onSelectNode={onSelectNode} />
+      ) : (
+        <UserOverviewView profile={profile} />
       )}
     </aside>
   );

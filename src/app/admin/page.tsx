@@ -64,6 +64,7 @@ export default function AdminIntelligencePage() {
       <InspectorPanel
         profile={profile}
         selectedNodeId={selectedNodeId}
+        activeCategories={activeCategories}
         onSelectNode={setSelectedNodeId}
         onClose={() => setSelectedNodeId(null)}
       />
