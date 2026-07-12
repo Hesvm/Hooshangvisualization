@@ -1,14 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import type { IntelligenceCategory } from "@/types/intelligence";
 import { intelligenceUsers } from "@/lib/mocks/userIntelligence";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { FilterChips } from "@/components/admin/FilterChips";
 import { InsightCardStrip } from "@/components/admin/InsightCardStrip";
-import { IntelligenceGraph } from "@/components/admin/IntelligenceGraph";
 import { InspectorPanel } from "@/components/admin/InspectorPanel";
 import styles from "./page.module.css";
+
+const IntelligenceGraph = dynamic(
+  () => import("@/components/admin/IntelligenceGraph").then((mod) => mod.IntelligenceGraph),
+  { ssr: false }
+);
 
 export default function AdminIntelligencePage() {
   const [selectedUserId, setSelectedUserId] = useState(intelligenceUsers[0].id);
