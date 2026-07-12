@@ -127,6 +127,50 @@ export const shoppingListData = {
   ],
 } satisfies ShoppingListWidgetData;
 
+export type PurchaseOpportunityItem = {
+  id: string;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  imageScale?: number;
+  imageOffsetY?: number;
+  label: string;
+};
+
+export const purchaseOpportunityData: PurchaseOpportunityItem[] = [
+  {
+    id: "suitcase",
+    name: "چمدان دلسی شاتلت ایر",
+    price: 38_900_000,
+    originalPrice: 45_500_000,
+    image: "/images/shopping/opportunity/delsey-suitcase.png",
+    imageScale: 1.3,
+    imageOffsetY: 8,
+    label: "پایین‌ترین حباب",
+  },
+  {
+    id: "moonswatch",
+    name: "ساعت امگا × سواچ",
+    price: 22_500_000,
+    originalPrice: 26_900_000,
+    image: "/images/shopping/opportunity/omega-moonswatch.avif",
+    imageScale: 1.2,
+    imageOffsetY: 8,
+    label: "پیشنهاد ویژه",
+  },
+  {
+    id: "gorilla-toy",
+    name: "عروسک فشاری گوریل مورتی",
+    price: 350_000,
+    originalPrice: 490_000,
+    image: "/images/shopping/opportunity/gorilla-squeeze-toy.png",
+    imageScale: 1.1,
+    imageOffsetY: 9,
+    label: "کمتر از حد انتظار",
+  },
+];
+
 export const yourItemsData = {
   badge: "۲۱",
   labels: ["لپ‌تاپ", "گوشی", "کفش"],

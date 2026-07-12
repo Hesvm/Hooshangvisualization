@@ -1,4 +1,26 @@
 .page {
+  /* Scoped dark palette — overrides the shared light tokens only within this
+     route so the rest of the app (chat/home) stays untouched. */
+  --color-white: #1a1e26;
+  --color-bg-gradient-top: #14171d;
+  --color-bg-gradient-bottom: #0a0c10;
+  --bg-top-rgb: 20, 23, 29;
+  --bg-bottom-rgb: 10, 12, 16;
+  --color-ink: #e9edf1;
+  --color-neutral-400: #6b7280;
+  --color-neutral-500: #9aa3ad;
+  --color-border-soft: rgba(255, 255, 255, 0.08);
+  --color-surface-subtle: #232830;
+  --color-selected: #eef1f5;
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.4);
+  --shadow-card-soft: 0 16px 32px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-floating: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.25);
+  --color-danger-bg: rgba(229, 72, 77, 0.18);
+  --color-warning-bg: rgba(201, 138, 9, 0.18);
+  --color-info-bg: rgba(92, 130, 184, 0.18);
+  --color-success-bg: rgba(26, 158, 107, 0.18);
+
   direction: rtl;
   display: flex;
   gap: 16px;
@@ -6,6 +28,7 @@
   padding: 16px;
   background: linear-gradient(to bottom, var(--color-bg-gradient-top), var(--color-bg-gradient-bottom));
   box-sizing: border-box;
+  color-scheme: dark;
 }
 
 .main {

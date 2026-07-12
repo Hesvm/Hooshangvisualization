@@ -19,9 +19,6 @@ export function AdminSidebar({ users, selectedUserId, onSelectUser }: AdminSideb
     return users.filter((u) => u.name.includes(trimmed));
   }, [users, query]);
 
-  const vipUsers = filteredUsers.filter((u) => u.isVip);
-  const recentUsers = filteredUsers.slice(0, 2);
-
   return (
     <aside className={styles.sidebar}>
       <input
@@ -31,18 +28,6 @@ export function AdminSidebar({ users, selectedUserId, onSelectUser }: AdminSideb
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-
-      {vipUsers.length > 0 && (
-        <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>کاربران ویژه</h3>
-          <UserList users={vipUsers} selectedUserId={selectedUserId} onSelectUser={onSelectUser} />
-        </section>
-      )}
-
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>کاربران اخیر</h3>
-        <UserList users={recentUsers} selectedUserId={selectedUserId} onSelectUser={onSelectUser} />
-      </section>
 
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>همه کاربران</h3>
@@ -80,7 +65,7 @@ function UserList({
             className={`${styles.userRow} ${user.id === selectedUserId ? styles.selected : ""}`}
             onClick={() => onSelectUser(user.id)}
           >
-            <span className={styles.avatar}>{user.name.charAt(0)}</span>
+            <img className={styles.avatar} src={user.avatarUrl} alt="" />
             <span className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userStatus}>{user.statusLine}</span>

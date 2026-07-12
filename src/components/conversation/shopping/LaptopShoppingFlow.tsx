@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AssistantText, UserBubble } from "@/components/conversation/blocks";
 import { ThinkingBeat } from "@/components/conversation/HooshangThinkingState";
 import { BottomSheet } from "@/components/BottomSheet";
+import { useVirtualNotifications } from "@/components/notifications/VirtualNotificationProvider";
 import { buildLoanOffers, clampLoanAmount, productPriceToman } from "@/lib/loan";
 import { isFastPreviewMode, makeInitialValidationStages } from "@/lib/mocks/validationStages";
 import {
@@ -515,6 +516,7 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
   const [state, setState] = useState<FlowState>(() => makeInitialState(recommendedProductId));
   const [activeShortlistView, setActiveShortlistView] = useState<ShortlistViewMode>("suggestions");
   const timers = useRef<number[]>([]);
+  const { showNotification } = useVirtualNotifications();
 
   function schedule(fn: () => void, ms: number) {
     const id = window.setTimeout(() => {
@@ -717,7 +719,16 @@ export function LaptopShoppingFlow({ products, recommendedProductId }: LaptopSho
   }
 
   function handlePaymentProcessingComplete() {
-    patch({ loanStep: "paymentDone", orderCode: buildOrderCode() });
+    const orderCode = buildOrderCode();
+    patch({ loanStep: "paymentDone", orderCode });
+    showNotification({
+      sourceName: "دیجی‌کالا",
+      title: `سفارش ${recommendedProduct.name} ثبت شد`,
+      body: `کد پیگیری: ${orderCode}`,
+      icon: "/images/brands/digikala-logo.svg",
+      timestampLabel: "now",
+      kind: "success",
+    });
   }
 
   const currentQuestionDef =

@@ -2,6 +2,7 @@ export type ConfidenceLevel = "confirmed" | "inferred" | "weak";
 
 export type IntelligenceCategory =
   | "kharid"
+  | "kalaha"
   | "mali"
   | "salamat"
   | "sabkeZendegi"
@@ -28,6 +29,7 @@ export type IntelligenceNode = {
   lastUpdated: string; // pre-formatted relative Persian string
   aiRecommendation?: string;
   relatedNodeIds?: string[];
+  imageUrl?: string;
 };
 
 export type IntelligenceEdge = {
@@ -37,18 +39,11 @@ export type IntelligenceEdge = {
   strength: number; // 0-1, drives stroke width
 };
 
-export type AIInsight = {
-  id: string;
-  text: string;
-  trendDelta?: string; // e.g. "+۴۲٪"
-};
-
 export type UserProfile = {
   id: string;
   name: string;
-  isVip: boolean;
+  avatarUrl: string;
   statusLine: string; // e.g. "۳ گفتگوی فعال"
   nodes: IntelligenceNode[];
   edges: IntelligenceEdge[];
-  insights: AIInsight[];
 };

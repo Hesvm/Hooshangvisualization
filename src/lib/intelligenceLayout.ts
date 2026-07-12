@@ -1,58 +1,55 @@
-import type { Node, Edge } from "@xyflow/react";
 import type {
   ConfidenceLevel,
   IntelligenceCategory,
   UserProfile,
 } from "@/types/intelligence";
-import { CATEGORY_ACCENT_RGB } from "@/config/intelligenceColors";
 
-export type CenterNodeData = { kind: "center"; profile: UserProfile };
-export type CategoryNodeData = {
+export type CenterGraphNode = {
+  id: string;
+  kind: "center";
+  profile: UserProfile;
+  fx: number;
+  fy: number;
+};
+export type CategoryGraphNode = {
+  id: string;
   kind: "category";
   nodeId: string;
   category: IntelligenceCategory;
   label: string;
   confidence: ConfidenceLevel;
-  expanded: boolean;
 };
-export type LeafNodeData = {
+export type LeafGraphNode = {
+  id: string;
   kind: "leaf";
   nodeId: string;
   category: IntelligenceCategory;
   label: string;
   confidence: ConfidenceLevel;
+  imageUrl?: string;
 };
-export type GraphNodeData = CenterNodeData | CategoryNodeData | LeafNodeData;
+export type GraphNode = CenterGraphNode | CategoryGraphNode | LeafGraphNode;
 
-const CATEGORY_RADIUS = 320;
-const LEAF_RADIUS = 170;
-const LEAF_SPREAD = Math.PI / 5; // ~36 degrees total arc per expanded category
-
-function categoryAngle(index: number, total: number): number {
-  return (index / total) * Math.PI * 2 - Math.PI / 2;
-}
-
-function edgeStyle(strength: number, confidence: ConfidenceLevel, category: IntelligenceCategory) {
-  const strokeWidth = 1 + Math.round(Math.max(0, Math.min(1, strength)) * 3); // 1-4px
-  const strokeDasharray =
-    confidence === "confirmed" ? undefined : confidence === "inferred" ? "6 4" : "2 3";
-  return {
-    strokeWidth,
-    stroke: `rgb(${CATEGORY_ACCENT_RGB[category]})`,
-    strokeDasharray,
-  };
-}
+export type GraphLink = {
+  id: string;
+  source: string;
+  target: string;
+  strength: number;
+  confidence: ConfidenceLevel;
+  category: IntelligenceCategory;
+  kind: "hierarchy" | "related";
+};
 
 /**
- * Pure function: given a user's full mock graph plus current UI state
- * (which category clusters are expanded, which categories are visible),
- * returns positioned React Flow nodes/edges for this render.
+ * Pure function: given a user's full mock graph plus the active category
+ * filter, returns the complete node/link set for this render (every
+ * category and every leaf is included — no expand/collapse). Positions are
+ * left entirely to the force simulation (react-force-graph).
  */
 export function computeGraph(
   profile: UserProfile,
-  expandedCategoryIds: ReadonlySet<string>,
   activeCategories: "all" | ReadonlySet<IntelligenceCategory>
-): { nodes: Node<GraphNodeData>[]; edges: Edge[] } {
+): { nodes: GraphNode[]; links: GraphLink[] } {
   const centerId = `${profile.id}-center`;
   const categoryNodes = profile.nodes.filter((n) => n.kind === "category");
   const visibleCategories =
@@ -60,82 +57,84 @@ export function computeGraph(
       ? categoryNodes
       : categoryNodes.filter((n) => activeCategories.has(n.category));
 
-  const nodes: Node<GraphNodeData>[] = [
-    {
-      id: centerId,
-      type: "center",
-      position: { x: 0, y: 0 },
-      data: { kind: "center", profile },
-      draggable: false,
-      selectable: false,
-    },
+  const nodes: GraphNode[] = [
+    { id: centerId, kind: "center", profile, fx: 0, fy: 0 },
   ];
-  const edges: Edge[] = [];
+  const links: GraphLink[] = [];
 
-  visibleCategories.forEach((categoryNode, index) => {
-    const angle = categoryAngle(index, visibleCategories.length);
-    const x = Math.cos(angle) * CATEGORY_RADIUS;
-    const y = Math.sin(angle) * CATEGORY_RADIUS;
-    const expanded = expandedCategoryIds.has(categoryNode.id);
-
+  visibleCategories.forEach((categoryNode) => {
     nodes.push({
       id: categoryNode.id,
-      type: "category",
-      position: { x, y },
-      data: {
-        kind: "category",
-        nodeId: categoryNode.id,
-        category: categoryNode.category,
-        label: categoryNode.label,
-        confidence: categoryNode.confidence,
-        expanded,
-      },
+      kind: "category",
+      nodeId: categoryNode.id,
+      category: categoryNode.category,
+      label: categoryNode.label,
+      confidence: categoryNode.confidence,
     });
 
     const categoryEdge = profile.edges.find(
       (e) => e.source === centerId && e.target === categoryNode.id
     );
-    edges.push({
+    links.push({
       id: categoryEdge?.id ?? `${profile.id}-edge-${categoryNode.id}`,
       source: centerId,
       target: categoryNode.id,
-      style: edgeStyle(categoryEdge?.strength ?? 0.5, categoryNode.confidence, categoryNode.category),
+      strength: categoryEdge?.strength ?? 0.5,
+      confidence: categoryNode.confidence,
+      category: categoryNode.category,
+      kind: "hierarchy",
     });
-
-    if (!expanded) return;
 
     const leaves = profile.nodes.filter(
       (n) => n.kind === "leaf" && n.category === categoryNode.category
     );
-    leaves.forEach((leaf, leafIndex) => {
-      const t = leaves.length === 1 ? 0.5 : leafIndex / (leaves.length - 1);
-      const leafAngle = angle - LEAF_SPREAD / 2 + LEAF_SPREAD * t;
-      const radius = CATEGORY_RADIUS + LEAF_RADIUS;
-
+    leaves.forEach((leaf) => {
       nodes.push({
         id: leaf.id,
-        type: "leaf",
-        position: { x: Math.cos(leafAngle) * radius, y: Math.sin(leafAngle) * radius },
-        data: {
-          kind: "leaf",
-          nodeId: leaf.id,
-          category: leaf.category,
-          label: leaf.label,
-          confidence: leaf.confidence,
-        },
+        kind: "leaf",
+        nodeId: leaf.id,
+        category: leaf.category,
+        label: leaf.label,
+        confidence: leaf.confidence,
+        imageUrl: leaf.imageUrl,
       });
 
       const leafEdge = profile.edges.find(
         (e) => e.source === categoryNode.id && e.target === leaf.id
       );
-      edges.push({
+      links.push({
         id: leafEdge?.id ?? `${profile.id}-edge-${leaf.id}`,
         source: categoryNode.id,
         target: leaf.id,
-        style: edgeStyle(leafEdge?.strength ?? 0.5, leaf.confidence, leaf.category),
+        strength: leafEdge?.strength ?? 0.5,
+        confidence: leaf.confidence,
+        category: leaf.category,
+        kind: "hierarchy",
       });
     });
   });
 
-  return { nodes, edges };
+  const visibleNodeIds = new Set(nodes.map((n) => n.id));
+  const seenRelatedPairs = new Set<string>();
+  nodes.forEach((node) => {
+    if (node.kind !== "leaf") return;
+    const sourceLeaf = profile.nodes.find((n) => n.id === node.id);
+    sourceLeaf?.relatedNodeIds?.forEach((targetId) => {
+      if (!visibleNodeIds.has(targetId) || targetId === node.id) return;
+      const pairKey = [node.id, targetId].sort().join("::");
+      if (seenRelatedPairs.has(pairKey)) return;
+      seenRelatedPairs.add(pairKey);
+      links.push({
+        id: `${profile.id}-related-${pairKey}`,
+        source: node.id,
+        target: targetId,
+        strength: 0.25,
+        confidence: node.confidence,
+        category: node.category,
+        kind: "related",
+      });
+    });
+  });
+
+  return { nodes, links };
 }

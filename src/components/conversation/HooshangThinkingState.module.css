@@ -35,9 +35,9 @@
 }
 
 .logoSvg {
-  /* Real logo is 23×21; render ~38×35 to sit in the 40px slot. */
-  width: 38px;
-  height: 35px;
+  /* Real logo is 23×21; render 20% smaller inside the stable 40px slot. */
+  width: 30.4px;
+  height: 28px;
   overflow: visible;
   will-change: transform;
 }

@@ -8,17 +8,9 @@ type FilterChipsProps = {
   activeCategories: "all" | ReadonlySet<IntelligenceCategory>;
   onToggleCategory: (category: IntelligenceCategory) => void;
   onSelectAll: () => void;
-  showInsights: boolean;
-  onToggleInsights: () => void;
 };
 
-export function FilterChips({
-  activeCategories,
-  onToggleCategory,
-  onSelectAll,
-  showInsights,
-  onToggleInsights,
-}: FilterChipsProps) {
+export function FilterChips({ activeCategories, onToggleCategory, onSelectAll }: FilterChipsProps) {
   const allSelected = activeCategories === "all";
 
   return (
@@ -31,7 +23,7 @@ export function FilterChips({
         همه
       </button>
       {CATEGORY_ORDER.map((category) => {
-        const active = allSelected || activeCategories.has(category);
+        const active = !allSelected && activeCategories.has(category);
         return (
           <button
             key={category}
@@ -43,13 +35,6 @@ export function FilterChips({
           </button>
         );
       })}
-      <button
-        type="button"
-        className={`${styles.chip} ${showInsights ? styles.active : ""}`}
-        onClick={onToggleInsights}
-      >
-        AI Insights
-      </button>
     </div>
   );
 }

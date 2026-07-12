@@ -5,12 +5,11 @@ import { MovementWidget } from "@/components/widgets/health/MovementWidget";
 import { HeartWidget } from "@/components/widgets/health/HeartWidget";
 import { SleepWidget } from "@/components/widgets/health/SleepWidget";
 import { StepsWidget } from "@/components/widgets/health/StepsWidget";
-import { PurchaseHistoryWidget } from "@/components/widgets/shopping/PurchaseHistoryWidget";
+import { PurchaseOpportunityWidget } from "@/components/widgets/shopping/PurchaseOpportunityWidget";
 import { ShoppingListWidget } from "@/components/widgets/shopping/ShoppingListWidget";
-import { YourItemsWidget } from "@/components/widgets/shopping/YourItemsWidget";
 import { MonthlyListNoteWidget, SmartReorderWidget } from "@/components/widgets/grocery/GroceryWidgets";
 import { healthWidgetData, healthHistory } from "@/lib/mocks/health";
-import { purchaseDayActivity, shoppingListData, yourItemsData, shoppingHistory } from "@/lib/mocks/shopping";
+import { purchaseOpportunityData, shoppingListData, shoppingHistory } from "@/lib/mocks/shopping";
 import { groceryHomeHistory, groceryMonthlyList, groceryReorderItems } from "@/lib/mocks/monthlyGrocery";
 import { RENTAL_HOME_HISTORY, RENTAL_HOUSE_SPACE_ID } from "@/lib/mocks/rentalHouse";
 import { SPACE_ACCENT_RGB } from "@/config/spaceColors";
@@ -46,8 +45,7 @@ export const spacePages: Record<string, SpacePageContent> = {
     accentRgb: SPACE_ACCENT_RGB.kharid,
 
     widgets: [
-      { id: "purchaseHistory", span: "full", component: PurchaseHistoryWidget, data: purchaseDayActivity },
-      { id: "yourItems", span: "half", component: YourItemsWidget, data: yourItemsData },
+      { id: "purchaseOpportunity", span: "half", component: PurchaseOpportunityWidget, data: purchaseOpportunityData },
       { id: "shoppingList", span: "half", component: ShoppingListWidget, data: shoppingListData },
     ],
     history: shoppingHistory,

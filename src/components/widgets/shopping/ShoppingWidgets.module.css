@@ -27,7 +27,7 @@
 .shoppingListWidget {
   width: 100%;
   min-width: 0;
-  padding: 16px;
+  padding: 16px 8px 8px;
   aspect-ratio: 1 / 1;
   border: 0;
   border-radius: var(--radius-widget);
@@ -172,123 +172,95 @@
   z-index: 1;
 }
 
-/* Purchase history heatmap */
-.purchaseHistory {
-  container-type: inline-size;
+/* Purchase opportunity — rotating product spotlight */
+.opportunityWidget {
   background: var(--color-white);
-  min-height: 125px;
-  /* Full-span heatmap: a wide banner, not a square tile. */
-  aspect-ratio: auto;
-}
-
-.purchaseHistoryHeader {
-  margin-bottom: 13px;
-}
-
-.purchaseAnalysisButton {
-  position: relative;
-  flex: 0 0 auto;
-  min-height: 32px;
-  padding: 0 13px;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 0 0 1px var(--color-border-soft);
-  color: var(--color-info);
-  cursor: pointer;
-  font-family: var(--font-ravi);
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-  transition-property: transform, background-color, box-shadow;
-  transition-duration: 140ms;
-  transition-timing-function: ease-out;
-}
-
-.purchaseAnalysisButton::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  min-width: 40px;
-  height: 40px;
-  transform: translate(-50%, -50%);
-}
-
-.purchaseAnalysisButton:active {
-  transform: scale(0.96);
-}
-
-.purchaseAnalysisButton:focus-visible {
-  outline: 2px solid rgba(92, 130, 184, 0.28);
-  outline-offset: 3px;
-}
-
-.dailyTimeline {
   display: flex;
-  flex-direction: row;
-  gap: 2px;
-  direction: rtl;
-}
-
-.monthGroup {
-  --month-columns: 5;
-  --month-days: 30;
-  display: flex;
-  flex: var(--month-days) 1 0;
-  min-width: 0;
   flex-direction: column;
-  gap: 4px;
 }
 
-.monthLabel {
-  display: block;
-  overflow: visible;
-  color: var(--color-history-heading);
-  font-family: var(--font-ravi);
-  font-size: 10px;
-  line-height: 16px;
-  font-weight: 400;
+.opportunityHeader {
+  flex: 0 0 auto;
+  margin-bottom: 6px;
+}
+
+.opportunityBody {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 0 -8px -8px;
+  padding: 14px 20px 12px;
+  border-radius: 18px;
+  background: #f2f2f3;
+  overflow: hidden;
+}
+
+.opportunitySlide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.opportunityInfo {
+  flex: 0 0 auto;
+  min-width: 0;
+  width: 100%;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   text-align: center;
+}
+
+.opportunityOriginalPrice {
+  font-size: 8.4px;
+  color: var(--color-history-heading);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+}
+
+.opportunityPrice {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.opportunityImageArea {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.opportunityImage {
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center bottom;
+}
+
+.opportunityLabel {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: rgba(20, 20, 22, 0.45);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  color: var(--color-white);
+  font-family: var(--font-ravi);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
-}
-
-.dayList {
-  display: grid;
-  grid-template-columns: repeat(var(--month-columns), minmax(0, 1fr));
-  grid-template-rows: repeat(7, auto);
-  grid-auto-flow: column;
-  gap: 1px;
-  direction: rtl;
-}
-
-.dayCell {
-  aspect-ratio: 1;
-  border-radius: 2px;
-  display: block;
-}
-
-.dayCell[data-intensity="0"] {
-  background: #eceeef;
-}
-
-.dayCell[data-intensity="1"] {
-  background: #d7efd6;
-}
-
-.dayCell[data-intensity="2"] {
-  background: #9bd49a;
-}
-
-.dayCell[data-intensity="3"] {
-  background: #55b65a;
-}
-
-.dayCell[data-intensity="4"] {
-  background: #278c35;
-}
-
-.dayCell[data-tone="orange"] {
-  background: #ff4900;
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HamburgerMenu } from "@/components/HamburgerMenu";
 import { currentUser } from "@/config/user";
 import { getGreeting } from "@/lib/greeting";
@@ -19,6 +20,7 @@ export function GreetingPill() {
   return (
     <>
       <div className={styles.pill}>
+        <Image src="/images/mascot.png" alt="" width={27} height={26} className={styles.mascot} priority />
         <p className={styles.text}>{greeting.line1}</p>
       </div>
       <HamburgerMenu className={styles.menuTrigger} />

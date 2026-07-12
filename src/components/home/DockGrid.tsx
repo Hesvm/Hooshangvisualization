@@ -31,20 +31,22 @@ function chunk<T>(items: T[], size: number): T[][] {
   return rows;
 }
 
-/** Slot #1 is permanently the expand/collapse arrow — never another app. */
+/** Last slot of the last collapsed row is permanently the expand/collapse arrow — never another app. */
 export function DockGrid({ apps, collapsedCount, state, onToggle }: DockGridProps) {
   const expanded = state === "expanded";
-  const firstRowApps = apps.slice(0, collapsedCount);
+  const collapsedRows = chunk(apps.slice(0, collapsedCount), COLUMNS);
   const restRows = chunk(apps.slice(collapsedCount), COLUMNS);
 
   return (
     <div className={styles.grid}>
-      <div className={styles.row}>
-        <MoreTile expanded={expanded} onToggle={onToggle} />
-        {firstRowApps.map((app) => (
-          <DockAppIcon key={app.id} app={app} />
-        ))}
-      </div>
+      {collapsedRows.map((row, index) => (
+        <div className={styles.row} key={`collapsed-${index}`}>
+          {row.map((app) => (
+            <DockAppIcon key={app.id} app={app} />
+          ))}
+          {index === collapsedRows.length - 1 && <MoreTile expanded={expanded} onToggle={onToggle} />}
+        </div>
+      ))}
 
       {restRows.map((row, index) => (
         <motion.div

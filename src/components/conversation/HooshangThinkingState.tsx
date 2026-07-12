@@ -20,16 +20,21 @@ import styles from "./HooshangThinkingState.module.css";
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 const APPEAR_DELAY_MS = 365; // wait before showing, so quick beats never flash
-const LOGO_HOLD_MS = 65; // brief hold on the real silhouette before morphing
+const LOGO_HOLD_MS = 1450; // let the real silhouette register before morphing
 const MORPH_IN_MS = 320; // silhouette → circle
 const MIN_ACTIVE_MS = 3850; // real "thinking" needs to read as deliberate, not decorative
-const MORPH_OUT_MS = 280; // circle → silhouette on exit
+const MORPH_OUT_MS = 360; // circle → silhouette on exit
+const EXIT_LOGO_HOLD_MS = 420; // show the restored silhouette before removing
 const SETTLE_MS = 200; // dots settle to 3 equal circles before the exit morph starts
 
 // One dot's full shape-cycle: transition between shapes, then a brief hold.
 const DOT_TRANSITION_S = 0.29;
 const DOT_HOLD_MS = 210;
 const DOT_LOOP_MS = (DOT_TRANSITION_S * 1000 + DOT_HOLD_MS) * 4;
+const BLINK_CLOSED_H = 0.46;
+const BLINK_CLOSED_MS = 72;
+const BLINK_OPEN_MS = 130;
+const BLINK_GAP_MS = 520;
 // Stagger so the 3 dots are always a different shape from one another —
 // a travelling wave, not a synchronized pulse.
 const DOT_STAGGER = 1;
@@ -91,10 +96,10 @@ const REST = { w: 4.31, h: 4.31 };
 // only height changes freely to read as short/tall pills. rx is always
 // width/2, which stays a true stadium cap in every state since h ≥ w always.
 const SHAPE = {
-  compact: { w: 1.6, h: 1.6 },
-  normal: { w: 2.1, h: 2.1 },
-  pillShort: { w: 1.6, h: 2.8 },
-  pillTall: { w: 1.6, h: 4.0 },
+  compact: { w: 2.08, h: 1.6 },
+  normal: { w: 2.73, h: 2.1 },
+  pillShort: { w: 2.08, h: 2.8 },
+  pillTall: { w: 2.08, h: 4.0 },
 } as const;
 const DOT_SEQUENCE = [SHAPE.pillTall, SHAPE.compact, SHAPE.normal, SHAPE.pillShort] as const;
 
@@ -144,18 +149,6 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
   const mountedRef = useRef(false);
   const activeRef = useRef(false);
 
-  // Resolves once the circle has actually been reached, so an exit that's
-  // requested while still mid morph-in waits for the forward morph to finish
-  // instead of reversing a half-played animation.
-  const activeReadyRef = useRef<{ promise: Promise<void>; resolve: () => void } | null>(null);
-  if (!activeReadyRef.current) {
-    let resolve = () => {};
-    const promise = new Promise<void>((r) => {
-      resolve = r;
-    });
-    activeReadyRef.current = { promise, resolve };
-  }
-
   // ---- Enter sequence (phase-keyed effects, Strict-Mode-safe) ---------------
   // "delay" → "logo" → "circle". Each step is its own timer/animate effect so
   // React 18 Strict Mode's mount-time double-invoke (run → cleanup → run) simply
@@ -195,7 +188,6 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
         activeRef.current = true;
         activeAtRef.current = performance.now();
         setActive(true);
-        activeReadyRef.current?.resolve();
       }
       return;
     }
@@ -206,7 +198,6 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
           activeRef.current = true;
           activeAtRef.current = performance.now();
           setActive(true);
-          activeReadyRef.current?.resolve();
         })
         .catch(() => {});
     }
@@ -226,8 +217,10 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
       }
       // Never interrupt a forward morph in progress — let it reach the circle
       // first, then respect the minimum visible time from that point.
-      await activeReadyRef.current?.promise;
-      if (cancelled) return;
+      while (!activeRef.current) {
+        await wait(16);
+        if (cancelled) return;
+      }
 
       // Enforce the minimum, but always land on a dot-loop boundary so a
       // beat that finishes early ends its *current* equalizer cycle cleanly
@@ -251,8 +244,11 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
       activeRef.current = false;
       if (!reduceMotion) {
         const back = animate(progress, 0, { duration: MORPH_OUT_MS / 1000, ease: EASE });
-        animate(containerOpacity, 0, { duration: MORPH_OUT_MS / 1000, ease: EASE, delay: 0.05 });
         await back.finished.catch(() => {});
+        if (cancelled) return;
+        await wait(EXIT_LOGO_HOLD_MS);
+        if (cancelled) return;
+        await animate(containerOpacity, 0, { duration: 0.18, ease: EASE }).finished.catch(() => {});
       } else {
         animate(containerOpacity, 0, { duration: 0.15 });
         await wait(150);
@@ -277,7 +273,13 @@ export function HooshangThinkingState({ pipeline, onComplete, appearDelayMs = AP
       style={{ opacity: containerOpacity, y: containerY }}
     >
       <div className={styles.inner}>
-        <MorphingLogo d={dString} active={active} settling={settling} reduceMotion={!!reduceMotion} />
+        <MorphingLogo
+          d={dString}
+          active={active}
+          settling={settling}
+          logoBlinking={vphase === "logo" && isPresent}
+          reduceMotion={!!reduceMotion}
+        />
 
         <div className={styles.textSlot}>
           <span className={`${styles.text} ${reduceMotion ? "" : styles.shimmer}`}>{activePhrase}</span>
@@ -296,11 +298,13 @@ function MorphingLogo({
   d,
   active,
   settling,
+  logoBlinking,
   reduceMotion,
 }: {
   d: string;
   active: boolean;
   settling: boolean;
+  logoBlinking: boolean;
   reduceMotion: boolean;
 }) {
   return (
@@ -314,16 +318,31 @@ function MorphingLogo({
         xmlns="http://www.w3.org/2000/svg"
       >
         <path d={d} fill={SHELL_FILL} />
-        <ShellDot cx={LANE.left} startIndex={0} active={active} settling={settling} reduceMotion={reduceMotion} />
+        <ShellDot
+          cx={LANE.left}
+          startIndex={0}
+          active={active}
+          settling={settling}
+          logoBlinking={logoBlinking}
+          reduceMotion={reduceMotion}
+        />
         <ShellDot
           cx={LANE.center}
           startIndex={1}
           isCenter
           active={active}
           settling={settling}
+          logoBlinking={logoBlinking}
           reduceMotion={reduceMotion}
         />
-        <ShellDot cx={LANE.right} startIndex={2} active={active} settling={settling} reduceMotion={reduceMotion} />
+        <ShellDot
+          cx={LANE.right}
+          startIndex={2}
+          active={active}
+          settling={settling}
+          logoBlinking={logoBlinking}
+          reduceMotion={reduceMotion}
+        />
       </svg>
     </div>
   );
@@ -341,6 +360,7 @@ function ShellDot({
   startIndex,
   active,
   settling,
+  logoBlinking,
   reduceMotion,
   isCenter = false,
 }: {
@@ -348,6 +368,7 @@ function ShellDot({
   startIndex: number;
   active: boolean;
   settling: boolean;
+  logoBlinking: boolean;
   reduceMotion: boolean;
   isCenter?: boolean;
 }) {
@@ -358,30 +379,19 @@ function ShellDot({
   const y = useTransform(height, (h) => LANE.y - h / 2);
   const rx = useTransform(width, (w) => w / 2);
 
-  // Reduced motion: dots never change shape, only a gentle opacity pulse.
-  if (reduceMotion) {
-    return (
-      <motion.rect
-        fill="#ffffff"
-        style={{ x, y, width, height, rx }}
-        initial={{ opacity: isCenter ? 0 : 0.7 }}
-        animate={{ opacity: isCenter ? 0 : [0.5, 0.9, 0.5] }}
-        transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-      />
-    );
-  }
-
   // Centre dot's own fade — independent of the shape cycle below.
   useEffect(() => {
+    if (reduceMotion) return;
     if (!isCenter) return;
     const target = active ? 1 : 0;
     const c = animate(opacity, target, { duration: 0.32, ease: EASE });
     return () => c.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCenter, active]);
+  }, [isCenter, active, reduceMotion]);
 
   // Shape state machine: rest ↔ equalizer loop ↔ settled equal circle.
   useEffect(() => {
+    if (reduceMotion) return;
     let cancelled = false;
 
     const animateTo = (shape: { w: number; h: number }, durationS: number) => {
@@ -392,6 +402,16 @@ function ShellDot({
 
     const run = async () => {
       if (!active) {
+        if (logoBlinking && !isCenter) {
+          while (!cancelled) {
+            await wait(BLINK_GAP_MS);
+            if (cancelled) return;
+            await animateTo({ w: REST.w, h: BLINK_CLOSED_H }, BLINK_CLOSED_MS / 1000);
+            if (cancelled) return;
+            await animateTo(REST, BLINK_OPEN_MS / 1000);
+          }
+          return;
+        }
         // Resting: outer dots fill their hole exactly; centre collapses to 0.
         await animateTo(isCenter ? { w: 0, h: 0 } : REST, MORPH_OUT_MS / 1000);
         return;
@@ -405,7 +425,6 @@ function ShellDot({
       await animateTo(DOT_SEQUENCE[idx % DOT_SEQUENCE.length], DOT_TRANSITION_S);
       if (cancelled) return;
       // Continuous staggered cycle until this effect is cancelled.
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         await wait(DOT_HOLD_MS);
         if (cancelled) return;
@@ -420,7 +439,20 @@ function ShellDot({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, settling]);
+  }, [active, settling, logoBlinking, reduceMotion]);
+
+  // Reduced motion: dots never change shape, only a gentle opacity pulse.
+  if (reduceMotion) {
+    return (
+      <motion.rect
+        fill="#ffffff"
+        style={{ x, y, width, height, rx }}
+        initial={{ opacity: isCenter ? 0 : 0.7 }}
+        animate={{ opacity: isCenter ? 0 : [0.5, 0.9, 0.5] }}
+        transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+      />
+    );
+  }
 
   return <motion.rect fill="#ffffff" style={{ x, y, width, height, rx, opacity }} />;
 }

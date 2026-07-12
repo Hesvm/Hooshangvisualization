@@ -14,30 +14,57 @@ type BottomDockProps = {
   onComposerStateChange: (state: ComposerState) => void;
 };
 
-const DOCK_SPRING = { type: "spring" as const, stiffness: 340, damping: 32, mass: 0.9 };
-const KEYBOARD_SPRING = { type: "spring" as const, stiffness: 420, damping: 38, mass: 0.9 };
+/* Single shared spring for every part of the dock (keyboard-follow, grid
+   collapse, and the composer's own pill morph in Composer.tsx) so the whole
+   thing reads as one object changing shape, not several independently-timed
+   animations. Keep this value in sync with EMBEDDED_MORPH_SPRING there. */
+const DOCK_MORPH_SPRING = { type: "spring" as const, stiffness: 380, damping: 36, mass: 0.9 };
+const KEYBOARD_SPRING = DOCK_MORPH_SPRING;
+const GRID_SPRING = DOCK_MORPH_SPRING;
+
+/* Height animated to/from "auto" (not mounted/unmounted) so the grid keeps its
+   scroll/expand state intact underneath — collapsing it is purely visual. */
+const gridVariants = {
+  visible: { height: "auto", opacity: 1, y: 0 },
+  hidden: { height: 0, opacity: 0, y: -6 },
+};
 
 export function BottomDock({ onComposerStateChange }: BottomDockProps) {
   const [state, setState] = useState<DockState>("collapsed");
   const [keyboardInset, setKeyboardInset] = useState(0);
+  const [composerState, setComposerState] = useState<ComposerState>("idle");
+
+  /* Any non-idle composer state (focused typing, voice recording, ...) means
+     the composer is the primary focus — the apps grid steps out of the way. */
+  const composerActive = composerState !== "idle";
 
   return (
     <motion.div
-      className={styles.dock}
-      layout
+      className={`${styles.dock} ${composerActive ? styles.editing : ""}`}
       animate={{ y: -keyboardInset }}
-      transition={{ ...DOCK_SPRING, y: KEYBOARD_SPRING }}
+      transition={KEYBOARD_SPRING}
     >
-      <DockGrid
-        apps={DOCK_APPS}
-        collapsedCount={DOCK_COLLAPSED_COUNT}
-        state={state}
-        onToggle={() => setState((prev) => (prev === "collapsed" ? "expanded" : "collapsed"))}
-      />
+      <motion.div
+        className={styles.gridClip}
+        variants={gridVariants}
+        animate={composerActive ? "hidden" : "visible"}
+        initial={false}
+        transition={GRID_SPRING}
+      >
+        <DockGrid
+          apps={DOCK_APPS}
+          collapsedCount={DOCK_COLLAPSED_COUNT}
+          state={state}
+          onToggle={() => setState((prev) => (prev === "collapsed" ? "expanded" : "collapsed"))}
+        />
+      </motion.div>
       <Composer
         variant="embedded"
         suggestions={homeComposerSuggestions}
-        onStateChange={onComposerStateChange}
+        onStateChange={(next) => {
+          setComposerState(next);
+          onComposerStateChange(next);
+        }}
         onKeyboardInsetChange={setKeyboardInset}
       />
     </motion.div>

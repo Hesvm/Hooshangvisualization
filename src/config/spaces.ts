@@ -89,6 +89,17 @@ export const spaces: SpaceConfig[] = [
     ],
   },
   {
+    id: RENTAL_HOUSE_SPACE_ID,
+    label: "اجاره خونه",
+    iconSrc: "/images/spaces/new-icons-symbol-130/house.png",
+    hasNotification: false,
+    composerSuggestions: [
+      RENTAL_HOUSE_SUGGESTION,
+      { id: "rental-saved", label: "خونه‌های ذخیره‌شده رو نشونم بده", icon: "shopping", prompt: "خونه‌های ذخیره‌شده رو نشونم بده" },
+      { id: "rental-visit", label: "برای بازدید از یه خونه وقت بگیر", icon: "shopping", prompt: "برای بازدید از یه خونه وقت بگیر" },
+    ],
+  },
+  {
     id: "baghie",
     label: "بقیه",
     iconSrc: "/images/spaces/new-icons-symbol-130/more.png",
@@ -119,17 +130,6 @@ export const spaces: SpaceConfig[] = [
       { id: "trip", label: "برای سفرم برنامه بچین", icon: "travel", prompt: "برای سفرم برنامه بچین" },
       { id: "weekend", label: "آخر هفته کجا بریم؟", icon: "travel", prompt: "آخر هفته کجا بریم؟" },
       { id: "route", label: "یه مسیر کوتاه پیشنهاد بده", icon: "travel", prompt: "یه مسیر کوتاه پیشنهاد بده" },
-    ],
-  },
-  {
-    id: RENTAL_HOUSE_SPACE_ID,
-    label: "اجاره خونه",
-    iconSrc: "/images/spaces/new-icons-symbol-130/house.png",
-    hasNotification: false,
-    composerSuggestions: [
-      RENTAL_HOUSE_SUGGESTION,
-      { id: "rental-saved", label: "خونه‌های ذخیره‌شده رو نشونم بده", icon: "shopping", prompt: "خونه‌های ذخیره‌شده رو نشونم بده" },
-      { id: "rental-visit", label: "برای بازدید از یه خونه وقت بگیر", icon: "shopping", prompt: "برای بازدید از یه خونه وقت بگیر" },
     ],
   },
   {

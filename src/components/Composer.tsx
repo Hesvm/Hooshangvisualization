@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Add, ArrowUp, Microphone, TickCircle } from "iconsax-react";
 import type { ComposerSuggestion } from "@/types/space";
@@ -70,12 +71,14 @@ export function Composer({
   const [kbInset, setKbInset] = useState(0);
   const [isFinePointer, setIsFinePointer] = useState(false);
   const [devKeyboardHeight, setDevKeyboardHeight] = useState(0);
+  const [devKeyboardPortal, setDevKeyboardPortal] = useState<HTMLElement | null>(null);
   const [renderedSuggestions, setRenderedSuggestions] = useState<ComposerSuggestion[]>([]);
   const [suggestionsExiting, setSuggestionsExiting] = useState(false);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const devKeyboardRef = useRef<HTMLImageElement>(null);
   const suggestionExitTimerRef = useRef<number | null>(null);
+  const suggestionShowTimerRef = useRef<number | null>(null);
   const valueRef = useRef(value);
   const visibleSuggestions = useMemo(
     () => suggestions?.slice(0, MAX_VISIBLE_SUGGESTIONS) ?? [],
@@ -102,6 +105,10 @@ export function Composer({
   const isVoiceActive = voice.mode !== "idle" && voice.mode !== "error";
   const state: ComposerState = sending ? "submitting" : voice.mode !== "idle" ? voice.mode : focused ? "focused" : "idle";
   const shouldRenderSuggestions = renderedSuggestions.length > 0 && !isVoiceActive;
+  /* Homepage-only "primary focus" mode: grows the pill and steps the plus
+     button aside. Gated on variant so the conversation composer (variant
+     defaults to "floating") never picks this up. */
+  const isEmbeddedActive = variant === "embedded" && (focused || isVoiceActive);
 
   useEffect(() => {
     valueRef.current = value;
@@ -115,6 +122,9 @@ export function Composer({
     return () => {
       if (suggestionExitTimerRef.current !== null) {
         window.clearTimeout(suggestionExitTimerRef.current);
+      }
+      if (suggestionShowTimerRef.current !== null) {
+        window.clearTimeout(suggestionShowTimerRef.current);
       }
     };
   }, []);
@@ -152,12 +162,28 @@ export function Composer({
 
   const showDevKeyboard = IS_DEV && isFinePointer && focused && kbInset === 0;
 
+  useEffect(() => {
+    if (!showDevKeyboard) return;
+    // When embedded, this component renders inside BottomDock's own
+    // transformed/lifted wrapper — an in-place absolute image would get
+    // dragged up by the same lift it's meant to sit fixed beneath. Portal it
+    // to the untransformed page frame so it always reads as the true
+    // viewport bottom, exactly like the real OS keyboard would.
+    setDevKeyboardPortal(document.getElementById("app-frame"));
+  }, [showDevKeyboard]);
+
   useLayoutEffect(() => {
     if (!showDevKeyboard) return;
     const img = devKeyboardRef.current;
     if (!img) return;
     // The <img> mounts before its src finishes loading, so a same-tick measure
     // reads height 0 (no intrinsic size yet) — remeasure once it actually loads.
+    // Also reruns on devKeyboardPortal changing: on the very first focus of a
+    // session the portal target isn't found yet, so this first mounts in place
+    // inside BottomDock's own small wrapper and measures a clipped, too-small
+    // height — once the portal attaches and the image moves to the full-size
+    // app frame, we need to measure again or that wrong height sticks for the
+    // rest of the focus session.
     const measure = () => setDevKeyboardHeight(img.getBoundingClientRect().height);
     if (img.complete) measure();
     img.addEventListener("load", measure);
@@ -166,9 +192,13 @@ export function Composer({
       img.removeEventListener("load", measure);
       window.removeEventListener("resize", measure);
     };
-  }, [showDevKeyboard]);
+  }, [showDevKeyboard, devKeyboardPortal]);
 
   const effectiveKbInset = showDevKeyboard ? devKeyboardHeight : kbInset;
+  /* Homepage-only: the OS keyboard has actually settled — the composer takes
+     its final height and lifts in the same beat as the keyboard, instead of
+     jumping to full size the instant the input is tapped. */
+  const isKeyboardUp = variant === "embedded" && effectiveKbInset > 0;
 
   useEffect(() => {
     if (variant !== "embedded") return;
@@ -179,6 +209,12 @@ export function Composer({
     if (suggestionExitTimerRef.current === null) return;
     window.clearTimeout(suggestionExitTimerRef.current);
     suggestionExitTimerRef.current = null;
+  }
+
+  function clearSuggestionShowTimer() {
+    if (suggestionShowTimerRef.current === null) return;
+    window.clearTimeout(suggestionShowTimerRef.current);
+    suggestionShowTimerRef.current = null;
   }
 
   function showSuggestionRows() {
@@ -237,11 +273,24 @@ export function Composer({
 
   function handleInputFocus() {
     setFocused(true);
-    if (!value.trim()) showSuggestionRows();
+    if (!value.trim()) {
+      if (variant === "embedded") {
+        // Let the grid fade out and the pill grow/lift with the keyboard
+        // first — suggestions are the last beat, not simultaneous with the tap.
+        clearSuggestionShowTimer();
+        suggestionShowTimerRef.current = window.setTimeout(() => {
+          showSuggestionRows();
+          suggestionShowTimerRef.current = null;
+        }, 260);
+      } else {
+        showSuggestionRows();
+      }
+    }
   }
 
   function handleInputBlur() {
     setFocused(false);
+    clearSuggestionShowTimer();
     hideSuggestionRows();
   }
 
@@ -267,13 +316,15 @@ export function Composer({
         />
       )}
 
-      {showDevKeyboard && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img ref={devKeyboardRef} src="/images/dev-keyboard-reference.png" alt="" aria-hidden className={styles.devKeyboard} />
-      )}
+      {showDevKeyboard &&
+        (() => {
+          // eslint-disable-next-line @next/next/no-img-element
+          const img = <img ref={devKeyboardRef} src="/images/dev-keyboard-reference.png" alt="" aria-hidden className={styles.devKeyboard} />;
+          return devKeyboardPortal ? createPortal(img, devKeyboardPortal) : img;
+        })()}
 
       <div
-        className={`${styles.dock} ${variant === "embedded" ? styles.embedded : ""} ${shouldRenderSuggestions ? styles.hasSuggestions : ""}`}
+        className={`${styles.dock} ${variant === "embedded" ? styles.embedded : ""} ${isEmbeddedActive ? styles.active : ""} ${isKeyboardUp ? styles.keyboardUp : ""} ${shouldRenderSuggestions ? styles.hasSuggestions : ""}`}
         style={{ "--kb-inset": `${effectiveKbInset}px` } as CSSProperties}
       >
         {/* Bottom edge fade/blur — content dissolves downward beneath the sharp composer. */}
@@ -325,11 +376,16 @@ export function Composer({
         )}
 
         <div className={`${styles.controlsRow} ${isVoiceActive ? styles.isVoiceActive : ""}`}>
-          <button type="button" className={styles.plusButton} aria-label="افزودن" tabIndex={isVoiceActive ? -1 : 0}>
-            <Add variant="Linear" size={24} color="var(--color-icon-line)" />
-          </button>
+          {/* Idle: plus button and pill are two separate floating surfaces.
+              Embedded + active: this same wrapper becomes the single shared
+              capsule (one background, one shadow) so the plus icon reads as
+              part of the pill instead of a detached button beside it. */}
+          <div className={styles.pillGroup}>
+            <button type="button" className={styles.plusButton} aria-label="افزودن" tabIndex={isVoiceActive ? -1 : 0}>
+              <Add variant="Linear" size={22} color="var(--color-icon-line)" />
+            </button>
 
-          <div className={`${styles.composer} ${isVoiceActive ? styles.composerVoice : ""}`}>
+            <div className={`${styles.composer} ${isVoiceActive ? styles.composerVoice : ""}`}>
             <div className={styles.composerContent} aria-hidden={isVoiceActive}>
               {/* First child in the RTL row = visual right (leading) edge. */}
               <button
@@ -393,6 +449,7 @@ export function Composer({
                 <TickCircle variant="Bold" size={48} color="var(--color-primary)" />
               </button>
             </div>
+          </div>
           </div>
         </div>
       </div>

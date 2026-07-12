@@ -6,14 +6,52 @@
 .dock {
   position: absolute;
   z-index: 30;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 18px;
+  right: 18px;
+  bottom: 6px;
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-  background: var(--color-white);
-  box-shadow: var(--shadow-floating);
+  border-radius: var(--radius-sheet);
+  /* Solid behind the icon grid, easing to translucent behind the input row
+     (~last 72px) so the backdrop-filter below has something real to blur —
+     the same topEdge technique the space header uses, just facing down and
+     scoped to a small strip instead of the whole card. */
+  background: linear-gradient(to bottom, var(--color-white) 0%, var(--color-white) 62%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  /* Scoped 15% bump over --shadow-floating (opacity + blur), not the shared
+     token itself — the floating/chat composer elsewhere also reads that
+     token and must stay untouched. */
+  box-shadow: 0 9px 32px rgba(0, 0, 0, 0.058), 0 2px 9px rgba(0, 0, 0, 0.035);
   overflow: hidden;
-  padding-top: 6px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  transition-property: background, box-shadow;
+  transition-duration: 260ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Editing: the apps grid is gone and the composer pill now carries its own
+   background/shadow (see Composer.module.css .pillGroup) — so this outer
+   sheet sheds its own chrome (and the idle-only blur strip above) entirely
+   rather than showing an empty white card behind the floating pill, matching
+   the reference where nothing but the suggestions and the composer float
+   above the keyboard. */
+.dock.editing {
+  /* The idle 18px resting margin exists so the collapsed pill floats off the
+     screen edge — once the keyboard is up and this card sheds its own chrome,
+     that same 18px becomes a dead gap between the composer and the keyboard
+     (nothing paints it, since overflow goes visible below). Drop it so the
+     keyboard-follow translate lands the composer flush above the keyboard. */
+  bottom: 0;
+  padding-bottom: 0;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.gridClip {
+  overflow: hidden;
 }

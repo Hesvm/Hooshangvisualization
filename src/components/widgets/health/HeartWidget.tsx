@@ -1,9 +1,24 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { HeartData } from "@/lib/mocks/health";
+import { faNum } from "@/lib/faNum";
 import shared from "@/components/widgets/shared.module.css";
 import styles from "./HealthWidgets.module.css";
 
+/** Small live-reading jitter so the bpm feels like it's updating, not just a static mock value. */
+const BPM_JITTER = [0, 1, -1, 2, 0, -1];
+
 export function HeartWidget({ data }: { data: unknown }) {
   const d = data as HeartData;
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  const liveBpm = d.bpm + BPM_JITTER[tick % BPM_JITTER.length];
 
   return (
     <div className={`${shared.card} ${styles.heart}`}>
@@ -15,7 +30,7 @@ export function HeartWidget({ data }: { data: unknown }) {
           />
         </svg>
         <div className={styles.heartCenter}>
-          <span className={styles.heartValue}>۷۴</span>
+          <span className={styles.heartValue}>{faNum(liveBpm)}</span>
           <span className={styles.heartSub}>تپش / دقیقه</span>
         </div>
       </div>

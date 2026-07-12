@@ -91,9 +91,10 @@
 }
 
 .rings {
-  width: 64px;
-  height: 64px;
+  width: 77px;
+  height: 77px;
   display: block;
+  transform: translateY(10px);
 }
 
 /* Heart */
@@ -115,6 +116,28 @@
   width: 100px;
   height: auto;
   display: block;
+  transform-origin: 50% 50%;
+  animation: heartbeat 2.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.02);
+  }
+  40% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.014);
+  }
+  70% {
+    transform: scale(1);
+  }
 }
 
 .heartCenter {
@@ -135,6 +158,13 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
   letter-spacing: -8px;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heartShape {
+    animation: none;
+  }
 }
 
 .heartSub {

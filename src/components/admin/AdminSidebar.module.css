@@ -97,15 +97,16 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-selected);
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-ravi);
-  font-weight: 600;
-  font-size: 14px;
+  object-fit: cover;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
   flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .avatar {
+    outline-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .userInfo {

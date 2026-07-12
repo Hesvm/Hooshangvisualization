@@ -9,10 +9,21 @@ type DockAppIconProps = {
   app: DockAppEntry;
 };
 
+const GROCERY_APP_ID = "kharid-supermarketi";
+
 function TileVisual({ app }: { app: DockAppEntry }) {
+  const isGrocery = app.id === GROCERY_APP_ID;
+  const size = isGrocery ? 52 : 68;
+
   return (
     <span className={styles.iconWrap} style={{ background: `rgba(${app.accentRgb}, 0.12)` }}>
-      <Image src={app.iconSrc} alt="" width={57} height={57} className={styles.icon} />
+      <Image
+        src={app.iconSrc}
+        alt=""
+        width={size}
+        height={size}
+        className={`${styles.icon} ${isGrocery ? "" : styles.iconLarge}`}
+      />
       {app.hasNotification && <span className={styles.notificationDot} />}
     </span>
   );

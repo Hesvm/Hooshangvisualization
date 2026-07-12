@@ -92,7 +92,7 @@
   --color-user-bubble: #ebe8ea; /* full-width user message, per reference */
   --color-assistant-ink: #1c2226; /* assistant prose on canvas */
   --color-selected: #101013; /* selected pill: black bg / white text */
-  --color-primary: #3b93eb; /* primary action button (بعدی / آره استفاده کن) */
+  --color-primary: #4b52ff; /* primary action button (بعدی / آره استفاده کن) */
   --color-secondary-bg: #ededef; /* secondary/ghost button fill */
   --color-digikala-red: #ed1844; /* Digikala brand red — logo mark, seller-trust badge */
   --color-digikala-red-bg: rgba(237, 24, 68, 0.05);

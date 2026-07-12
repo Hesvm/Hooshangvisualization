@@ -1,3 +1,22 @@
+import type { ComponentType } from "react";
+import type { IconProps } from "iconsax-react";
+import {
+  ShoppingCart,
+  Bag2,
+  Wallet,
+  HeartCircle,
+  Activity,
+  Location,
+  Book1,
+  Mobile,
+  Link21,
+  Star1,
+  People,
+  MessageText1,
+  Setting2,
+  Warning2,
+  Flag,
+} from "iconsax-react";
 import type { IntelligenceCategory } from "@/types/intelligence";
 
 /**
@@ -6,6 +25,7 @@ import type { IntelligenceCategory } from "@/types/intelligence";
  */
 export const CATEGORY_ORDER: IntelligenceCategory[] = [
   "kharid",
+  "kalaha",
   "mali",
   "salamat",
   "sabkeZendegi",
@@ -23,6 +43,7 @@ export const CATEGORY_ORDER: IntelligenceCategory[] = [
 
 export const CATEGORY_LABELS: Record<IntelligenceCategory, string> = {
   kharid: "خرید",
+  kalaha: "کالاها",
   mali: "مالی",
   salamat: "سلامت",
   sabkeZendegi: "سبک زندگی",
@@ -44,6 +65,7 @@ export const CATEGORY_LABELS: Record<IntelligenceCategory, string> = {
  */
 export const CATEGORY_ACCENT_RGB: Record<IntelligenceCategory, string> = {
   kharid: "80, 130, 220",
+  kalaha: "58, 176, 158",
   mali: "26, 158, 107",
   salamat: "232, 56, 79",
   sabkeZendegi: "154, 111, 224",
@@ -57,4 +79,22 @@ export const CATEGORY_ACCENT_RGB: Record<IntelligenceCategory, string> = {
   tarjihat: "176, 141, 87",
   risk: "197, 84, 60",
   ahdaf: "122, 163, 95",
+};
+
+export const CATEGORY_ICONS: Record<IntelligenceCategory, ComponentType<IconProps>> = {
+  kharid: ShoppingCart,
+  kalaha: Bag2,
+  mali: Wallet,
+  salamat: HeartCircle,
+  sabkeZendegi: Activity,
+  makanha: Location,
+  amoozesh: Book1,
+  dastgahha: Mobile,
+  appHayeMotasel: Link21,
+  servisha: Star1,
+  ravabet: People,
+  goftogooha: MessageText1,
+  tarjihat: Setting2,
+  risk: Warning2,
+  ahdaf: Flag,
 };

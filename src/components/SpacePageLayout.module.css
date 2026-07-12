@@ -11,8 +11,12 @@
 /* The scroll area fills the whole frame and clears the header/composer with padding
    rather than hard top/bottom bounds — so content scrolls *under* both edges and is
    softly blurred/faded by the overlays instead of clipping at a visible line.
-   Padding keeps the first widget at ~127px and the last item ~128px above the
-   composer, matching the previous resting positions. */
+   Top padding only needs to clear the header row itself (raising it doesn't buy
+   clearance from the bottom fade — it pushes every item down, which is the wrong
+   direction). Bottom padding matters once the list is scrolled all the way down:
+   it must clear the composer's full 152px fade zone (Composer.module.css
+   .bottomEdge) plus a buffer, so the last item rests fully clear of the composer
+   once scrolled to, instead of staying permanently half-dissolved under it. */
 .scrollArea {
   position: absolute;
   inset: 0;
@@ -23,7 +27,7 @@
   overscroll-behavior-y: contain;
   overscroll-behavior-x: none;
   touch-action: pan-y;
-  padding: 127px 23px 128px;
+  padding: 127px 23px 168px;
   display: flex;
   flex-direction: column;
   gap: 24px;
